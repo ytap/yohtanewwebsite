@@ -1,0 +1,81 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const projectTitle = 'Contact Membrane';
+const projectDescription = `Contact Membrane, an interface designed to mediate interspecies listening through gravitational instability and shared materiality. The system couples a human and mealworm beetle performer on a tensioned paper surface instrumented with contact microphones and an Inertial Measurement Unit (IMU).
+
+Through granular synthesis and spatialized audio, the system magnifies the insect’s micro-movements based on the concept of Umwelts. The interaction is governed by a precarious mechanical constraint: the performer must continuously adjust the surface tilt to prevent the insect from falling.
+
+We argue that this necessity of postural compensation creates a contact zone where listening emerges not as passive reception, but as an active engagement with the non-human other. We discuss the design of this feedback loop and examine how physical precarity can function as a pedagogical tool for post-anthropocentric musical expression.`;
+---
+
+<Layout title={projectTitle}>
+    <main class="project-container">
+        <div class="navigation">
+            <a href="/" class="back-link">メインページに戻る</a>
+        </div>
+        
+        <header class="project-header">
+            <h1>{projectTitle}</h1>
+        </header>
+
+        <article class="project-body">
+            <div class="image-wrapper">
+                <img src="/assets/mealworm1.jpg" alt={projectTitle} class="project-image" />
+            </div>
+            
+            <div class="content-text">
+                <p>{projectDescription}</p>
+            </div>
+        </article>
+    </main>
+</Layout>
+
+<style>
+    .project-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        font-family: sans-serif;
+    }
+
+    .navigation {
+        margin-bottom: 30px;
+    }
+
+    .back-link {
+        color: inherit;
+        text-decoration: none;
+        font-size: 0.9rem;
+        opacity: 0.7;
+    }
+
+    .back-link:hover {
+        opacity: 1;
+        text-decoration: underline;
+    }
+
+    .project-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+    }
+
+    .image-wrapper {
+        width: 100%;
+        margin-bottom: 30px;
+    }
+
+    .project-image {
+        width: 100%;
+        height: auto;
+        max-height: 450px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .content-text p {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        white-space: pre-line;
+    }
+</style>

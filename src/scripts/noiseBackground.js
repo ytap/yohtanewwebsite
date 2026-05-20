@@ -10,7 +10,7 @@ export function initNoiseBackground(pixelSize = 4) {
     canvas.style.width = '100vw';
     canvas.style.height = '100vh';
     canvas.style.pointerEvents = 'none';
-    canvas.style.zIndex = '9999';
+    canvas.style.zIndex = '-1';
     canvas.style.opacity = '0.08';
     
     canvas.style.imageRendering = 'pixelated';
@@ -96,7 +96,7 @@ export function initNoiseBackground(pixelSize = 4) {
         }
 
         const len = buffer32.length;
-        const base = 210; 
+        const base = 80;
         const range = 255 - base;
 
         // 2. 画面全体の描画

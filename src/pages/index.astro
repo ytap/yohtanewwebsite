@@ -5,7 +5,7 @@ const featuredProjects = [
     {
         title: 'NoiseLoom',
         description: 'An intuitive yet unique multiplayer noise improvisation tool, for experts and non-experts.',
-        image: '/assets/project-a.jpg',
+        image: '/assets/NoiseLoom1.png',
         link: '/projects/project-a'
     },
     {
@@ -184,7 +184,7 @@ const featuredProjects = [
             const distance = track.scrollWidth / 2;
 
             // pixels per second baseline
-            const pixelsPerSecond = 80;
+            const pixelsPerSecond = 110;
             const duration = (distance / pixelsPerSecond) * 1000; // ms
 
             marqueeAnimation = track.animate([
@@ -213,6 +213,15 @@ const featuredProjects = [
                     if (mod && typeof mod.initNoiseBackground === 'function') mod.initNoiseBackground(2);
                 } catch (e) {
                     console.error('initNoiseBackground failed:', e);
+                }
+            })();
+
+            (async () => {
+                try {
+                    const mod = await import('../scripts/projectCardBorder.js');
+                    if (mod && typeof mod.initProjectCardBorders === 'function') mod.initProjectCardBorders();
+                } catch (e) {
+                    console.error('initProjectCardBorders failed:', e);
                 }
             })();
 
@@ -344,18 +353,18 @@ const featuredProjects = [
     }
 
     .project-block {
+        position: relative;
         display: flex;
         align-items: flex-start;
         gap: 32px;
-        padding: 20px;            /* 写真とテキストの塊を綺麗に囲むための内側余白 */
-    background-color: transparent;
-    border: 2px solid black;
-        border-radius: 6px;       /* 境界を僅かに明瞭にするための角丸 */
-        transition: background-color 0.2s ease; /* 灰色の変化を滑らかにする設定 */
+        padding: 20px;
+        background-color: transparent;
+        border-radius: 6px;
+        transition: background-color 0.2s ease;
         text-decoration: none;
         color: inherit;
         flex-shrink: 0;
-        margin-right: 40px;       /* paddingの追加に伴い、ブロック間の余白を微調整 */
+        margin-right: 40px;
     }
 
     .project-block:hover {
