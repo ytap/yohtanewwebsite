@@ -1,86 +1,423 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const featuredProjects = [
+    {
+        title: 'NoiseLoom',
+        description: 'An intuitive yet unique multiplayer noise improvisation tool, for experts and non-experts.',
+        image: '/assets/project-a.jpg',
+        link: '/projects/project-a'
+    },
+    {
+        title: 'Contact Membrane',
+        description: 'An interface to listen to mealworm beetles.',
+        image: '/assets/mealworm1.png',
+        link: '/projects/project-b'
+    },
+    {
+        title: 'Project C',
+        description: 'A real-time interactive system deploying creative coding techniques.',
+        image: '/assets/project-c.jpg',
+        link: '/projects/project-c'
+    }
+];
 ---
 
 <Layout>
     <div class="main-container">
-        <div class="tab-navigation">
-            <button class="tab-button active" data-tab="about">About</button>
-            <button class="tab-button" data-tab="projects">Featured Projects</button>
-            <button class="tab-button" data-tab="exhibitions">Exhibitions & Grants</button>
-            <button class="tab-button" data-tab="contact">Contact</button>
+        <div class="hero-section">
+            <div class="canvas-wrapper">
+                <canvas id="title-canvas" class="procedural-title"></canvas>
+                <canvas id="about-canvas" class="procedural-about"></canvas>
+            </div>
+            <canvas id="divider-canvas" class="procedural-divider"></canvas>
         </div>
 
-        <div class="tab-content active" id="about">
-            <h2>About</h2>
-            <p>ここにAboutのコンテンツを書きます</p>
+        <div class="accordion-item active">
+            <button class="accordion-header">
+                <span class="title-wrapper"><span class="arrow">＞</span>Featured Projects</span>
+            </button>
+            <div class="accordion-content">
+                <div class="inner-content">
+                    <section class="featured-section">
+                        <div class="marquee-container">
+                            <div class="marquee-track" style={`--marquee-duration: ${featuredProjects.length * 12}s`}>
+                                {featuredProjects.map((project) => (
+                                    <a href={project.link} class="project-block">
+                                        <div class="image-wrapper">
+                                            <img src={project.image} alt={project.title} class="project-img" />
+                                        </div>
+                                        <div class="project-text-content">
+                                            <h3 class="project-block-title">{project.title}</h3>
+                                            <p class="project-block-desc">{project.description}</p>
+                                        </div>
+                                    </a>
+                                ))}
+
+                                {featuredProjects.map((project) => (
+                                    <a href={project.link} class="project-block" aria-hidden="true">
+                                        <div class="image-wrapper">
+                                            <img src={project.image} alt={project.title} class="project-img" />
+                                        </div>
+                                        <div class="project-text-content">
+                                            <h3 class="project-block-title">{project.title}</h3>
+                                            <p class="project-block-desc">{project.description}</p>
+                                        </div>
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div class="more-projects-link">
+                            <a href="/wip">For more projects, visit wip garden</a>
+                        </div>
+
+                    </section>
+                </div>
+            </div>
         </div>
-        <div class="tab-content" id="projects">
-            <h2>Featured Projects</h2>
-            <p>ここにプロジェクトの一覧を書きます</p>
+
+        <div class="accordion-item">
+            <button class="accordion-header">
+                <span class="title-wrapper"><span class="arrow">＞</span>News</span>
+            </button>
+            <div class="accordion-content">
+                <div class="inner-content">
+                    <p>Coming soon...</p>
+                </div>
+            </div>
         </div>
-        <div class="tab-content" id="exhibitions">
-            <h2>Exhibitions & Grants</h2>
-            <p>ここに展示や助成金の情報を書きます</p>
+
+        <div class="accordion-item">
+            <button class="accordion-header">
+                <span class="title-wrapper"><span class="arrow">＞</span>Exhibitions & Grants</span>
+            </button>
+            <div class="accordion-content">
+                <div class="inner-content">
+                    <p>Coming soon...</p>
+                </div>
+            </div>
         </div>
-        <div class="tab-content" id="contact">
-            <h2>Contact</h2>
-            <p>ここに連絡先を書きます</p>
+
+        <div class="accordion-item">
+            <button class="accordion-header">
+                <span class="title-wrapper"><span class="arrow">＞</span>Contact</span>
+            </button>
+            <div class="accordion-content">
+                <div class="inner-content">
+                    <p>ykitagawa[at]keio.jp</p>
+                </div>
+            </div>
         </div>
     </div>
 
+    <script src="../scripts/pages/main-canvas.js"></script>
+
     <script>
-        const buttons = document.querySelectorAll('.tab-button');
-        const contents = document.querySelectorAll('.tab-content');
+        // import noise background initializer for main page (fine grain)
+        // use dynamic import since this script is not a module
+        // Accordion setup (keeps the existing single-open behavior)
+        function setupAccordion() {
+            // 1. 初期状態の高さを計算
+            setTimeout(() => {
+                const activeItems = document.querySelectorAll('.accordion-item.active');
+                activeItems.forEach(item => {
+                    const content = item.querySelector('.accordion-content');
+                    if (content && content instanceof HTMLElement) {
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                    }
+                });
+            }, 300);
 
-        buttons.forEach(button => {
-            button.addEventListener('click', () => {
-                const targetTab = button.getAttribute('data-tab');
-                if (!targetTab) return;
+            /** @type {NodeListOf<HTMLButtonElement>} */
+            const headers = document.querySelectorAll('.accordion-header');
+            headers.forEach(header => {
+                // 2. cloneNodeをやめ、カスタムデータ属性(dataset)で二重登録を安全に防ぐ
+                if (header.dataset.isSetup === 'true') return;
+                header.dataset.isSetup = 'true';
 
-                buttons.forEach(btn => btn.classList.remove('active'));
-                contents.forEach(cnt => cnt.classList.remove('active'));
+                header.addEventListener('click', () => {
+                    const item = header.parentElement;
+                    if (!item) return;
 
-                button.classList.add('active');
-                const targetContent = document.getElementById(targetTab);
-                if (targetContent) {
-                    targetContent.classList.add('active');
-                }
+                    const content = item.querySelector('.accordion-content');
+                    if (!content || !(content instanceof HTMLElement)) return;
+                    const isOpen = item.classList.contains('active');
+
+                    if (isOpen) {
+                        item.classList.remove('active');
+                        // 3. 単位(px)を確実に付与する
+                        content.style.maxHeight = '0px'; 
+                    } else {
+                            /*
+                            document.querySelectorAll('.accordion-item.active').forEach(open => {
+                                if (open !== item) {
+                                    open.classList.remove('active');
+                                    const openContent = open.querySelector('.accordion-content');
+                                    if (openContent && openContent instanceof HTMLElement) {
+                                        openContent.style.maxHeight = '0px'; 
+                                    }
+                                }
+                            });
+                            */
+                            item.classList.add('active');
+                            content.style.maxHeight = content.scrollHeight + 'px';
+                        }
+                });
             });
-        });
+        }
+
+        // JS-driven marquee (Web Animations API)
+    /** @type {any} */
+    let marqueeAnimation = null;
+
+        function setupMarquee() {
+            const track = document.querySelector('.marquee-track');
+            if (!track) return;
+
+            // prevent duplicate animations on re-init
+            if (marqueeAnimation) {
+                marqueeAnimation.cancel();
+            }
+
+            // distance to travel = one set width (we duplicated content in markup)
+            const distance = track.scrollWidth / 2;
+
+            // pixels per second baseline
+            const pixelsPerSecond = 80;
+            const duration = (distance / pixelsPerSecond) * 1000; // ms
+
+            marqueeAnimation = track.animate([
+                { transform: 'translateX(0)' },
+                { transform: `translateX(-${distance}px)` }
+            ], {
+                duration: duration,
+                iterations: Infinity,
+                easing: 'linear'
+            });
+
+            // slow down on hover
+            track.addEventListener('mouseenter', () => {
+                if (marqueeAnimation) marqueeAnimation.playbackRate = 0.25;
+            });
+            track.addEventListener('mouseleave', () => {
+                if (marqueeAnimation) marqueeAnimation.playbackRate = 1.0;
+            });
+        }
+
+        function initPage() {
+            // Initialize fine-grain noise for the main page (pixel size 2)
+            (async () => {
+                try {
+                    const mod = await import('../scripts/noiseBackground.js');
+                    if (mod && typeof mod.initNoiseBackground === 'function') mod.initNoiseBackground(2);
+                } catch (e) {
+                    console.error('initNoiseBackground failed:', e);
+                }
+            })();
+
+            setupAccordion();
+            setupMarquee();
+        }
+
+        initPage();
+        document.addEventListener('astro:page-load', initPage);
     </script>
 </Layout>
 
 <style>
     .main-container {
-        width: 80vw;
+        width: 86vw;
         margin: 0 auto;
-        padding: 60px 0;
+        padding: 0px 0 40px 0;
     }
-    .tab-navigation {
-        display: flex;
-        gap: 30px;
-        margin-bottom: 40px;
+    .accordion-item {
         border-bottom: 2px solid black;
-        padding-bottom: 10px;
+        width: 100%;
     }
-    .tab-button {
+    .accordion-item:first-child {
+        border-top: 2px solid black;
+    }
+    .accordion-header {
+        width: 100%;
         background: none;
         border: none;
         font-family: inherit;
-        font-size: 24px;
+        font-size: 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 30px 0;
         cursor: pointer;
-        padding: 5px 10px;
-        color: #666;
+        text-align: left;
+        color: #333;
+        transition: color 0.2s ease;
     }
-    .tab-button.active {
-        color: #000;
-        font-weight: bold;
+    .accordion-header:hover {
+        color: #888;
     }
-    .tab-content {
-        display: none;
+    .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
     }
-    .tab-content.active {
+    .inner-content {
+        padding: 10px 0 40px 0;
+        font-size: 22px;
+        line-height: 1.6;
+    }
+
+    /* Featured projects carousel */
+    .featured-carousel {
+        display: flex;
+        overflow-x: auto;
+        gap: 16px;
+        padding-bottom: 8px; /* space for scrollbar */
+        scroll-snap-type: x mandatory;
+    }
+
+    /* hide scrollbar (optional) */
+    .featured-carousel::-webkit-scrollbar { display: none; }
+    .featured-carousel { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .featured-item {
+        flex: 0 0 auto;
+        width: 200px;
+        scroll-snap-align: start;
+        display: flex;
+        flex-direction: column;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .featured-item img {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+
+    .project-title { font-size: 0.9rem; text-align: center; }
+
+    /* Arrow indicator for accordion headers (same behavior as wip page) */
+    .title-wrapper { display:flex; align-items:center; }
+    .arrow { display:inline-block; margin-right:12px; font-family: monospace; font-size:0.9em; transition: transform 0.3s ease; }
+    .accordion-item.active .arrow { transform: rotate(90deg); }
+
+    /* -------------------------------------
+       Featured Projects: 無限横流動スライダー
+       ------------------------------------- */
+    .featured-section {
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+        overflow: hidden;
+        margin-top: 0px;
+        margin-bottom: 20px;
+    }
+
+    .marquee-container {
+        width: 100%;
+        overflow: hidden;
+        user-select: none;
+    }
+
+    .marquee-track {
+        display: flex;
+        width: max-content;
+        /* アニメーションはJS側で一元管理するため CSS の animation プロパティは削除 */
+    }
+
+    .marquee-track:hover {
+        animation-play-state: paused;
+    }
+
+    @keyframes marqueeScroll {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+
+    .project-block {
+        display: flex;
+        align-items: flex-start;
+        gap: 32px;
+        padding: 20px;            /* 写真とテキストの塊を綺麗に囲むための内側余白 */
+    background-color: transparent;
+    border: 2px solid black;
+        border-radius: 6px;       /* 境界を僅かに明瞭にするための角丸 */
+        transition: background-color 0.2s ease; /* 灰色の変化を滑らかにする設定 */
+        text-decoration: none;
+        color: inherit;
+        flex-shrink: 0;
+        margin-right: 40px;       /* paddingの追加に伴い、ブロック間の余白を微調整 */
+    }
+
+    .project-block:hover {
+        background-color: #eeeeee; /* クリック可能であることを示す適切な明度の灰色 */
+    }
+
+    .image-wrapper {
+        width: 640px;            /* 幅を 420px から 640px に拡大 */
+        aspect-ratio: 16 / 9;
+        border: 2px solid black;
+        overflow: hidden;
+        background-color: #f0f0f0;
+    }
+
+    .project-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
         display: block;
+    }
+
+    .project-text-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 10px;               /* タイトルと説明文の間の余白を調整 */
+        width: 340px;            /* テキスト領域の幅も合わせて拡大 */
+        white-space: normal;
+    }
+
+    .project-block-title {
+        font-size: 32px;         /* フォントサイズを 24px から 32px に拡大 */
+        font-weight: bold;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .project-block-desc {
+        font-size: 18px;         /* フォントサイズを 15px から 18px に拡大 */
+        color: #555;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    /* -------------------------------------
+       wip garden へのリンクテキストスタイル
+       ------------------------------------- */
+    .more-projects-link {
+        width: 86vw;                 /* 他のコンテンツ領域と同じ幅に合わせる */
+        margin: 30px auto 0 auto;    /* 全体を中央に配置しつつ上部に余白を持たせる */
+        text-align: left;            /* テキストを左寄せ（左インデントに揃える） */
+        font-size: 20px;
+    }
+
+    .more-projects-link a {
+        color: #000;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        transition: color 0.2s ease;
+    }
+
+    .more-projects-link a:hover {
+        color: #888;
     }
 </style>

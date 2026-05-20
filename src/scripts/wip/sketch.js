@@ -186,6 +186,11 @@ function getInteractableAt(x, y) {
 }
 
 function mousePressed() {
+  // キャンバス外のクリックを無視するガード句を追加
+  if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) {
+    return;
+  }
+
   //audio context
   startAudioContext();
 
@@ -211,8 +216,6 @@ function mousePressed() {
     // Clicked pixel into grids
     let targetGridX = floor((mouseX - offsetX) / tileSize);
     let targetGridY = floor((mouseY - offsetY) / tileSize);
-
-
 
     // Checking if it is a grid
     if (targetGridX >= 0 && targetGridX < cols && targetGridY >= 0 && targetGridY < rows) {

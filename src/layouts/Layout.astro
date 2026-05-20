@@ -6,16 +6,16 @@
     <meta charset="UTF-8">
     <title>Portfolio: Yohta Kitagawa</title>
     <style is:global>
-    @font-face {
-    font-family: 'CothamSans'; /* font name */
-    src: url('/fonts/CothamSans.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-    }
+        @font-face {
+            font-family: 'CothamSans';
+            src: url('/fonts/CothamSans.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
 
         body {
-            font-family: "CothamSans", sans-serif;
+            font-family: CothamSans, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f5f5f5;
@@ -27,7 +27,7 @@
             position: fixed;
             top: 2rem;
             right: 2rem;
-            z-index: 100; /* above menu*/
+            z-index: 100;
             width: 30px;
             height: 24px;
             cursor: pointer;
@@ -57,7 +57,6 @@
             transform: translateY(-11px) rotate(-45deg);
         }
 
-        /* Overlay menu */
         .menu-overlay {
             position: fixed;
             top: 0;
@@ -69,19 +68,17 @@
             
             display: flex;
             flex-direction: column;
-            align-items: flex-end; 
+            align-items: flex-end; /* 右寄せに戻しました */
             
-            /* under button - use browser size*/
-            padding-right: clamp(1rem, 2vw, 3rem);
-            padding-top: 6rem;
+            padding-right: 2vw; /* ここで画面右端からの距離を調整できます */
+            padding-top: 3rem;
+            box-sizing: border-box;
 
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.4s ease;
-            box-sizing: border-box; 
         }
 
-        /* when open */
         .menu-overlay.open {
             opacity: 1;
             pointer-events: auto;
@@ -91,7 +88,7 @@
             list-style: none;
             padding: 0;
             margin: 0;
-            text-align: right;
+            text-align: right; /* テキストを右揃えに戻しました */
             width: auto;
         }
 
@@ -112,7 +109,38 @@
         }
 
         main {
-            padding: 4rem 2rem 2rem 2rem;
+            padding-top: 1rem;
+        }
+
+        /* Shared header / canvas rules (moved from page-level styles) */
+        .hero-section {
+            padding: 10px 0 30px 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 0px;
+        }
+        .canvas-wrapper {
+            position: relative;
+            width: 100%;
+            height: 170px;
+        }
+        .procedural-title, .procedural-about {
+            position: absolute;
+            top: 0;
+            left: 0;
+            max-width: 100%;
+            height: auto;
+        }
+        .procedural-divider {
+            width: 100vw;
+            height: 0px;
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 0px;
+            margin-bottom: 0px;
         }
     </style>
 </head>
@@ -133,21 +161,20 @@
     <main>
         <slot />
     </main>
-<script type="module">
-    function setupMenu() {
+
+    <script type="module">
+        function setupMenu() {
             const btn = document.getElementById('menu-btn');
             const menu = document.getElementById('mobile-menu');
             const links = menu?.querySelectorAll('a');
 
             if (!btn || !menu) return;
 
-            // click to open menu
             btn.addEventListener('click', () => {
                 btn.classList.toggle('open');
                 menu.classList.toggle('open');
             });
 
-            // when click link, close menu
             links?.forEach(link => {
                 link.addEventListener('click', () => {
                     btn.classList.remove('open');
@@ -156,20 +183,14 @@
             });
         }
 
-    
         document.addEventListener('astro:page-load', setupMenu);
         setupMenu();
 
-    // Load public noise background module to avoid client import resolution issues
-    import('../scripts/noiseBackground.js').catch(e => {
-        // don't break menu if noise fails to load
-        console.error('Failed to load public noiseBackground:', e);
-    });
+        
 
-        // feth website open time for wip
         if (!sessionStorage.getItem('siteEntryPoint')) {
             sessionStorage.setItem('siteEntryPoint', Date.now().toString());
         }
-</script>
+    </script>
 </body>
 </html>
