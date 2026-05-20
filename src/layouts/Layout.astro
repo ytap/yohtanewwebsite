@@ -5,45 +5,171 @@
 <head>
     <meta charset="UTF-8">
     <title>Portfolio: Yohta Kitagawa</title>
-    <style>
+    <style is:global>
+    @font-face {
+    font-family: 'CothamSans'; /* font name */
+    src: url('/fonts/CothamSans.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+    }
+
         body {
-            font-family: sans-serif;
+            font-family: "CothamSans", sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f5f5f5;
             color: #333;
+            overflow-x: hidden;
         }
-        nav {
-            background-color: #fff;
-            padding: 1rem;
-            border-bottom: 1px solid #ccc;
-        }
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 2rem;
-            margin: 0;
+
+        .menu-btn {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 100; /* above menu*/
+            width: 30px;
+            height: 24px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
-        nav a {
+
+        .menu-btn span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .menu-btn.open span:nth-child(1) {
+            transform: translateY(11px) rotate(45deg);
+        }
+        .menu-btn.open span:nth-child(2) {
+            opacity: 0;
+        }
+        .menu-btn.open span:nth-child(3) {
+            transform: translateY(-11px) rotate(-45deg);
+        }
+
+        /* Overlay menu */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(255, 255, 255, 0.95);
+            z-index: 90;
+            
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end; 
+            
+            /* under button - use browser size*/
+            padding-right: clamp(1rem, 2vw, 3rem);
+            padding-top: 6rem;
+
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            box-sizing: border-box; 
+        }
+
+        /* when open */
+        .menu-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .menu-overlay ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: right;
+            width: auto;
+        }
+
+        .menu-overlay li {
+            margin: 1rem 0;
+        }
+
+        .menu-overlay a {
             text-decoration: none;
-            color: #000;
+            color: #333;
+            font-size: 1.8rem; 
+            font-weight: bold;
+            transition: color 0.2s;
         }
+
+        .menu-overlay a:hover {
+            color: #888;
+        }
+
         main {
-            padding: 2rem;
+            padding: 4rem 2rem 2rem 2rem;
         }
     </style>
 </head>
 <body>
-    <nav>
+    <button id="menu-btn" class="menu-btn" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <nav id="mobile-menu" class="menu-overlay">
         <ul>
-            <li><a href="/">Projects</a></li>
-            <li><a href="/about">About</a></li>
+            <li><a href="/">Main page</a></li>
             <li><a href="/wip">WIP Garden</a></li>
         </ul>
     </nav>
+
     <main>
         <slot />
     </main>
+<script type="module">
+    function setupMenu() {
+            const btn = document.getElementById('menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            const links = menu?.querySelectorAll('a');
+
+            if (!btn || !menu) return;
+
+            // click to open menu
+            btn.addEventListener('click', () => {
+                btn.classList.toggle('open');
+                menu.classList.toggle('open');
+            });
+
+            // when click link, close menu
+            links?.forEach(link => {
+                link.addEventListener('click', () => {
+                    btn.classList.remove('open');
+                    menu.classList.remove('open');
+                });
+            });
+        }
+
+    
+        document.addEventListener('astro:page-load', setupMenu);
+        setupMenu();
+
+    // Load public noise background module to avoid client import resolution issues
+    import('../scripts/noiseBackground.js').catch(e => {
+        // don't break menu if noise fails to load
+        console.error('Failed to load public noiseBackground:', e);
+    });
+
+        // feth website open time for wip
+        if (!sessionStorage.getItem('siteEntryPoint')) {
+            sessionStorage.setItem('siteEntryPoint', Date.now().toString());
+        }
+</script>
 </body>
 </html>

@@ -51,6 +51,23 @@ function preload() {
 }
 
 function setup() {
+  // count time
+  const entryPoint = sessionStorage.getItem('siteEntryPoint');
+  if (entryPoint) {
+    const currentTime = Date.now();
+    const duration = (currentTime - parseInt(entryPoint)) / 1000; // 秒単位に変換
+
+    // if under 5s, show list
+    if (duration < 10) {
+      viewMode = 1; 
+    } else {
+      viewMode = 0; 
+    }
+    
+    console.log(`Transition duration: ${duration}s. Starting viewMode: ${viewMode}`);
+  }
+
+  
   const canvas = createCanvas(windowWidth, windowHeight);
   canvas.parent("canvas-container"); //html so quote
   
@@ -73,17 +90,32 @@ function setup() {
   initTextures(cols, rows, tileSize, width, height);
 
   dialogue = new Dialogue();
-  dialogue.show(['welcome to my wip page, here you can randomly encounter my wip projects.', 'If you want to see a list of my wips, click the arrow on bottom left!'], width / 2, height * 0.9, 0);
-  playPororoSound();
+  if (viewMode === 0) {
+    dialogue.show([
+      'welcome to my wip page, here you can randomly encounter my wip projects.', 
+      'If you want to see a list of my wips, click the arrow on bottom left!'
+    ], width / 2, height * 0.9, 0);
+    
+    if (typeof playPororoSound === "function") {
+      playPororoSound();
+    }
+  }
   
   //sound for dialogue box
   playPororoSound();
 
+  // weather data init for panel
+  if (typeof updateWeatherData === "function") {
+    updateWeatherData();
+    setInterval(updateWeatherData, 600000); // update every 10 mins
+  }
 
   // box counter for every 10s
   setInterval(() => {
     if (viewMode === 0) { // 島ビューの時のみ発生
-      spawnBoxWithWind();
+      if (typeof spawnBoxWithWind === "function") {
+        spawnBoxWithWind();
+      }
     }
   }, 10000); // 例: 10秒ごとに発生
 }
@@ -122,6 +154,10 @@ function draw() {
     }
     
     pop();
+
+    // draw weather panel outside of translate to fix to screen
+    drawWeatherPanel();
+
   } else {
     // draw in list
     drawListView();
@@ -139,6 +175,11 @@ function getInteractableAt(x, y) {
   for (let obj of interactables) {
     if (obj.gridX === x && obj.gridY === y) {
       return obj;
+    }
+  }
+  for (let box of boxes) {
+    if (box.isArrived && box.gridX === x && box.gridY === y) {
+      return box;
     }
   }
   return null;
@@ -171,13 +212,7 @@ function mousePressed() {
     let targetGridX = floor((mouseX - offsetX) / tileSize);
     let targetGridY = floor((mouseY - offsetY) / tileSize);
 
-    //box interaction
-    for (let box of boxes) {
-      if (box.isArrived && box.gridX === targetGridX && box.gridY === targetGridY) {
-        box.interact();
-        return; // cutoff movement
-      }
-    }
+
 
     // Checking if it is a grid
     if (targetGridX >= 0 && targetGridX < cols && targetGridY >= 0 && targetGridY < rows) {
@@ -249,7 +284,9 @@ function keyPressed() {
 
   //for demo
   if (keyCode === 13) {
-    spawnBoxWithWind(); //use weather.js
+    if (typeof spawnBoxWithWind === "function") {
+      spawnBoxWithWind(); //use weather.js
+    }
   }
 }
 
@@ -328,4 +365,47 @@ function drawListView() {
   }
   
   pop();
+}
+
+function drawWeatherPanel() {
+  if (typeof currentWeather === 'undefined' || !currentWeather) return;
+
+  // wood panel size
+  let pWidth = max(220, floor(width * 0.2));
+  let pHeight = max(140, floor(height * 0.15));
+  let x = width - pWidth - 20;
+  let y = 20;
+
+  // draw canvas
+  if (typeof woodBg !== 'undefined' && woodBg) {
+    image(woodBg, x, y, pWidth, pHeight);
+  } else {
+    fill(139, 90, 43);
+    rect(x, y, pWidth, pHeight);
+  }
+
+  // outline
+  noFill();
+  stroke(0);
+  strokeWeight(pixelSize);
+  rect(x, y, pWidth, pHeight);
+
+  // txt
+  noStroke();
+  fill(255);
+  textFont(customFont);
+  textAlign(LEFT, TOP);
+  
+  let margin = 15;
+  // margin
+  let lineGap = (pHeight - margin * 2) / 4;
+  
+  textSize(18);
+  text("It is " + currentWeather.time + " at Providence RI,", x + margin, y + margin);
+  text("where Yohta is at." , x + margin, y + margin + lineGap * 0.6);
+  
+  textSize(18);
+  text(`TEMP: ${currentWeather.temp}C`, x + margin, y + margin + lineGap * 1.6);
+  text(`SKY: ${currentWeather.condition}`, x + margin, y + margin + lineGap * 2.4);
+  text(`WIND: ${currentWeather.windDeg}deg`, x + margin, y + margin + lineGap * 3.2);
 }

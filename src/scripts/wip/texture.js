@@ -1,19 +1,23 @@
 // texture.js
-const pixelSize = 4;
+export const pixelSize = 4;
 let oceanBg;
 let sandBg;
+let woodBg;
 
 // setup() color
-function initTextures(cols, rows, tileSize, canvasWidth, canvasHeight) {
+export function initTextures(cols, rows, tileSize, canvasWidth, canvasHeight) {
   oceanBg = createGraphics(canvasWidth, canvasHeight);
   drawOceanTexture(oceanBg);
 
   sandBg = createGraphics(cols * tileSize, rows * tileSize);
   drawSandTexture(sandBg);
+
+  woodBg = createGraphics(220, 140); // panel size
+  drawWoodTexture(woodBg);
 }
 
 // draw() each frame
-function renderBackgrounds(offsetX, offsetY) {
+export function renderBackgrounds(offsetX, offsetY) {
   image(oceanBg, 0, 0);
   
   push();
@@ -51,6 +55,26 @@ function drawSandTexture(pg) {
       } else {
         pg.fill(215, 205, 155); // dark
       }
+      pg.rect(x, y, pixelSize, pixelSize);
+    }
+  }
+}
+
+
+//drawing wood
+function drawWoodTexture(pg) {
+  pg.noStroke();
+  for (let y = 0; y < pg.height; y += pixelSize) {
+    for (let x = 0; x < pg.width; x += pixelSize) {
+      // base
+      let r = 139, g = 90, b = 43;
+      let n = noise(x * 0.05, y * 0.01);
+      if (n > 0.6) {
+        r -= 20; g -= 15; b -= 10;
+      } else if (n < 0.3) {
+        r += 10; g += 5;
+      }
+      pg.fill(r, g, b);
       pg.rect(x, y, pixelSize, pixelSize);
     }
   }

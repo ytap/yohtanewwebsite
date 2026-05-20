@@ -1,4 +1,7 @@
-class Dialogue {
+import { playPororoSound } from './sound.js';
+import { pixelSize } from './texture.js';
+
+export class Dialogue {
   constructor() {
     this.messages = [];
     this.currentIndex = 0;

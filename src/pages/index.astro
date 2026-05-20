@@ -1,8 +1,86 @@
 ---
-// src/pages/index.astro
 import Layout from '../layouts/Layout.astro';
 ---
+
 <Layout>
-    <h1>Selected Projects</h1>
-    <p>Tbd</p>
+    <div class="main-container">
+        <div class="tab-navigation">
+            <button class="tab-button active" data-tab="about">About</button>
+            <button class="tab-button" data-tab="projects">Featured Projects</button>
+            <button class="tab-button" data-tab="exhibitions">Exhibitions & Grants</button>
+            <button class="tab-button" data-tab="contact">Contact</button>
+        </div>
+
+        <div class="tab-content active" id="about">
+            <h2>About</h2>
+            <p>ここにAboutのコンテンツを書きます</p>
+        </div>
+        <div class="tab-content" id="projects">
+            <h2>Featured Projects</h2>
+            <p>ここにプロジェクトの一覧を書きます</p>
+        </div>
+        <div class="tab-content" id="exhibitions">
+            <h2>Exhibitions & Grants</h2>
+            <p>ここに展示や助成金の情報を書きます</p>
+        </div>
+        <div class="tab-content" id="contact">
+            <h2>Contact</h2>
+            <p>ここに連絡先を書きます</p>
+        </div>
+    </div>
+
+    <script>
+        const buttons = document.querySelectorAll('.tab-button');
+        const contents = document.querySelectorAll('.tab-content');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetTab = button.getAttribute('data-tab');
+                if (!targetTab) return;
+
+                buttons.forEach(btn => btn.classList.remove('active'));
+                contents.forEach(cnt => cnt.classList.remove('active'));
+
+                button.classList.add('active');
+                const targetContent = document.getElementById(targetTab);
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                }
+            });
+        });
+    </script>
 </Layout>
+
+<style>
+    .main-container {
+        width: 80vw;
+        margin: 0 auto;
+        padding: 60px 0;
+    }
+    .tab-navigation {
+        display: flex;
+        gap: 30px;
+        margin-bottom: 40px;
+        border-bottom: 2px solid black;
+        padding-bottom: 10px;
+    }
+    .tab-button {
+        background: none;
+        border: none;
+        font-family: inherit;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 5px 10px;
+        color: #666;
+    }
+    .tab-button.active {
+        color: #000;
+        font-weight: bold;
+    }
+    .tab-content {
+        display: none;
+    }
+    .tab-content.active {
+        display: block;
+    }
+</style>

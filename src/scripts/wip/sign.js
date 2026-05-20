@@ -9,7 +9,7 @@ const signSprite = [
   [0,0,0,1,1,0,0,0]
 ];
 
-class Sign {
+export class Sign {
   constructor(gridX, gridY, tileSize) {
     this.gridX = gridX;
     this.gridY = gridY;

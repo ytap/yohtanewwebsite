@@ -11,7 +11,7 @@ const boxSprite = [
   [0,0,0,0,0,0,0,0,0,0]
 ];
 
-class Box {
+export class Box {
   constructor(linkUrl, spawnGridX, spawnGridY, windSpeed, windDirection, tileSize) {
     this.url = linkUrl;
     this.tileSize = tileSize;
@@ -103,3 +103,5 @@ draw() {
     }
   }
 }
+
+

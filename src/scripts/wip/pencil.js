@@ -9,7 +9,7 @@ const pencilSprite = [
   [1,1,1,0,0,0,0,0]
 ];
 
-class Pencil {
+export class Pencil {
   constructor(gridX, gridY, tileSize) {
     this.gridX = gridX;
     this.gridY = gridY;
@@ -30,35 +30,6 @@ class Pencil {
 
   showChoices() {
     playPororoSound();
-
-    if (!document.getElementById('custom-font-style')) {
-      let style = document.createElement('style');
-      style.id = 'custom-font-style';
-      style.innerHTML = `
-        @font-face {
-          font-family: 'TerminalGrotesque';
-          src: url('/wip/terminal-grotesque.ttf') format('truetype');
-        }
-        .pixel-button {
-          font-family: 'TerminalGrotesque', sans-serif;
-          font-size: 32px;
-          background-color: white;
-          border: 4px solid black;
-          padding: 12px 20px;
-          margin: 12px 0;
-          cursor: pointer;
-          width: 100%;
-          text-align: center;
-          box-sizing: border-box;
-        }
-        .pixel-button:hover {
-          background-color: #000;
-          color: #fff;
-        }
-      `;
-      document.head.appendChild(style);
-    }
-
     let container = document.createElement('div');
     container.style.position = 'absolute';
     container.style.top = '50%';

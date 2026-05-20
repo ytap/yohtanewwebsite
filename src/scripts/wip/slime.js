@@ -9,7 +9,7 @@ const slimeSprite = [
   [0,1,1,1,1,1,1,1,1,0]
 ];
 
-class Player {
+export class Player {
   constructor(startX, startY, tileSize) {
     this.tileSize = tileSize;
     this.x = startX;
