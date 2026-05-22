@@ -23,7 +23,7 @@ const featuredProjects = [
 ];
 ---
 
-<Layout>
+<Layout isHome={true}>
     <div class="main-container">
         <div class="hero-section">
             <div class="canvas-wrapper">
@@ -33,220 +33,269 @@ const featuredProjects = [
             <canvas id="divider-canvas" class="procedural-divider"></canvas>
         </div>
 
-        <div class="accordion-item active">
-            <button class="accordion-header">
-                <span class="title-wrapper"><span class="arrow">＞</span>Featured Projects</span>
-            </button>
-            <div class="accordion-content">
-                <div class="inner-content">
-                    <section class="featured-section">
-                        <div class="marquee-container">
-                            <div class="marquee-track" style={`--marquee-duration: ${featuredProjects.length * 12}s`}>
-                                {featuredProjects.map((project) => (
-                                    <a href={project.link} class="project-block">
-                                        <div class="image-wrapper">
-                                            <img src={project.image} alt={project.title} class="project-img" />
-                                        </div>
-                                        <div class="project-text-content">
-                                            <h3 class="project-block-title">{project.title}</h3>
-                                            <p class="project-block-desc">{project.description}</p>
-                                        </div>
-                                    </a>
-                                ))}
-
-                                {featuredProjects.map((project) => (
-                                    <a href={project.link} class="project-block" aria-hidden="true">
-                                        <div class="image-wrapper">
-                                            <img src={project.image} alt={project.title} class="project-img" />
-                                        </div>
-                                        <div class="project-text-content">
-                                            <h3 class="project-block-title">{project.title}</h3>
-                                            <p class="project-block-desc">{project.description}</p>
-                                        </div>
-                                    </a>
-                                ))}
+        <section class="featured-section">
+            <div class="marquee-container">
+                <div class="marquee-track">
+                    {/* 1周目: 左側の隙間を埋めるバッファ用 */}
+                    {featuredProjects.map((project) => (
+                        <a href={project.link} class="project-block" aria-hidden="true">
+                            <div class="image-wrapper">
+                                <img src={project.image} alt={project.title} class="project-img" />
                             </div>
-                        </div>
+                            <div class="project-text-content">
+                                <h3 class="project-block-title">{project.title}</h3>
+                                <p class="project-block-desc">{project.description}</p>
+                            </div>
+                        </a>
+                    ))}
 
-                        <div class="more-projects-link">
-                            <a href="/wip">For more projects, visit wip garden</a>
-                        </div>
+                    {/* 2周目: 初期状態で中央に表示されるメイン要素 */}
+                    {featuredProjects.map((project) => (
+                        <a href={project.link} class="project-block">
+                            <div class="image-wrapper">
+                                <img src={project.image} alt={project.title} class="project-img" />
+                            </div>
+                            <div class="project-text-content">
+                                <h3 class="project-block-title">{project.title}</h3>
+                                <p class="project-block-desc">{project.description}</p>
+                            </div>
+                        </a>
+                    ))}
 
-                    </section>
+                    {/* 3周目: 右側に続くスライド用 */}
+                    {featuredProjects.map((project) => (
+                        <a href={project.link} class="project-block" aria-hidden="true">
+                            <div class="image-wrapper">
+                                <img src={project.image} alt={project.title} class="project-img" />
+                            </div>
+                            <div class="project-text-content">
+                                <h3 class="project-block-title">{project.title}</h3>
+                                <p class="project-block-desc">{project.description}</p>
+                            </div>
+                        </a>
+                    ))}
                 </div>
             </div>
-        </div>
 
-        <div class="accordion-item">
-            <button class="accordion-header">
-                <span class="title-wrapper"><span class="arrow">＞</span>News</span>
-            </button>
-            <div class="accordion-content">
-                <div class="inner-content">
-                    <p>Coming soon...</p>
+            <div class="more-projects-link">
+                For more projects, visit <a href="/archive">archive</a> or <a href="/wip">wip garden</a>. For details of past experiences and achievements, visit <a href="/about">about</a>.
+            </div>
+        </section>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <span class="title-wrapper"><span class="arrow">＞</span>News</span>
+                </button>
+                <div class="accordion-content">
+                    <div class="inner-content">
+                        <p>Coming soon...</p>
+                    </div>
                 </div>
             </div>
+
         </div>
+    </Layout>
 
-        <div class="accordion-item">
-            <button class="accordion-header">
-                <span class="title-wrapper"><span class="arrow">＞</span>Exhibitions & Grants</span>
-            </button>
-            <div class="accordion-content">
-                <div class="inner-content">
-                    <p>Coming soon...</p>
-                </div>
-            </div>
-        </div>
+<script>
+    import '../scripts/pages/main-canvas.js';
 
-        <div class="accordion-item">
-            <button class="accordion-header">
-                <span class="title-wrapper"><span class="arrow">＞</span>Contact</span>
-            </button>
-            <div class="accordion-content">
-                <div class="inner-content">
-                    <p>ykitagawa[at]keio.jp</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    function setupAccordion() {
+        const headers = document.querySelectorAll('.accordion-header');
+        headers.forEach(header => {
+            // 古いイベントリスナーの重複を防ぐためにノードを複製
+            const newHeader = header.cloneNode(true);
+            if (header.parentNode) header.parentNode.replaceChild(newHeader, header);
+            
+            newHeader.addEventListener('click', () => {
+                const item = newHeader.parentElement;
+                if (!item) return;
+                const content = item.querySelector('.accordion-content');
+                if (!content || !(content instanceof HTMLElement)) return;
 
-    <script src="../scripts/pages/main-canvas.js"></script>
-
-    <script>
-        // import noise background initializer for main page (fine grain)
-        // use dynamic import since this script is not a module
-        // Accordion setup (keeps the existing single-open behavior)
-        function setupAccordion() {
-            // 1. 初期状態の高さを計算
-            setTimeout(() => {
-                const activeItems = document.querySelectorAll('.accordion-item.active');
-                activeItems.forEach(item => {
-                    const content = item.querySelector('.accordion-content');
-                    if (content && content instanceof HTMLElement) {
-                        content.style.maxHeight = content.scrollHeight + 'px';
-                    }
-                });
-            }, 300);
-
-            /** @type {NodeListOf<HTMLButtonElement>} */
-            const headers = document.querySelectorAll('.accordion-header');
-            headers.forEach(header => {
-                // 2. cloneNodeをやめ、カスタムデータ属性(dataset)で二重登録を安全に防ぐ
-                if (header.dataset.isSetup === 'true') return;
-                header.dataset.isSetup = 'true';
-
-                header.addEventListener('click', () => {
-                    const item = header.parentElement;
-                    if (!item) return;
-
-                    const content = item.querySelector('.accordion-content');
-                    if (!content || !(content instanceof HTMLElement)) return;
-                    const isOpen = item.classList.contains('active');
-
-                    if (isOpen) {
-                        item.classList.remove('active');
-                        // 3. 単位(px)を確実に付与する
-                        content.style.maxHeight = '0px'; 
-                    } else {
-                            /*
-                            document.querySelectorAll('.accordion-item.active').forEach(open => {
-                                if (open !== item) {
-                                    open.classList.remove('active');
-                                    const openContent = open.querySelector('.accordion-content');
-                                    if (openContent && openContent instanceof HTMLElement) {
-                                        openContent.style.maxHeight = '0px'; 
-                                    }
-                                }
-                            });
-                            */
-                            item.classList.add('active');
-                            content.style.maxHeight = content.scrollHeight + 'px';
-                        }
-                });
+                const isOpen = item.classList.contains('active');
+                if (isOpen) {
+                    item.classList.remove('active');
+                    content.style.maxHeight = '0'; // 閉じる
+                } else {
+                    item.classList.add('active');
+                    content.style.maxHeight = content.scrollHeight + 'px'; // 中身の高さに合わせて開く
+                }
             });
-        }
+        });
+    }
 
-        // JS-driven marquee (Web Animations API)
-    /** @type {any} */
-    let marqueeAnimation = null;
+    function setupMarquee() {
+        const track = document.querySelector('.marquee-track');
+        if (!track || !(track instanceof HTMLElement)) return;
+        const blocks = track.querySelectorAll('.project-block');
+        if (blocks.length === 0) return;
 
-        function setupMarquee() {
-            const track = document.querySelector('.marquee-track');
-            if (!track) return;
+        const images = Array.from(track.querySelectorAll('img'));
+        const totalProjects = blocks.length / 3;
 
-            // prevent duplicate animations on re-init
-            if (marqueeAnimation) {
-                marqueeAnimation.cancel();
+        const imageLoadPromises = images.map(img => {
+            if (img.complete) return Promise.resolve();
+            return new Promise(resolve => {
+                img.onload = resolve;
+                img.onerror = resolve;
+            });
+        });
+
+        Promise.all(imageLoadPromises).then(() => {
+            let currentIndex = totalProjects;
+            let stepWidth = 0;
+            let itemWidth = 0;
+
+            function updateLayout() {
+                if (!blocks[0]) return;
+                itemWidth = blocks[0].getBoundingClientRect().width;
+                const style = window.getComputedStyle(blocks[0]);
+                stepWidth = itemWidth + (parseFloat(style.marginRight) || 0);
+                updatePosition(true);
             }
 
-            // distance to travel = one set width (we duplicated content in markup)
-            const distance = track.scrollWidth / 2;
-
-            // pixels per second baseline
-            const pixelsPerSecond = 110;
-            const duration = (distance / pixelsPerSecond) * 1000; // ms
-
-            marqueeAnimation = track.animate([
-                { transform: 'translateX(0)' },
-                { transform: `translateX(-${distance}px)` }
-            ], {
-                duration: duration,
-                iterations: Infinity,
-                easing: 'linear'
-            });
-
-            // slow down on hover
-            track.addEventListener('mouseenter', () => {
-                if (marqueeAnimation) marqueeAnimation.playbackRate = 0.25;
-            });
-            track.addEventListener('mouseleave', () => {
-                if (marqueeAnimation) marqueeAnimation.playbackRate = 1.0;
-            });
-        }
-
-        function initPage() {
-            // Initialize fine-grain noise for the main page (pixel size 2)
-            (async () => {
-                try {
-                    const mod = await import('../scripts/noiseBackground.js');
-                    if (mod && typeof mod.initNoiseBackground === 'function') mod.initNoiseBackground(2);
-                } catch (e) {
-                    console.error('initNoiseBackground failed:', e);
+            function updatePosition(instant = false) {
+                if (instant) {
+                    track.style.transition = 'none';
+                } else {
+                    track.style.transition = 'transform 1s cubic-bezier(0.22, 1, 0.36, 1)';
                 }
-            })();
+                
+                const centerOffset = (window.innerWidth / 2) - (stepWidth * currentIndex + itemWidth / 2);
+                track.style.transform = `translateX(${centerOffset}px)`;
+            }
 
-            (async () => {
-                try {
-                    const mod = await import('../scripts/projectCardBorder.js');
-                    if (mod && typeof mod.initProjectCardBorders === 'function') mod.initProjectCardBorders();
-                } catch (e) {
-                    console.error('initProjectCardBorders failed:', e);
+            function nextSlide() {
+                currentIndex++;
+                updatePosition();
+                if (currentIndex === totalProjects * 2) {
+                    setTimeout(() => {
+                        currentIndex = totalProjects;
+                        updatePosition(true);
+                    }, 1000); 
                 }
-            })();
+            }
 
-            setupAccordion();
-            setupMarquee();
-        }
+            window.addEventListener('resize', updateLayout);
+            updateLayout();
+            track.classList.add('is-loaded');
 
+            let intervalId = 0;
+            function startAutoPlay() {
+                intervalId = window.setInterval(nextSlide, 5000);
+            }
+            function stopAutoPlay() {
+                if (intervalId !== 0) window.clearInterval(intervalId);
+            }
+            
+            startAutoPlay();
+            track.addEventListener('mouseenter', stopAutoPlay);
+            track.addEventListener('mouseleave', startAutoPlay);
+        });
+    }
+
+    function initPage() {
+        (async () => {
+            try {
+                const mod = await import('../scripts/noiseBackground.js');
+                if (mod && typeof mod.initNoiseBackground === 'function') {
+                    mod.initNoiseBackground(2);
+                }
+            } catch (e) {
+                console.error('initNoiseBackground failed:', e);
+            }
+        })();
+
+        (async () => {
+            try {
+                const mod = await import('../scripts/projectCardBorder.js');
+                if (mod && typeof mod.initProjectCardBorders === 'function') {
+                    mod.initProjectCardBorders();
+                }
+            } catch (e) {
+                console.error('initProjectCardBorders failed:', e);
+            }
+        })();
+        
+        setupAccordion();
+        setupMarquee();
+    }
+
+    document.addEventListener('astro:page-load', initPage);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPage);
+    } else {
         initPage();
-        document.addEventListener('astro:page-load', initPage);
-    </script>
-</Layout>
+    }
+</script>
 
 <style>
+    :root {
+        --project-image-width: 800px;
+        --project-text-width: 800px;
+    }
+
+    .hero-section {
+        padding-top: 20px;   /* 💡 画面上部との間の余白を追加（好みに応じて数値を調整） */
+        min-height: 150px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: stretch;
+        width: 100%;
+    }
+
+    .canvas-wrapper {
+        position: relative;
+        min-height: 80px;
+        width: 100%;
+    }
+
+    .canvas-wrapper canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .procedural-divider {
+        display: block;
+        width: 100vw !important;
+        max-width: none !important;
+        height: 20px;
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-top: 0px;
+    }
+
+    canvas {
+        opacity: 0;
+        animation: fadeIn 0.8s ease-out forwards;
+        animation-delay: 0.1s; 
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
     .main-container {
         width: 86vw;
         margin: 0 auto;
         padding: 0px 0 40px 0;
     }
+
     .accordion-item {
         border-bottom: 2px solid black;
         width: 100%;
     }
+
     .accordion-item:first-child {
         border-top: 2px solid black;
     }
+
     .accordion-header {
         width: 100%;
         background: none;
@@ -262,60 +311,42 @@ const featuredProjects = [
         color: #333;
         transition: color 0.2s ease;
     }
+
     .accordion-header:hover {
         color: #888;
     }
+
     .accordion-content {
         max-height: 0;
         overflow: hidden;
         transition: max-height 0.3s ease-out;
     }
+
     .inner-content {
         padding: 10px 0 40px 0;
         font-size: 22px;
         line-height: 1.6;
     }
 
-    /* Featured projects carousel */
-    .featured-carousel {
-        display: flex;
-        overflow-x: auto;
-        gap: 16px;
-        padding-bottom: 8px; /* space for scrollbar */
-        scroll-snap-type: x mandatory;
+    .title-wrapper { 
+        display: flex; 
+        align-items: center; 
     }
 
-    /* hide scrollbar (optional) */
-    .featured-carousel::-webkit-scrollbar { display: none; }
-    .featured-carousel { -ms-overflow-style: none; scrollbar-width: none; }
-
-    .featured-item {
-        flex: 0 0 auto;
-        width: 200px;
-        scroll-snap-align: start;
-        display: flex;
-        flex-direction: column;
-        text-decoration: none;
-        color: inherit;
+    .arrow { 
+        display: inline-block; 
+        margin-right: 12px; 
+        font-family: monospace; 
+        font-size: 0.9em; 
+        transition: transform 0.3s ease; 
     }
 
-    .featured-item img {
-        width: 100%;
-        height: 120px;
-        object-fit: cover;
-        border-radius: 8px;
-        margin-bottom: 8px;
+    .accordion-item.active .arrow { 
+        transform: rotate(90deg); 
     }
-
-    .project-title { font-size: 0.9rem; text-align: center; }
-
-    /* Arrow indicator for accordion headers (same behavior as wip page) */
-    .title-wrapper { display:flex; align-items:center; }
-    .arrow { display:inline-block; margin-right:12px; font-family: monospace; font-size:0.9em; transition: transform 0.3s ease; }
-    .accordion-item.active .arrow { transform: rotate(90deg); }
 
     /* -------------------------------------
-       Featured Projects: 無限横流動スライダー
+       Featured Projects
        ------------------------------------- */
     .featured-section {
         width: 100vw;
@@ -336,27 +367,20 @@ const featuredProjects = [
     .marquee-track {
         display: flex;
         width: max-content;
-        /* アニメーションはJS側で一元管理するため CSS の animation プロパティは削除 */
+        opacity: 0;
+        transition: opacity 0.5s ease;
     }
 
-    .marquee-track:hover {
-        animation-play-state: paused;
-    }
-
-    @keyframes marqueeScroll {
-        0% {
-            transform: translateX(0);
-        }
-        100% {
-            transform: translateX(-50%);
-        }
+    .marquee-track.is-loaded {
+        opacity: 1;
     }
 
     .project-block {
         position: relative;
         display: flex;
+        flex-direction: column;
         align-items: flex-start;
-        gap: 32px;
+        gap: 16px;
         padding: 20px;
         background-color: transparent;
         border-radius: 6px;
@@ -365,16 +389,18 @@ const featuredProjects = [
         color: inherit;
         flex-shrink: 0;
         margin-right: 40px;
+        width: var(--project-image-width);
     }
 
     .project-block:hover {
-        background-color: #eeeeee; /* クリック可能であることを示す適切な明度の灰色 */
+        background-color: #eeeeee;
     }
 
     .image-wrapper {
-        width: 640px;            /* 幅を 420px から 640px に拡大 */
+        width: var(--project-image-width);
         aspect-ratio: 16 / 9;
-        border: 2px solid black;
+        border: 2px solid transparent; 
+        box-sizing: border-box;
         overflow: hidden;
         background-color: #f0f0f0;
     }
@@ -390,32 +416,32 @@ const featuredProjects = [
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
-        gap: 10px;               /* タイトルと説明文の間の余白を調整 */
-        width: 340px;            /* テキスト領域の幅も合わせて拡大 */
+        gap: 10px;
+        width: 100%;
         white-space: normal;
     }
 
     .project-block-title {
-        font-size: 32px;         /* フォントサイズを 24px から 32px に拡大 */
+        font-size: 32px; 
         font-weight: bold;
         margin: 0;
-        line-height: 1.2;
+        line-height: 1.1;
     }
 
     .project-block-desc {
-        font-size: 18px;         /* フォントサイズを 15px から 18px に拡大 */
+        font-size: 18px; 
         color: #555;
         margin: 0;
         line-height: 1.5;
     }
 
     /* -------------------------------------
-       wip garden へのリンクテキストスタイル
+       More Projects Link
        ------------------------------------- */
     .more-projects-link {
-        width: 86vw;                 /* 他のコンテンツ領域と同じ幅に合わせる */
-        margin: 30px auto 0 auto;    /* 全体を中央に配置しつつ上部に余白を持たせる */
-        text-align: left;            /* テキストを左寄せ（左インデントに揃える） */
+        width: 86vw;
+        margin: 30px auto 0 auto;
+        text-align: left;
         font-size: 20px;
     }
 
@@ -429,4 +455,5 @@ const featuredProjects = [
     .more-projects-link a:hover {
         color: #888;
     }
+
 </style>

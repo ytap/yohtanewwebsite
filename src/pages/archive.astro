@@ -1,0 +1,341 @@
+---
+// src/pages/archive.astro
+import Layout from '../layouts/Layout.astro';
+
+const archiveData = [
+    {
+        year: '2026',
+        projects: [
+            {
+                title: 'Project NoiseLoom (Alternative Ver)',
+                image: '/assets/NoiseLoom1.png',
+                link: '/projects/project-a'
+            },
+            {
+                title: 'Experimental Sound Improvisation',
+                image: '/assets/NoiseLoom1.png',
+                link: '/projects/project-a'
+            }
+        ]
+    },
+    {
+        year: '2025',
+        projects: [
+            {
+                title: 'Project Avert',
+                image: '/assets/NoiseLoom1.png', 
+                link: '/projects/project-a'
+            },
+            {
+                title: 'Interactive System Prototype C',
+                image: '/assets/project-c.jpg',
+                link: '/projects/project-c'
+            }
+        ]
+    },
+    {
+        year: '2024',
+        projects: [
+            {
+                title: 'Micro-Hammock',
+                image: '/assets/mealworm1.png', 
+                link: '/projects/project-b'
+            }
+        ]
+    },
+    {
+        year: '2023',
+        projects: [
+            {
+                title: 'Bio-Hybrid Interface Exploration',
+                image: '/assets/mealworm1.png',
+                link: '/projects/project-b'
+            }
+        ]
+    }
+];
+
+function generateRandomDashArray() {
+    const pairs = [];
+    for (let i = 0; i < 12; i++) {
+        const lineLength = Math.floor(Math.random() * 24) + 8;  
+        const spaceLength = Math.floor(Math.random() * 16) + 12; 
+        pairs.push(`${lineLength} ${spaceLength}`);
+    }
+    return pairs.join(' ');
+}
+---
+
+<Layout title="Archive: Yohta Kitagawa">
+    <div class="main-container">
+        <h1 class="page-title">Archive</h1>
+        <p class="archive-lead">A collection of past research, interactive systems, and media art projects.</p>
+
+        <div class="archive-timeline">
+            {archiveData.map((group) => (
+                /* 💡 2026年のオブジェクトである場合のみ、初期クラスに active を付与 */
+                <div class={group.year === '2026' ? "accordion-item active" : "accordion-item"}>
+                    <button class="accordion-header">
+                        <span class="title-wrapper"><span class="arrow">＞</span>{group.year}</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="inner-content">
+                            <div class="archive-grid">
+                                {group.projects.map((project) => {
+                                    const randomDashArray = generateRandomDashArray();
+                                    return (
+                                        <a href={project.link} class="archive-card">
+                                            <svg class="border-svg" xmlns="http://www.w3.org/2000/svg">
+                                                <rect 
+                                                    class="border-rect" 
+                                                    width="100%" 
+                                                    height="100%" 
+                                                    style={`stroke-dasharray: ${randomDashArray};`}
+                                                ></rect>
+                                            </svg>
+
+                                            <div class="card-image-wrapper">
+                                                <img src={project.image} alt={project.title} class="card-img" />
+                                            </div>
+                                            <div class="card-text-content">
+                                                <h2 class="card-title">{project.title}</h2>
+                                            </div>
+                                        </a>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    </div>
+</Layout>
+
+<script>
+    function setupAccordion() {
+        const headers = document.querySelectorAll('.accordion-header');
+        
+        // 💡 ページロード時に最初から 'active' クラスを持っているアイテムを走査し、展開サイズを適用する
+        const initialActiveItems = document.querySelectorAll('.accordion-item.active');
+        initialActiveItems.forEach(item => {
+            const content = item.querySelector('.accordion-content');
+            if (content && content instanceof HTMLElement) {
+                // 画像などのアセット読み込みによる高さ計算の狂いを防ぐため、レンダリングフローを保証して高さを設定
+                content.style.maxHeight = content.scrollHeight + 'px';
+            }
+        });
+
+        headers.forEach(header => {
+            const newHeader = header.cloneNode(true);
+            if (header.parentNode) header.parentNode.replaceChild(newHeader, header);
+            
+            newHeader.addEventListener('click', () => {
+                const item = newHeader.parentElement;
+                if (!item) return;
+                const content = item.querySelector('.accordion-content');
+                if (!content || !(content instanceof HTMLElement)) return;
+
+                const isOpen = item.classList.contains('active');
+                if (isOpen) {
+                    item.classList.remove('active');
+                    content.style.maxHeight = '0';
+                } else {
+                    item.classList.add('active');
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            });
+        });
+    }
+
+    function initPage() {
+        setupAccordion();
+        
+        // 💡 動的インポートや遷移直後のタイミング補正として、少し遅延させて高さを再確定させる（表示崩れ防止の安全策）
+        setTimeout(() => {
+            const initialActiveItems = document.querySelectorAll('.accordion-item.active');
+            initialActiveItems.forEach(item => {
+                const content = item.querySelector('.accordion-content');
+                if (content && content instanceof HTMLElement) {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            });
+        }, 300);
+    }
+
+    document.addEventListener('astro:page-load', initPage);
+    initPage();
+</script>
+
+<style>
+    .main-container {
+        width: 86vw;
+        margin: 0 auto;
+        padding: 0px 0 40px 0;
+    }
+
+    .page-title {
+        font-size: 32px;
+        font-weight: normal;
+        margin-top: 5px;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .archive-lead {
+        font-size: 22px;
+        line-height: 1.6;
+        margin-top: 0;
+        margin-bottom: 40px;
+        color: #333;
+    }
+
+    /* -------------------------------------
+       アコーディオンシステム
+       ------------------------------------- */
+    .accordion-item {
+        border-bottom: 2px solid black;
+        width: 100%;
+    }
+    .accordion-item:first-child {
+        border-top: 2px solid black;
+    }
+    .accordion-header {
+        width: 100%;
+        background: none;
+        border: none;
+        font-family: inherit;
+        font-size: 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 30px 0;
+        cursor: pointer;
+        text-align: left;
+        color: #333;
+        transition: color 0.2s ease;
+    }
+    .accordion-header:hover {
+        color: #888;
+    }
+    
+    .title-wrapper {
+        display: flex;
+        align-items: center;
+    }
+
+    .arrow {
+        display: inline-block;
+        margin-right: 12px;
+        font-family: monospace;
+        font-size: 0.9em;
+        transition: transform 0.3s ease;
+    }
+
+    .accordion-item.active .arrow {
+        transform: rotate(90deg);
+    }
+
+    .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+    }
+    .inner-content {
+        padding: 30px 0 40px 0; 
+    }
+
+    /* -------------------------------------
+       アーカイブグリッド＆カード
+       ------------------------------------- */
+    .archive-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 30px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .archive-card {
+        position: relative; 
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        padding: 15px;
+        box-sizing: border-box;
+        background-color: transparent;
+        text-decoration: none;
+        color: inherit;
+        transition: background-color 0.2s ease;
+    }
+
+    .archive-card:hover {
+        background-color: #eeeeee;
+    }
+
+    .border-svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none; 
+    }
+
+    .border-rect {
+        fill: none;
+        stroke: #333;
+        stroke-width: 2;
+        animation: rotateBorder 15s linear infinite;
+        transition: stroke 0.2s ease;
+    }
+
+    .archive-card:hover .border-rect {
+        stroke: #4ac3e1;
+    }
+
+    @keyframes rotateBorder {
+        from {
+            stroke-dashoffset: 0;
+        }
+        to {
+            stroke-dashoffset: 500; 
+        }
+    }
+
+    .card-image-wrapper {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        background-color: #f0f0f0;
+        box-sizing: border-box;
+    }
+
+    .card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.3s ease;
+    }
+
+    .archive-card:hover .card-img {
+        transform: scale(1.03);
+    }
+
+    .card-text-content {
+        width: 100%;
+        margin-top: 15px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 0;
+        line-height: 1.3;
+        color: #333;
+    }
+</style>

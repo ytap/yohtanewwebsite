@@ -1,10 +1,173 @@
 ---
-// src/pages/about.astro
 import Layout from '../layouts/Layout.astro';
 ---
-<Layout>
-    <h1>About</h1>
-    <p>Yohta Kitagawa is a Japanese critical media artist. He primarily creates realtime systems that critiqe dominant concepts through personal and entangled experience.
-        Yohta is currently studying abroad at Brown University, while conducting research with Rhode Island School of Design faculty.
-        His primary medium is sound, choreographical performance, robotics.</p>
+
+<Layout title="About: Yohta Kitagawa">
+    <div class="main-container">
+        <h1 class="page-title">About</h1>
+        <p class="about-lead">
+            Yohta Kitagawa is a Japanese critical media artist.
+            He primarily creates realtime systems that critique dominant concepts through personal and entangled experience.
+            Yohta is currently studying abroad at Brown University, while conducting research with Rhode Island School of Design faculty.
+            His primary medium is sound, choreographical performance, robotics.
+        </p>
+
+        <div class="accordion-item">
+            <button class="accordion-header">
+                <span class="title-wrapper"><span class="arrow">＞</span>Selected Exhibitions</span>
+            </button>
+            <div class="accordion-content">
+                <div class="inner-content">
+                    <p>Coming soon...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <button class="accordion-header">
+                <span class="title-wrapper"><span class="arrow">＞</span>Publications</span>
+            </button>
+            <div class="accordion-content">
+                <div class="inner-content">
+                    <p>Coming soon...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <button class="accordion-header">
+                <span class="title-wrapper"><span class="arrow">＞</span>Academic History</span>
+            </button>
+            <div class="accordion-content">
+                <div class="inner-content">
+                    <p>Coming soon...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <button class="accordion-header">
+                <span class="title-wrapper"><span class="arrow">＞</span>CV</span>
+            </button>
+            <div class="accordion-content">
+                <div class="inner-content">
+                    <p>Available upon request. Please contact ykitagawa[at]keio.jp.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </Layout>
+
+<script>
+    function setupAccordion() {
+        const headers = document.querySelectorAll('.accordion-header');
+        headers.forEach(header => {
+            // 重複バインドを避けるためノードを複製
+            const newHeader = header.cloneNode(true);
+            if (header.parentNode) header.parentNode.replaceChild(newHeader, header);
+            
+            newHeader.addEventListener('click', () => {
+                const item = newHeader.parentElement;
+                if (!item) return;
+                const content = item.querySelector('.accordion-content');
+                if (!content || !(content instanceof HTMLElement)) return;
+
+                const isOpen = item.classList.contains('active');
+                if (isOpen) {
+                    item.classList.remove('active');
+                    content.style.maxHeight = '0';
+                } else {
+                    item.classList.add('active');
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            });
+        });
+    }
+
+    function initPage() {
+        setupAccordion();
+    }
+
+    document.addEventListener('astro:page-load', initPage);
+    initPage();
+</script>
+
+<style>
+    .main-container {
+        width: 86vw;
+        margin: 0 auto;
+        padding: 0px 0 40px 0;
+    }
+
+    /* 💡 ブラウザのデフォルトマージンを打ち消し、上部キャンバスとの距離を最適化 */
+    .page-title {
+        font-size: 32px;
+        font-weight: normal;
+        margin-top: 5px;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .about-lead {
+        font-size: 22px;
+        line-height: 1.6;
+        margin-top: 0;
+        margin-bottom: 60px;
+        color: #333;
+    }
+
+    /* 他のページと共通のアコーディオンシステム用のスタイル */
+    .accordion-item {
+        border-bottom: 2px solid black;
+        width: 100%;
+    }
+    .accordion-item:first-child {
+        border-top: 2px solid black;
+    }
+    .accordion-header {
+        width: 100%;
+        background: none;
+        border: none;
+        font-family: inherit;
+        font-size: 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 30px 0;
+        cursor: pointer;
+        text-align: left;
+        color: #333;
+        transition: color 0.2s ease;
+    }
+    .accordion-header:hover {
+        color: #888;
+    }
+    
+    .title-wrapper {
+        display: flex;
+        align-items: center;
+    }
+
+    .arrow {
+        display: inline-block;
+        margin-right: 12px;
+        font-family: monospace;
+        font-size: 0.9em;
+        transition: transform 0.3s ease;
+    }
+
+    .accordion-item.active .arrow {
+        transform: rotate(90deg);
+    }
+
+    .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+    }
+    .inner-content {
+        padding: 10px 0 40px 0;
+        font-size: 22px;
+        line-height: 1.6;
+    }
+</style>

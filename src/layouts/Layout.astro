@@ -1,10 +1,17 @@
 ---
 // src/layouts/Layout.astro
+interface Props {
+    title?: string;
+    isHome?: boolean;
+    isWip?: boolean;
+}
+
+const { title = "Portfolio: Yohta Kitagawa", isHome = false, isWip = false } = Astro.props;
 ---
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Portfolio: Yohta Kitagawa</title>
+    <title>{title}</title>
     <style is:global>
         @font-face {
             font-family: 'CothamSans';
@@ -18,9 +25,77 @@
             font-family: CothamSans, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
-            color: #333;
+            background-color: var(--body-bg, #f5f5f5);
+            color: var(--body-color, #333);
             overflow-x: hidden;
+        }
+
+        .main-container {
+            width: 86vw;
+            margin: 0 auto;
+            padding: 0px 0 40px 0;
+        }
+
+        .hero-section {
+            padding-top: 40px;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 0px;
+            width: 100%;
+        }
+
+        /* 💡 下層ページ専用のヘッダー定義を追加（メインページと縦座標を完全に一致させる） */
+        .sub-hero-section {
+            padding-top: 65px;       /* メインページの中央寄せ計算（40px + 25px）に厳密に揃えた数値 */
+            padding-bottom: 15px;    /* 波線下のコンテンツとの距離を最適化 */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 0px;
+            width: 100%;
+        }
+
+        .sub-header-title {
+            font-size: 32px;
+            font-weight: normal;
+            margin: 0 0 10px 0;
+            line-height: 1.2;
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+            animation-delay: 0.1s;
+        }
+        .sub-header-title a {
+            color: #4ac3e1;
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+        .sub-header-title a:hover {
+            opacity: 0.7;
+        }
+
+        .procedural-divider {
+            width: 100vw !important;
+            max-width: none !important;
+            height: 20px;
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 0px;
+        }
+
+        canvas {
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+            animation-delay: 0.1s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .menu-btn {
@@ -38,143 +113,118 @@
             flex-direction: column;
             justify-content: space-between;
         }
-
-        .menu-btn span {
-            display: block;
-            width: 100%;
-            height: 2px;
-            background-color: #333;
-            transition: all 0.3s ease;
-        }
-
-        .menu-btn.open span:nth-child(1) {
-            transform: translateY(11px) rotate(45deg);
-        }
-        .menu-btn.open span:nth-child(2) {
-            opacity: 0;
-        }
-        .menu-btn.open span:nth-child(3) {
-            transform: translateY(-11px) rotate(-45deg);
-        }
+        .menu-btn span { display: block; width: 100%; height: 2px; background-color: #333; transition: all 0.3s ease; }
+        .menu-btn.open span:nth-child(1) { transform: translateY(11px) rotate(45deg); }
+        .menu-btn.open span:nth-child(2) { opacity: 0; }
+        .menu-btn.open span:nth-child(3) { transform: translateY(-11px) rotate(-45deg); }
 
         .menu-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 0; left: 0; width: 100vw; height: 100vh;
             background-color: rgba(255, 255, 255, 0.95);
             z-index: 90;
-            
+            display: flex; flex-direction: column; align-items: flex-end;
+            padding-right: 2vw; padding-top: 3rem; box-sizing: border-box;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+        }
+        .menu-overlay.open { opacity: 1; pointer-events: auto; }
+        .menu-overlay ul { list-style: none; padding: 0; margin: 0; text-align: right; width: auto; }
+        .menu-overlay li { margin: 1rem 0; }
+        .menu-overlay a { text-decoration: none; color: #333; font-size: 1.8rem; font-weight: bold; transition: color 0.2s; }
+        .menu-overlay a:hover { color: #888; }
+
+        /* 💡 共通フッターのグローバルスタイル定義 */
+        .site-footer {
+            margin-top: 120px;
+            padding-bottom: 40px;
+            width: 100%;
             display: flex;
-            flex-direction: column;
-            align-items: flex-end; /* 右寄せに戻しました */
-            
-            padding-right: 2vw; /* ここで画面右端からの距離を調整できます */
-            padding-top: 3rem;
+            justify-content: space-between;
+            align-items: flex-end;
             box-sizing: border-box;
-
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease;
         }
 
-        .menu-overlay.open {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .menu-overlay ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            text-align: right; /* テキストを右揃えに戻しました */
-            width: auto;
-        }
-
-        .menu-overlay li {
-            margin: 1rem 0;
-        }
-
-        .menu-overlay a {
-            text-decoration: none;
+        .footer-email {
+            font-size: 18px;
             color: #333;
-            font-size: 1.8rem; 
-            font-weight: bold;
-            transition: color 0.2s;
+            margin: 0;
+            text-align: left;
         }
 
-        .menu-overlay a:hover {
+        .footer-instagram {
+            font-size: 18px;
+            margin: 0;
+            text-align: right;
+        }
+
+        .footer-instagram a {
+            color: #333;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            transition: color 0.2s ease;
+        }
+
+        .footer-instagram a:hover {
             color: #888;
         }
-
-        main {
-            padding-top: 1rem;
-        }
-
-        /* Shared header / canvas rules (moved from page-level styles) */
-        .hero-section {
-            padding: 10px 0 30px 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: flex-start;
-            gap: 0px;
-        }
-        .canvas-wrapper {
-            position: relative;
-            width: 100%;
-            height: 170px;
-        }
-        .procedural-title, .procedural-about {
-            position: absolute;
-            top: 0;
-            left: 0;
-            max-width: 100%;
-            height: auto;
-        }
-        .procedural-divider {
-            width: 100vw;
-            height: 0px;
-            position: relative;
-            left: 50%;
-            transform: translateX(-50%);
-            margin-top: 0px;
-            margin-bottom: 0px;
-        }
     </style>
+    {isWip && (
+        <style>
+            :root {
+                --body-bg: #000000;
+                --body-color: #ffffff;
+            }
+        </style>
+    )}
 </head>
-<body>
+<body data-is-home={String(isHome)} data-is-wip={String(isWip)}>
     <button id="menu-btn" class="menu-btn" aria-label="Menu">
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span>
     </button>
 
     <nav id="mobile-menu" class="menu-overlay">
         <ul>
             <li><a href="/">Main page</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/archive">Archive</a></li>
             <li><a href="/wip">WIP Garden</a></li>
         </ul>
     </nav>
 
+    {!isHome && (
+        <div class="main-container">
+            <header class="sub-hero-section">
+                <h1 class="sub-header-title">
+                    <a href="/">Yohta Kitagawa</a>
+                </h1>
+                <canvas id="divider-canvas" class="procedural-divider"></canvas>
+            </header>
+        </div>
+    )}
+
     <main>
         <slot />
     </main>
+
+    <div class="main-container" style="padding-top: 0; padding-bottom: 0;">
+        <footer class="site-footer">
+            <p class="footer-email">Contact: ykitagawa[at]keio.jp</p>
+            <p class="footer-instagram">
+                <a href="https://instagram.com/yohta_kitagawa" target="_blank" rel="noopener noreferrer">Instagram</a>
+            </p>
+        </footer>
+    </div>
 
     <script type="module">
         function setupMenu() {
             const btn = document.getElementById('menu-btn');
             const menu = document.getElementById('mobile-menu');
             const links = menu?.querySelectorAll('a');
-
             if (!btn || !menu) return;
-
             btn.addEventListener('click', () => {
                 btn.classList.toggle('open');
                 menu.classList.toggle('open');
             });
-
             links?.forEach(link => {
                 link.addEventListener('click', () => {
                     btn.classList.remove('open');
@@ -182,15 +232,95 @@
                 });
             });
         }
-
         document.addEventListener('astro:page-load', setupMenu);
         setupMenu();
+    </script>
 
-        
+    <script>
+        function setupLayoutScripts() {
+            const isWip = document.body.dataset.isWip === 'true';
+            const isHome = document.body.dataset.isHome === 'true';
 
-        if (!sessionStorage.getItem('siteEntryPoint')) {
-            sessionStorage.setItem('siteEntryPoint', Date.now().toString());
+            if (!isWip && !isHome) {
+                import('../scripts/noiseBackground.js').then(mod => {
+                    if (mod && typeof mod.initNoiseBackground === 'function') {
+                        mod.initNoiseBackground(2);
+                    }
+                }).catch(e => console.error('Failed to load noiseBackground:', e));
+            }
+
+            if (!isHome) {
+                const dividerCanvas = document.getElementById('divider-canvas');
+                if (dividerCanvas && dividerCanvas instanceof HTMLCanvasElement && dividerCanvas.dataset.initialized !== 'true') {
+                    dividerCanvas.dataset.initialized = 'true';
+                    const dividerCtx = dividerCanvas.getContext('2d');
+                    
+                    if (dividerCtx) {
+                        const dpr = window.devicePixelRatio || 1;
+                        const dividerCssHeight = 20;
+                        let dividerWidth = window.innerWidth;
+
+                        dividerCanvas.width = dividerWidth * dpr;
+                        dividerCanvas.height = dividerCssHeight * dpr;
+                        dividerCanvas.style.height = dividerCssHeight + 'px';
+                        dividerCtx.scale(dpr, dpr);
+
+                        let lines = [];
+                        let currentX = 0;
+                        while (currentX < dividerWidth) {
+                            const length = 8 + Math.random() * 24;
+                            const space = 12 + Math.random() * 36;
+                            lines.push({ x: currentX, length: length });
+                            currentX += length + space;
+                        }
+                        const speed = 1.2;
+
+                        function renderDivider() {
+                            if (!document.getElementById('divider-canvas') || document.body.dataset.isHome === 'true') {
+                                return;
+                            }
+
+                            dividerCtx.clearRect(0, 0, dividerWidth, dividerCssHeight);
+                            dividerCtx.strokeStyle = 'rgb(51,51,51)';
+                            dividerCtx.lineWidth = 1.5;
+                            for (let i = 0; i < lines.length; i++) {
+                                lines[i].x += speed;
+                                dividerCtx.beginPath();
+                                dividerCtx.moveTo(lines[i].x, dividerCssHeight / 2);
+                                dividerCtx.lineTo(lines[i].x + lines[i].length, dividerCssHeight / 2);
+                                dividerCtx.stroke();
+                            }
+                            lines = lines.filter(line => line.x < dividerWidth);
+                            if (lines.length > 0) {
+                                let leftmostX = lines[0].x;
+                                while (leftmostX > 0) {
+                                    const space = 12 + Math.random() * 36;
+                                    const length = 8 + Math.random() * 24;
+                                    const newX = leftmostX - space - length;
+                                    lines.unshift({ x: newX, length: length });
+                                    leftmostX = newX;
+                                }
+                            } else {
+                                lines.push({ x: -40, length: 20 });
+                            }
+                            requestAnimationFrame(renderDivider);
+                        }
+                        renderDivider();
+
+                        window.addEventListener('resize', () => {
+                            if (document.body.dataset.isHome === 'true') return;
+                            dividerWidth = window.innerWidth;
+                            dividerCanvas.width = dividerWidth * dpr;
+                            dividerCanvas.height = dividerCssHeight * dpr;
+                            dividerCtx.scale(dpr, dpr);
+                        });
+                    }
+                }
+            }
         }
+
+        document.addEventListener('astro:page-load', setupLayoutScripts);
+        setupLayoutScripts();
     </script>
 </body>
 </html>

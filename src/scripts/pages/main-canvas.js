@@ -1,8 +1,9 @@
 if (typeof window !== 'undefined') {
   document.fonts.ready.then(() => {
-    const paddingLeft = window.innerWidth * 0.03;
-    const cssWidth = window.innerWidth - paddingLeft - 40;
-    const canvasHeight = 220; 
+    const wrapper = document.querySelector('.canvas-wrapper');
+    if (!wrapper) return;
+
+    let cssWidth = wrapper.clientWidth;
     const dpr = window.devicePixelRatio || 1;
     const base = 120;
     const range = 255 - base;
@@ -10,8 +11,46 @@ if (typeof window !== 'undefined') {
     const fontSizePx = 32; 
     const startY = 10; 
     const titleAccumulationSpeed = 0.02;
+    const lineHeight = fontSizePx * 1.2;
 
-    // --- TITLE CANVAS ---
+    const titleText = "Yohta Kitagawa";
+    const aboutText = "is a Japanese critical media artist. His works aims to reframe existing values and assumptions in technology, through personal and intimate interaction. Yohta's primary mediums are sound and robotics. However, he consistently experiments with various mediums such as games, sculpture, creative coding and choreography. He is currently studying abroad at Brown university.";
+
+    const measureCanvas = document.createElement('canvas');
+    const measureCtx = measureCanvas.getContext('2d');
+    measureCtx.font = `normal ${fontSizePx}px CothamSans, sans-serif`;
+    
+    const titleWidth = measureCtx.measureText(titleText + " ").width;
+    const words = aboutText.split(' ');
+    
+    function calculateCanvasHeight(targetWidth) {
+      let tempLine = '';
+      let currentY = startY;
+      let firstLine = true;
+      
+      for (let n = 0; n < words.length; n++) {
+        let testLine = tempLine === '' ? words[n] : tempLine + ' ' + words[n];
+        let testWidth = measureCtx.measureText(testLine).width;
+        let allowedWidth = firstLine ? targetWidth - titleWidth : targetWidth;
+
+        if (testWidth > allowedWidth && tempLine !== '') {
+          tempLine = words[n];
+          currentY += lineHeight;
+          firstLine = false;
+        } else {
+          tempLine = testLine;
+        }
+      }
+      return currentY + lineHeight + 5; 
+    }
+
+    let canvasHeight = calculateCanvasHeight(cssWidth);
+
+    if (wrapper instanceof HTMLElement) {
+      wrapper.style.height = canvasHeight + 'px';
+    }
+
+    // TITLE CANVAS
     const titleCanvas = document.getElementById('title-canvas');
     if (!(titleCanvas instanceof HTMLCanvasElement)) return;
     const titleCtx = titleCanvas.getContext('2d');
@@ -33,18 +72,17 @@ if (typeof window !== 'undefined') {
     titleOffCtx.textAlign = 'left';
     titleOffCtx.textBaseline = 'top';
     titleOffCtx.fillStyle = '#4ac3e1';
-    
-    const titleText = "Yohta Kitagawa";
     titleOffCtx.fillText(titleText, 0, startY);
-    
-    const titleWidth = titleOffCtx.measureText(titleText + " ").width;
 
     const titleMaskData = titleOffCtx.getImageData(0, 0, titleOffCanvas.width, titleOffCanvas.height).data;
     const titleDisplayData = titleCtx.createImageData(titleOffCanvas.width, titleOffCanvas.height);
     const titleBuffer32 = new Uint32Array(titleDisplayData.data.buffer);
     const titleAccumulation = new Float32Array(titleBuffer32.length);
 
+    let isEffectRunning = true;
+
     function renderTitle() {
+      if (!isEffectRunning) return;
       let isFinished = true;
       for (let i = 0; i < titleBuffer32.length; i++) {
         const maskAlpha = titleMaskData[i * 4 + 3];
@@ -78,13 +116,11 @@ if (typeof window !== 'undefined') {
       }
     }
 
-    // --- ABOUT CANVAS ---
+    // ABOUT CANVAS
     const aboutCanvas = document.getElementById('about-canvas');
     if (!(aboutCanvas instanceof HTMLCanvasElement)) return;
     const aboutCtx = aboutCanvas.getContext('2d');
     if (!aboutCtx) return;
-
-    const aboutText = "is a Japanese critical media artist. His works aims to reframe existing values and powerbalances in technology, through personal experience. His primary mediums are sound and robotics, however he consistently experiments with different mediums such as games, sculpture, choreography and more. He is currently studying abroad at Brown university.";
    
     aboutCanvas.width = cssWidth * dpr;
     aboutCanvas.height = canvasHeight * dpr;
@@ -92,104 +128,96 @@ if (typeof window !== 'undefined') {
     aboutCanvas.style.height = canvasHeight + 'px';
     aboutCtx.scale(dpr, dpr);
 
-    const aboutOffCanvas = document.createElement('canvas');
-    aboutOffCanvas.width = aboutCanvas.width;
-    aboutOffCanvas.height = aboutCanvas.height;
-    const aboutOffCtx = aboutOffCanvas.getContext('2d', { willReadFrequently: true });
-    aboutOffCtx.scale(dpr, dpr);
-
-    aboutOffCtx.font = `normal ${fontSizePx}px CothamSans, sans-serif`;
-    aboutOffCtx.textAlign = 'left';
-    aboutOffCtx.textBaseline = 'top';
-    aboutOffCtx.fillStyle = '#333';
-
-    function wrapText(context, text, x, y, maxWidth, lineHeight, initialOffsetX) {
-      const words = text.split('');
-      let line = '';
+    // テキストごとの座標を事前に計算する関数
+    function calculateCharPositions(context, text, x, y, maxWidth, lineHeight, initialOffsetX) {
+      const positions = [];
+      const textWords = text.split(' ');
+      let currentX = x + initialOffsetX;
       let currentY = y;
       let firstLine = true;
 
-      for (let n = 0; n < words.length; n++) {
-        let testLine = line + words[n];
-        let metrics = context.measureText(testLine);
-        let testWidth = metrics.width;
-        let allowedWidth = firstLine ? maxWidth - initialOffsetX : maxWidth;
-        
-        if (testWidth > allowedWidth && n > 0) {
-          context.fillText(line, firstLine ? x + initialOffsetX : x, currentY);
-          line = words[n];
+      for (let n = 0; n < textWords.length; n++) {
+        const word = textWords[n];
+        const wordWidth = context.measureText(word).width;
+        const allowedWidth = firstLine ? maxWidth - initialOffsetX : maxWidth;
+
+        // 単語が現在の行に収まらない場合は改行 (ただし行の先頭でない場合のみ)
+        if (currentX + wordWidth > maxWidth && currentX > (firstLine ? x + initialOffsetX : x)) {
+          currentX = x;
           currentY += lineHeight;
           firstLine = false;
-        } else {
-          line = testLine;
+        }
+
+        // 単語内の各文字の座標を記録
+        for (let i = 0; i < word.length; i++) {
+          const char = word[i];
+          const charWidth = context.measureText(char).width;
+          positions.push({ char, x: currentX, y: currentY });
+          currentX += charWidth;
+        }
+
+        // 最後の単語以外はスペースを追加
+        if (n < textWords.length - 1) {
+          const spaceWidth = context.measureText(' ').width;
+          positions.push({ char: ' ', x: currentX, y: currentY });
+          currentX += spaceWidth;
         }
       }
-      context.fillText(line, firstLine ? x + initialOffsetX : x, currentY);
+      return positions;
     }
 
-    wrapText(aboutOffCtx, aboutText, 0, startY, cssWidth, fontSizePx * 1.2, titleWidth);
+    // タイピングアニメーション用の変数設定
+    aboutCtx.font = `normal ${fontSizePx}px CothamSans, sans-serif`;
+    let charPositions = calculateCharPositions(aboutCtx, aboutText, 0, startY, cssWidth, lineHeight, titleWidth);
     
-    const aboutMaskData = aboutOffCtx.getImageData(0, 0, aboutOffCanvas.width, aboutOffCanvas.height).data;
-    const aboutDisplayData = aboutCtx.createImageData(aboutOffCanvas.width, aboutOffCanvas.height);
-    const aboutBuffer32 = new Uint32Array(aboutDisplayData.data.buffer);
-    const aboutAccumulation = new Float32Array(aboutBuffer32.length);
-
-    const blockSize = 4;
-    const aboutAccumulationSpeed = titleAccumulationSpeed / 2;
-    const w = aboutOffCanvas.width;
-    const h = aboutOffCanvas.height;
-    const cols = Math.ceil(w / blockSize);
-    const rows = Math.ceil(h / blockSize);
-    const blockAccum = new Float32Array(cols * rows);
+    let typeProgress = 0; 
+    const charsPerFrame = 0.6; // 1フレームあたりの文字表示速度（調整可能）
+    let frameCount = 0;
 
     function renderAbout() {
-      let isFinished = true;
-      for (let by = 0, yy = 0; yy < h; yy += blockSize, by++) {
-        for (let bx = 0, xx = 0; xx < w; xx += blockSize, bx++) {
-          const accIdx = by * cols + bx;
-          let hasMask = false;
-          for (let y = 0; y < blockSize && yy + y < h && !hasMask; y++) {
-            for (let x = 0; x < blockSize && xx + x < w; x++) {
-              const idx = ((yy + y) * w + (xx + x)) * 4;
-              if (aboutMaskData[idx + 3] > 0) { hasMask = true; break; }
-            }
-          }
+      if (!isEffectRunning) return;
+      frameCount++;
 
-          if (hasMask) {
-            if (blockAccum[accIdx] < 1.0) {
-              isFinished = false;
-              const r = base + Math.random() * range;
-              const g = base + Math.random() * range;
-              const b = base + Math.random() * range;
-              blockAccum[accIdx] += Math.random() * aboutAccumulationSpeed;
-              if (blockAccum[accIdx] > 1.0) blockAccum[accIdx] = 1.0;
-              const acc = blockAccum[accIdx];
-              const currentR = Math.round(r * (1 - acc) + 51 * acc);
-              const currentG = Math.round(g * (1 - acc) + 51 * acc);
-              const currentB = Math.round(b * (1 - acc) + 51 * acc);
-              const alpha = Math.min(255, Math.floor(acc * 255));
-              for (let y = 0; y < blockSize && yy + y < h; y++) {
-                for (let x = 0; x < blockSize && xx + x < w; x++) {
-                  const offset = ((yy + y) * w + (xx + x));
-                  const maskAlpha = aboutMaskData[offset * 4 + 3];
-                  if (maskAlpha > 0) {
-                    aboutBuffer32[offset] = alpha * 16777216 + currentB * 65536 + currentG * 256 + currentR;
-                  }
-                }
-              }
-            }
-          }
-        }
+      aboutCtx.clearRect(0, 0, cssWidth, canvasHeight);
+      aboutCtx.fillStyle = '#333';
+      aboutCtx.font = `normal ${fontSizePx}px CothamSans, sans-serif`;
+      aboutCtx.textAlign = 'left';
+      aboutCtx.textBaseline = 'top';
+
+      const currentTypeCount = Math.min(Math.floor(typeProgress), charPositions.length);
+
+      // 表示済みの文字を描画
+      for (let i = 0; i < currentTypeCount; i++) {
+        const pos = charPositions[i];
+        aboutCtx.fillText(pos.char, pos.x, pos.y);
       }
-      aboutCtx.putImageData(aboutDisplayData, 0, 0);
-      if (!isFinished) requestAnimationFrame(renderAbout);
-      else {
-        aboutCtx.clearRect(0, 0, cssWidth, canvasHeight);
-        aboutCtx.drawImage(aboutOffCanvas, 0, 0, aboutOffCanvas.width / dpr, aboutOffCanvas.height / dpr);
+
+      // カーソルの位置計算
+      let cursorX, cursorY;
+      if (currentTypeCount < charPositions.length) {
+        cursorX = charPositions[currentTypeCount].x;
+        cursorY = charPositions[currentTypeCount].y;
+      } else {
+        const lastPos = charPositions[charPositions.length - 1];
+        cursorX = lastPos.x + aboutCtx.measureText(lastPos.char).width;
+        cursorY = lastPos.y;
       }
+
+      // カーソルの点滅描画 (約0.5秒ごとに表示/非表示を切り替え)
+      if (Math.floor(frameCount / 30) % 2 === 0) {
+        aboutCtx.fillRect(cursorX + 2, cursorY + 2, 2, fontSizePx - 4);
+      }
+
+      // 文字を少しずつ進める (ランダムな揺らぎを入れて人間らしさを出す)
+      if (typeProgress < charPositions.length) {
+        typeProgress += charsPerFrame * (0.5 + Math.random());
+      }
+      
+      // アニメーションを継続 (全て表示した後もカーソル点滅を維持するため)
+      requestAnimationFrame(renderAbout);
     }
 
-    // --- DIVIDER CANVAS ---
+    // DIVIDER CANVAS
     const dividerCanvas = document.getElementById('divider-canvas');
     if (dividerCanvas instanceof HTMLCanvasElement) {
       const dividerCtx = dividerCanvas.getContext('2d');
@@ -241,6 +269,47 @@ if (typeof window !== 'undefined') {
         renderDivider();
 
         window.addEventListener('resize', () => {
+          isEffectRunning = false; 
+
+          if (wrapper instanceof HTMLElement) {
+            cssWidth = wrapper.clientWidth;
+          }
+          canvasHeight = calculateCanvasHeight(cssWidth);
+
+          if (wrapper instanceof HTMLElement) {
+            wrapper.style.height = canvasHeight + 'px';
+          }
+
+          titleCanvas.width = cssWidth * dpr;
+          titleCanvas.height = canvasHeight * dpr;
+          titleCanvas.style.width = cssWidth + 'px';
+          titleCanvas.style.height = canvasHeight + 'px';
+          titleCtx.scale(dpr, dpr);
+          titleCtx.font = `normal ${fontSizePx}px CothamSans, sans-serif`;
+          titleCtx.fillStyle = '#4ac3e1';
+          titleCtx.textAlign = 'left';
+          titleCtx.textBaseline = 'top';
+          titleCtx.fillText(titleText, 0, startY);
+
+          // リサイズイベント内の aboutCanvas 更新部分
+          aboutCanvas.width = cssWidth * dpr;
+          aboutCanvas.height = canvasHeight * dpr;
+          aboutCanvas.style.width = cssWidth + 'px';
+          aboutCanvas.style.height = canvasHeight + 'px';
+          aboutCtx.scale(dpr, dpr);
+          aboutCtx.font = `normal ${fontSizePx}px CothamSans, sans-serif`;
+          aboutCtx.fillStyle = '#333';
+          aboutCtx.textAlign = 'left';
+          aboutCtx.textBaseline = 'top';
+
+          // リサイズ時は再計算して全文字を即時描画する
+          aboutCtx.clearRect(0, 0, cssWidth, canvasHeight);
+          charPositions = calculateCharPositions(aboutCtx, aboutText, 0, startY, cssWidth, lineHeight, titleWidth);
+          for (let i = 0; i < charPositions.length; i++) {
+            const pos = charPositions[i];
+            aboutCtx.fillText(pos.char, pos.x, pos.y);
+          }
+
           dividerWidth = window.innerWidth;
           dividerCanvas.width = dividerWidth * dpr;
           dividerCanvas.height = dividerCssHeight * dpr;

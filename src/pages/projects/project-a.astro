@@ -1,77 +1,10 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-
-const projectTitle = 'NoiseLoom';
-const projectDescription = ``;
+import ProjectLayout from '../../layouts/ProjectLayout.astro';
 ---
 
-<Layout title={projectTitle}>
-    <main class="project-container">
-        <div class="navigation">
-            <a href="/" class="back-link">メインページに戻る</a>
-        </div>
-        
-        <header class="project-header">
-            <h1>{projectTitle}</h1>
-        </header>
-
-        <article class="project-body">
-            <div class="image-wrapper">
-                <img src="/assets/project-a.jpg" alt={projectTitle} class="project-image" />
-            </div>
-            
-            <div class="content-text">
-                <p>{projectDescription}</p>
-            </div>
-        </article>
-    </main>
-</Layout>
-
-<style>
-    .project-container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 40px 20px;
-        font-family: sans-serif;
-    }
-
-    .navigation {
-        margin-bottom: 30px;
-    }
-
-    .back-link {
-        color: inherit;
-        text-decoration: none;
-        font-size: 0.9rem;
-        opacity: 0.7;
-    }
-
-    .back-link:hover {
-        opacity: 1;
-        text-decoration: underline;
-    }
-
-    .project-header h1 {
-        font-size: 2.5rem;
-        margin-bottom: 20px;
-    }
-
-    .image-wrapper {
-        width: 100%;
-        margin-bottom: 30px;
-    }
-
-    .project-image {
-        width: 100%;
-        height: auto;
-        max-height: 450px;
-        object-fit: cover;
-        border-radius: 8px;
-    }
-
-    .content-text p {
-        font-size: 1.1rem;
-        line-height: 1.8;
-        white-space: pre-line;
-    }
-</style>
+<ProjectLayout 
+    title="NoiseLoom" 
+    image="/assets/NoiseLoom1.png"
+>
+    <p>An intuitive yet unique multiplayer noise improvisation tool, for experts and non-experts.</p>
+</ProjectLayout>

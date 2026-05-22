@@ -2,16 +2,8 @@
 import Layout from '../../layouts/Layout.astro';
 ---
 
-<Layout>
+<Layout title="WIP Garden" isWip={true}>
     <div class="main-container">
-        <div class="hero-section">
-            <div class="canvas-wrapper">
-                <canvas id="title-canvas" class="procedural-title"></canvas>
-                <canvas id="about-canvas" class="procedural-about"></canvas>
-            </div>
-            <canvas id="divider-canvas" class="procedural-divider"></canvas>
-        </div>
-
         <div class="accordion-item active">
             <button class="accordion-header">
                 <span class="title-wrapper"><span class="arrow">＞</span>wip encounter machine (ver1.0)</span>
@@ -38,10 +30,7 @@ import Layout from '../../layouts/Layout.astro';
         </div>
     </div>
 
-    <script src="../../scripts/pages/main-canvas.js"></script>
-
     <script>
-    // use dynamic import since this script is not a module
         /**
          * @param {string} src
          * @returns {Promise<void>}
@@ -58,7 +47,6 @@ import Layout from '../../layouts/Layout.astro';
         }
 
         async function ensureP5AndStart() {
-            // access p5 on window; annotate to avoid TS errors in editor
             // @ts-ignore
             if (typeof window.p5 === 'undefined') {
                 try {
@@ -74,7 +62,6 @@ import Layout from '../../layouts/Layout.astro';
                 const mod = await import('../../scripts/wip/startSketch.js');
                 if (mod && typeof mod.startSketch === 'function') {
                     mod.startSketch('canvas-container');
-                    
                     setTimeout(() => {
                         const activeItems = document.querySelectorAll('.accordion-item.active');
                         activeItems.forEach(item => {
@@ -116,17 +103,9 @@ import Layout from '../../layouts/Layout.astro';
                     const isOpen = item.classList.contains('active');
 
                     if (isOpen) {
-                        // 開いている場合は閉じる
                         item.classList.remove('active');
                         content.style.maxHeight = '0';
                     } else {
-                        /* ===================================================
-                           ここで他のタブを強制的に閉じていた以下の記述を削除します。
-                           document.querySelectorAll('.accordion-item.active').forEach(...) 
-                           ===================================================
-                        */
-                        
-                        // クリックされたタブだけを開く（他のタブはそのまま）
                         item.classList.add('active');
                         content.style.maxHeight = content.scrollHeight + 'px';
                     }
@@ -139,7 +118,7 @@ import Layout from '../../layouts/Layout.astro';
             (async () => {
                 try {
                     const mod = await import('../../scripts/noiseBackground.js');
-                    if (mod && typeof mod.initNoiseBackground === 'function') mod.initNoiseBackground(4);
+                    if (mod && typeof mod.initNoiseBackground === 'function') mod.initNoiseBackground(4, 'green');
                 } catch (e) {
                     console.error('initNoiseBackground failed:', e);
                 }
@@ -158,9 +137,12 @@ import Layout from '../../layouts/Layout.astro';
     .main-container {
         width: 86vw;
         margin: 0 auto;
-        padding: 0px 0 40px 0; /* main pageに合わせる */
+        padding: 0px 0 40px 0;
     }
+
+    /* ヘッダーは Layout.astro に移譲されたため、ここでは定義しません */
     
+    /* 既存のWIPコンテンツスタイル（維持） */
     .game-wrapper {
         width: 100%;
         aspect-ratio: 16 / 9;
