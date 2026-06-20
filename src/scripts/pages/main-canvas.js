@@ -1,3 +1,4 @@
+
 if (typeof window !== 'undefined') {
   document.fonts.ready.then(() => {
     const wrapper = document.querySelector('.canvas-wrapper');
@@ -230,40 +231,50 @@ if (typeof window !== 'undefined') {
         dividerCanvas.style.height = dividerCssHeight + 'px';
         dividerCtx.scale(dpr, dpr);
 
-        let lines = [];
-        let currentX = 0;
-        while (currentX < dividerWidth) {
-          const length = 8 + Math.random() * 24;
-          const space = 12 + Math.random() * 36;
-          lines.push({ x: currentX, length: length });
-          currentX += length + space;
-        }
-        const speed = 1.2;
+  /** @type {{x:number,length:number}[]} */
+  let lines = [];                
+  let currentSpeed = 90;
+  const targetSpeed = 1.9;
+  let brakeForce = 0.05;
 
         function renderDivider() {
+          if (brakeForce < 0.08) {
+            brakeForce += 0.0005;
+          }
+          currentSpeed += (targetSpeed - currentSpeed) * brakeForce;
+
           dividerCtx.clearRect(0, 0, dividerWidth, dividerCssHeight);
           dividerCtx.strokeStyle = 'rgb(51,51,51)';
           dividerCtx.lineWidth = 1.5;
+
           for (let i = 0; i < lines.length; i++) {
-            lines[i].x += speed;
+            // currentSpeedを使って左方向に移動させます
+            lines[i].x -= currentSpeed;
             dividerCtx.beginPath();
             dividerCtx.moveTo(lines[i].x, dividerCssHeight / 2);
             dividerCtx.lineTo(lines[i].x + lines[i].length, dividerCssHeight / 2);
             dividerCtx.stroke();
           }
-          lines = lines.filter(line => line.x < dividerWidth);
+          
+          // 画面の左端より外に出た線を削除します
+          lines = lines.filter(line => line.x + line.length > 0);
+          
+          // 画面の右端に隙間ができたら新しい線を追加します
           if (lines.length > 0) {
-            let leftmostX = lines[0].x;
-            while (leftmostX > 0) {
+            let rightmostLine = lines[lines.length - 1];
+            let rightmostX = rightmostLine.x + rightmostLine.length;
+            while (rightmostX < dividerWidth) {
               const space = 12 + Math.random() * 36;
               const length = 8 + Math.random() * 24;
-              const newX = leftmostX - space - length;
-              lines.unshift({ x: newX, length: length });
-              leftmostX = newX;
+              const newX = rightmostX + space;
+              lines.push({ x: newX, length: length });
+              rightmostX = newX + length;
             }
           } else {
-            lines.push({ x: -40, length: 20 });
+            const length = 8 + Math.random() * 24;
+            lines.push({ x: dividerWidth, length: length });
           }
+          
           requestAnimationFrame(renderDivider);
         }
         renderDivider();
