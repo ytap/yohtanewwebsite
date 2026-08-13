@@ -1,13 +1,14 @@
 ---
 import Layout from './Layout.astro';
 
-const { title, image } = Astro.props;
+const { title, image, note } = Astro.props;
 ---
 
 <Layout title={title}>
     <div class="main-container">
         <header class="project-header">
             <h1>{title}</h1>
+            {note && <p class="project-note">{note}</p>}
         </header>
 
         <article class="project-body">
@@ -37,6 +38,12 @@ const { title, image } = Astro.props;
         margin: 0 0 16px 0;
         color: #333;
         line-height: 1.05;
+    }
+
+    .project-note {
+        font-size: 15px;
+        color: #888;
+        margin: 0 0 16px 0;
     }
 
     .project-body {

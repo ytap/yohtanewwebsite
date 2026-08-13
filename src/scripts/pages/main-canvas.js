@@ -15,7 +15,7 @@ if (typeof window !== 'undefined') {
     const lineHeight = fontSizePx * 1.2;
 
     const titleText = "Yohta Kitagawa";
-    const aboutText = "is a Japanese critical media artist. His works aims to reframe existing values and assumptions in technology, through personal and intimate interaction. Yohta's primary mediums are sound and robotics. However, he consistently experiments with various mediums such as games, sculpture, creative coding and choreography. He is currently studying abroad at Brown university.";
+    const aboutText = "is a Japanese critical media artist and HCI researcher. Guided by his vision of Mediating Animacy, he creates intimate interactions that connect humans to an already animate world. Rooted in sound and robotics, his material-led, experimental practice continually takes on new forms.";
 
     const measureCanvas = document.createElement('canvas');
     const measureCtx = measureCanvas.getContext('2d');
@@ -280,7 +280,7 @@ if (typeof window !== 'undefined') {
         // 点線の合間に時折混ざる「製作中」の文言
         const noticeText = 'Website under construction...';
         const noticeFontSize = 11;
-        const noticeFont = `normal ${noticeFontSize}px CothamSans, sans-serif`;
+        const noticeFont = `italic ${noticeFontSize}px CothamSans, sans-serif`;
         dividerCtx.font = noticeFont;
         const noticeWidth = dividerCtx.measureText(noticeText).width;
         let sinceLastNotice = 0; // 直近の文言から追加した線の数
@@ -324,7 +324,7 @@ if (typeof window !== 'undefined') {
               const space = 12 + Math.random() * 36;
               const newX = rightmostX + space;
               // しばらく線が続いたら、時折文言を挟む
-              if (sinceLastNotice > 20 && Math.random() < 0.06) {
+              if (sinceLastNotice > 2 && Math.random() < 0.5) {
                 lines.push({ x: newX, length: noticeWidth, text: noticeText });
                 rightmostX = newX + noticeWidth;
                 sinceLastNotice = 0;
