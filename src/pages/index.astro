@@ -15,10 +15,16 @@ const featuredProjects = [
     link: '/yohtanewwebsite/projects/project-b'
     },
     {
-        title: 'Project C',
-        description: 'A real-time interactive system deploying creative coding techniques.',
-    image: '/yohtanewwebsite/assets/project-c.jpg',
-    link: '/yohtanewwebsite/projects/project-c'
+        title: 'Dancing with Robots',
+        description: 'A robotic choreography piece questioning where robots gain animacy, and lose animacy.',
+    image: '/yohtanewwebsite/assets/contact.jpeg',
+    link: '/yohtanewwebsite/projects/contact'
+    },
+    {
+        title: 'BACKPACKER',
+        description: '',
+    image: '/yohtanewwebsite/assets/backpacker.jpeg',
+    link: '/yohtanewwebsite/projects/backpacker'
     }
 ];
 ---
@@ -82,13 +88,16 @@ const featuredProjects = [
             </div>
         </section>
 
-            <div class="accordion-item">
+            <div class="accordion-item active">
                 <button class="accordion-header">
                     <span class="title-wrapper"><span class="arrow">＞</span>News</span>
                 </button>
                 <div class="accordion-content">
                     <div class="inner-content">
-                        <p>Coming soon...</p>
+                        <ul class="news-list">
+                            <li>Yohta Kitagawa's new piece, <em>Spoken Words</em>, will be presented via audio playback at Cube Fest 2026 (Aug 21–23, 2026) (<a href="https://icat.vt.edu/events/2026/08/cube-fest-2026---spoken-words.html" target="_blank" rel="noopener noreferrer">→ icat.vt.edu</a>), held at Virginia Tech.</li>
+                        </ul>
+                        <p>More coming soon...</p>
                     </div>
                 </div>
             </div>
@@ -121,6 +130,15 @@ const featuredProjects = [
                     content.style.maxHeight = content.scrollHeight + 'px'; // 中身の高さに合わせて開く
                 }
             });
+
+            // 初期状態で開いているものは高さを合わせておく
+            const item = newHeader.parentElement;
+            if (item && item.classList.contains('active')) {
+                const content = item.querySelector('.accordion-content');
+                if (content instanceof HTMLElement) {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            }
         });
     }
 
@@ -165,16 +183,32 @@ const featuredProjects = [
                 track.style.transform = `translateX(${centerOffset}px)`;
             }
 
-            function nextSlide() {
-                currentIndex++;
+            function goToIndex(targetIndex) {
+                currentIndex = targetIndex;
                 updatePosition();
-                if (currentIndex === totalProjects * 2) {
-                    setTimeout(() => {
-                        currentIndex = totalProjects;
+                setTimeout(() => {
+                    if (currentIndex >= totalProjects * 2) {
+                        currentIndex -= totalProjects;
                         updatePosition(true);
-                    }, 1000); 
-                }
+                    } else if (currentIndex < totalProjects) {
+                        currentIndex += totalProjects;
+                        updatePosition(true);
+                    }
+                }, 1000);
             }
+
+            function nextSlide() {
+                goToIndex(currentIndex + 1);
+            }
+
+            // 中央以外のブロックをクリックしたら、そのプロジェクトを中央にスライドさせる
+            blocks.forEach((block, domIndex) => {
+                block.addEventListener('click', (e) => {
+                    if (domIndex === currentIndex) return;
+                    e.preventDefault();
+                    goToIndex(domIndex);
+                });
+            });
 
             window.addEventListener('resize', updateLayout);
             updateLayout();
@@ -187,8 +221,13 @@ const featuredProjects = [
             function stopAutoPlay() {
                 if (intervalId !== 0) window.clearInterval(intervalId);
             }
-            
-            startAutoPlay();
+
+            // ロード直後にスライドが動くものだと伝えるため、一度だけ早めに送ってから通常の自動再生を始める
+            setTimeout(() => {
+                nextSlide();
+                startAutoPlay();
+            }, 1200);
+
             track.addEventListener('mouseenter', stopAutoPlay);
             track.addEventListener('mouseleave', startAutoPlay);
         });
@@ -237,18 +276,17 @@ const featuredProjects = [
 
     .hero-section {
         padding-top: 20px;   /* 💡 画面上部との間の余白を追加（好みに応じて数値を調整） */
-        min-height: 150px;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: stretch;
         width: 100%;
     }
 
     .canvas-wrapper {
         position: relative;
-        min-height: 80px;
         width: 100%;
+        transition: height 0.4s ease-out;
     }
 
     .canvas-wrapper canvas {

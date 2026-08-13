@@ -41,7 +41,7 @@ export class ProjectBox extends Box {
 
     // create ui
     let container = document.createElement('div');
-    container.style.position = 'absolute';
+    container.style.position = 'fixed';
     container.style.top = '50%';
     container.style.left = '50%';
     container.style.transform = 'translate(-50%, -50%)';

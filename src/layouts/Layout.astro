@@ -38,7 +38,6 @@ const { title = "Portfolio: Yohta Kitagawa", isHome = false, isWip = false } = A
 
         .hero-section {
             padding-top: 40px;
-            min-height: 150px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -49,8 +48,8 @@ const { title = "Portfolio: Yohta Kitagawa", isHome = false, isWip = false } = A
 
         /* 💡 下層ページ専用のヘッダー定義を追加（メインページと縦座標を完全に一致させる） */
         .sub-hero-section {
-            padding-top: 65px;       /* メインページの中央寄せ計算（40px + 25px）に厳密に揃えた数値 */
-            padding-bottom: 15px;    /* 波線下のコンテンツとの距離を最適化 */
+            padding-top: 30px;       /* メインページのhero-section(20px)+タイトルのstartY(10px)に揃えた数値 */
+            padding-bottom: 0;       /* 波線の直下にコンテンツが続くため余白なし */
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -65,8 +64,9 @@ const { title = "Portfolio: Yohta Kitagawa", isHome = false, isWip = false } = A
             margin: 0 0 10px 0;
             line-height: 1.2;
             opacity: 0;
-            animation: fadeIn 0.8s ease-out forwards;
-            animation-delay: 0.1s;
+            /* Mainページのキャンバス文字エフェクトが完成するまでの時間(約0.2s遅延+約2s)に揃えている */
+            animation: fadeIn 2s ease-out forwards;
+            animation-delay: 0.2s;
         }
         .sub-header-title a {
             color: #4ac3e1;
@@ -168,14 +168,6 @@ const { title = "Portfolio: Yohta Kitagawa", isHome = false, isWip = false } = A
             color: #888;
         }
     </style>
-    {isWip && (
-        <style>
-            :root {
-                --body-bg: #000000;
-                --body-color: #ffffff;
-            }
-        </style>
-    )}
 </head>
 <body data-is-home={String(isHome)} data-is-wip={String(isWip)}>
     <button id="menu-btn" class="menu-btn" aria-label="Menu">
@@ -192,7 +184,7 @@ const { title = "Portfolio: Yohta Kitagawa", isHome = false, isWip = false } = A
     </nav>
 
     {!isHome && (
-        <div class="main-container">
+        <div class="main-container" style="padding-bottom:0">
             <header class="sub-hero-section">
                 <h1 class="sub-header-title">
                     <a href="/yohtanewwebsite/">Yohta Kitagawa</a>
@@ -215,119 +207,6 @@ const { title = "Portfolio: Yohta Kitagawa", isHome = false, isWip = false } = A
         </footer>
     </div>
 
-    <script type="module">
-        function setupMenu() {
-            const btn = document.getElementById('menu-btn');
-            const menu = document.getElementById('mobile-menu');
-            const links = menu?.querySelectorAll('a');
-            if (!btn || !menu) return;
-            btn.addEventListener('click', () => {
-                btn.classList.toggle('open');
-                menu.classList.toggle('open');
-            });
-            links?.forEach(link => {
-                link.addEventListener('click', () => {
-                    btn.classList.remove('open');
-                    menu.classList.remove('open');
-                });
-            });
-        }
-        document.addEventListener('astro:page-load', setupMenu);
-        setupMenu();
-    </script>
-
-    <script type="module">
-    function setupLayoutScripts() {
-        const isWip = document.body.dataset.isWip === 'true';
-        const isHome = document.body.dataset.isHome === 'true';
-
-        if (!isWip && !isHome) {
-            import('../scripts/noiseBackground.js').then(mod => {
-                if (mod && typeof mod.initNoiseBackground === 'function') {
-                    mod.initNoiseBackground(2);
-                }
-            }).catch(e => console.error('Failed to load noiseBackground:', e));
-        }
-
-        if (!isHome) {
-            const dividerCanvas = document.getElementById('divider-canvas');
-            if (dividerCanvas && dividerCanvas instanceof HTMLCanvasElement && dividerCanvas.dataset.initialized !== 'true') {
-                dividerCanvas.dataset.initialized = 'true';
-                const dividerCtx = dividerCanvas.getContext('2d');
-                if (!dividerCtx) return;
-                // create a local non-null binding so downstream closures see a definite CanvasRenderingContext2D
-                const ctx = /** @type {CanvasRenderingContext2D} */ (dividerCtx);
-
-                const dpr = window.devicePixelRatio || 1;
-                const dividerCssHeight = 20;
-                let dividerWidth = window.innerWidth;
-
-                dividerCanvas.width = dividerWidth * dpr;
-                dividerCanvas.height = dividerCssHeight * dpr;
-                dividerCanvas.style.height = dividerCssHeight + 'px';
-                ctx.scale(dpr, dpr);
-
-                    let lines = /** @type {Array<{x:number,length:number}>} */ ([]);
-                let currentSpeed = 90;
-                const targetSpeed = 1.9;
-                let brakeForce = 0.05;
-
-                function renderDivider() {
-                    if (!document.getElementById('divider-canvas') || document.body.dataset.isHome === 'true') {
-                        return;
-                    }
-
-                    if (brakeForce < 0.08) {
-                        brakeForce += 0.0005;
-                    }
-                    currentSpeed += (targetSpeed - currentSpeed) * brakeForce;
-
-                    ctx.clearRect(0, 0, dividerWidth, dividerCssHeight);
-                    ctx.strokeStyle = 'rgb(51,51,51)';
-                    ctx.lineWidth = 1.5;
-                    
-                    for (let i = 0; i < lines.length; i++) {
-                        lines[i].x -= currentSpeed;
-                        ctx.beginPath();
-                        ctx.moveTo(lines[i].x, dividerCssHeight / 2);
-                        ctx.lineTo(lines[i].x + lines[i].length, dividerCssHeight / 2);
-                        ctx.stroke();
-                    }
-                    
-                    lines = lines.filter(line => line.x + line.length > 0);
-                    
-                    if (lines.length > 0) {
-                        let rightmostLine = lines[lines.length - 1];
-                        let rightmostX = rightmostLine.x + rightmostLine.length;
-                        while (rightmostX < dividerWidth) {
-                            const space = 12 + Math.random() * 36;
-                            const length = 8 + Math.random() * 24;
-                            const newX = rightmostX + space;
-                            lines.push({ x: newX, length: length });
-                            rightmostX = newX + length;
-                        }
-                    } else {
-                        const length = 8 + Math.random() * 24;
-                        lines.push({ x: dividerWidth, length: length });
-                    }
-                    
-                    requestAnimationFrame(renderDivider);
-                }
-                renderDivider();
-
-                window.addEventListener('resize', () => {
-                    if (document.body.dataset.isHome === 'true') return;
-                    dividerWidth = window.innerWidth;
-                    dividerCanvas.width = dividerWidth * dpr;
-                    dividerCanvas.height = dividerCssHeight * dpr;
-                    ctx.scale(dpr, dpr);
-                });
-            }
-        }
-    }
-
-    document.addEventListener('astro:page-load', setupLayoutScripts);
-    setupLayoutScripts();
-</script>
+    <script src="../scripts/layoutInit.js"></script>
 </body>
 </html>

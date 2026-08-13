@@ -47,8 +47,9 @@ if (typeof window !== 'undefined') {
 
     let canvasHeight = calculateCanvasHeight(cssWidth);
 
+    // wrapperの高さはタイピングの進行に合わせて伸ばすため、まずは1行目分だけ確保する
     if (wrapper instanceof HTMLElement) {
-      wrapper.style.height = canvasHeight + 'px';
+      wrapper.style.height = (startY + lineHeight + 5) + 'px';
     }
 
     // TITLE CANVAS
@@ -170,10 +171,35 @@ if (typeof window !== 'undefined') {
     // タイピングアニメーション用の変数設定
     aboutCtx.font = `normal ${fontSizePx}px CothamSans, sans-serif`;
     let charPositions = calculateCharPositions(aboutCtx, aboutText, 0, startY, cssWidth, lineHeight, titleWidth);
-    
-    let typeProgress = 0; 
-    const charsPerFrame = 0.6; // 1フレームあたりの文字表示速度（調整可能）
+
+    // 2行目の開始位置と3行目の開始位置を求める(1行目は速く、2行目の間に基準速度まで減速させるため)
+    function getDecelRange(positions) {
+      let lineStartIndex = positions.length;
+      let lineEndIndex = positions.length;
+      if (positions.length === 0) return { lineStartIndex, lineEndIndex };
+      let lastY = positions[0].y;
+      let found = 0;
+      for (let i = 1; i < positions.length; i++) {
+        if (positions[i].y !== lastY) {
+          lastY = positions[i].y;
+          found++;
+          if (found === 1) lineStartIndex = i;
+          if (found === 2) {
+            lineEndIndex = i;
+            break;
+          }
+        }
+      }
+      if (found < 2) lineEndIndex = positions.length;
+      return { lineStartIndex, lineEndIndex };
+    }
+
+    let typeProgress = 0;
+    const charsPerFrame = 0.6; // 1フレームあたりの文字表示速度（最終的な基準速度）
+    const typeStartSpeedMultiplier = 3; // 1行目の間の速度倍率
+    let { lineStartIndex: typeDecelStart, lineEndIndex: typeDecelEnd } = getDecelRange(charPositions);
     let frameCount = 0;
+    let wrapperLineY = startY; // 直近でwrapperの高さを合わせた行のY座標
 
     function renderAbout() {
       if (!isEffectRunning) return;
@@ -209,9 +235,23 @@ if (typeof window !== 'undefined') {
         aboutCtx.fillRect(cursorX + 2, cursorY + 2, 2, fontSizePx - 4);
       }
 
-      // 文字を少しずつ進める (ランダムな揺らぎを入れて人間らしさを出す)
+      // 改行してカーソルの行が変わったら、wrapperの高さを伸ばして点線を下に追従させる
+      if (cursorY !== wrapperLineY) {
+        wrapperLineY = cursorY;
+        if (wrapper instanceof HTMLElement) {
+          wrapper.style.height = Math.min(cursorY + lineHeight + 5, canvasHeight) + 'px';
+        }
+      }
+
+      // 文字を少しずつ進める (1行目は速く、2行目の間に基準速度まで減速。ランダムな揺らぎも加える)
       if (typeProgress < charPositions.length) {
-        typeProgress += charsPerFrame * (0.5 + Math.random());
+        let speedMultiplier = typeStartSpeedMultiplier;
+        if (typeProgress > typeDecelStart) {
+          const span = Math.max(typeDecelEnd - typeDecelStart, 1);
+          const t = Math.min((typeProgress - typeDecelStart) / span, 1);
+          speedMultiplier = 1 + (typeStartSpeedMultiplier - 1) * (1 - t) * (1 - t);
+        }
+        typeProgress += charsPerFrame * speedMultiplier * (0.5 + Math.random());
       }
       
       // アニメーションを継続 (全て表示した後もカーソル点滅を維持するため)
@@ -231,11 +271,19 @@ if (typeof window !== 'undefined') {
         dividerCanvas.style.height = dividerCssHeight + 'px';
         dividerCtx.scale(dpr, dpr);
 
-  /** @type {{x:number,length:number}[]} */
-  let lines = [];                
+  /** @type {{x:number,length:number,text?:string}[]} */
+  let lines = [];
   let currentSpeed = 90;
   const targetSpeed = 1.9;
   let brakeForce = 0.05;
+
+        // 点線の合間に時折混ざる「製作中」の文言
+        const noticeText = 'Website under construction...';
+        const noticeFontSize = 11;
+        const noticeFont = `normal ${noticeFontSize}px CothamSans, sans-serif`;
+        dividerCtx.font = noticeFont;
+        const noticeWidth = dividerCtx.measureText(noticeText).width;
+        let sinceLastNotice = 0; // 直近の文言から追加した線の数
 
         function renderDivider() {
           if (brakeForce < 0.08) {
@@ -247,13 +295,22 @@ if (typeof window !== 'undefined') {
           dividerCtx.strokeStyle = 'rgb(51,51,51)';
           dividerCtx.lineWidth = 1.5;
 
+          dividerCtx.fillStyle = 'rgb(51,51,51)';
+          dividerCtx.font = noticeFont;
+          dividerCtx.textAlign = 'left';
+          dividerCtx.textBaseline = 'middle';
+
           for (let i = 0; i < lines.length; i++) {
             // currentSpeedを使って左方向に移動させます
             lines[i].x -= currentSpeed;
-            dividerCtx.beginPath();
-            dividerCtx.moveTo(lines[i].x, dividerCssHeight / 2);
-            dividerCtx.lineTo(lines[i].x + lines[i].length, dividerCssHeight / 2);
-            dividerCtx.stroke();
+            if (lines[i].text) {
+              dividerCtx.fillText(lines[i].text, lines[i].x, dividerCssHeight / 2);
+            } else {
+              dividerCtx.beginPath();
+              dividerCtx.moveTo(lines[i].x, dividerCssHeight / 2);
+              dividerCtx.lineTo(lines[i].x + lines[i].length, dividerCssHeight / 2);
+              dividerCtx.stroke();
+            }
           }
           
           // 画面の左端より外に出た線を削除します
@@ -265,10 +322,18 @@ if (typeof window !== 'undefined') {
             let rightmostX = rightmostLine.x + rightmostLine.length;
             while (rightmostX < dividerWidth) {
               const space = 12 + Math.random() * 36;
-              const length = 8 + Math.random() * 24;
               const newX = rightmostX + space;
-              lines.push({ x: newX, length: length });
-              rightmostX = newX + length;
+              // しばらく線が続いたら、時折文言を挟む
+              if (sinceLastNotice > 20 && Math.random() < 0.06) {
+                lines.push({ x: newX, length: noticeWidth, text: noticeText });
+                rightmostX = newX + noticeWidth;
+                sinceLastNotice = 0;
+              } else {
+                const length = 8 + Math.random() * 24;
+                lines.push({ x: newX, length: length });
+                rightmostX = newX + length;
+                sinceLastNotice++;
+              }
             }
           } else {
             const length = 8 + Math.random() * 24;

@@ -84,13 +84,9 @@ export function initNoiseBackground(pixelSize = 4, theme = 'default') {
                         r = Math.random() * 150;
                         b = Math.random() * 150;
                     } else {
-                        const colorType = Math.floor(Math.random() * 6);
-                        if (colorType === 0) { r = 255; g = Math.random() * 255; }
-                        else if (colorType === 1) { g = 255; r = Math.random() * 255; }
-                        else if (colorType === 2) { b = 255; r = Math.random() * 255; }
-                        else if (colorType === 3) { r = 255; g = 255; b = Math.random() * 255; }
-                        else if (colorType === 4) { r = 255; b = 255; g = Math.random() * 255; }
-                        else { g = 255; b = 255; r = Math.random() * 255; }
+                        b = 200 + Math.random() * 55;
+                        g = 180 + Math.random() * 75;
+                        r = Math.random() * 80;
                     }
 
                     colorMap[idx] = (255 << 24) | (b << 16) | (g << 8) | r;

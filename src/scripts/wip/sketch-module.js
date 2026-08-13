@@ -177,6 +177,9 @@ export function mountSketchInstance(p, containerId = 'canvas-container') {
   }
 
   p.mousePressed = function () {
+    // ignore clicks outside the canvas bounds
+    if (p.mouseX < 0 || p.mouseX > p.width || p.mouseY < 0 || p.mouseY > p.height) return;
+
     // audio context
     startAudioContext();
 
