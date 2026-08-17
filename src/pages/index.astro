@@ -334,8 +334,9 @@ const featuredProjects = [
 
 <style>
     :root {
-        --project-image-width: 800px;
-        --project-text-width: 800px;
+        /* ブロック幅は画面幅に追従させる (最小280px / 最大800px) */
+        --project-image-width: clamp(280px, 60vw, 800px);
+        --project-text-width: clamp(280px, 60vw, 800px);
     }
 
     .hero-section {
@@ -551,14 +552,14 @@ const featuredProjects = [
     }
 
     .project-block-title {
-        font-size: 32px; 
+        font-size: clamp(20px, 2.4vw, 32px);
         font-weight: bold;
         margin: 0;
         line-height: 1.1;
     }
 
     .project-block-desc {
-        font-size: 18px; 
+        font-size: clamp(14px, 1.4vw, 18px);
         color: #555;
         margin: 0;
         line-height: 1.5;
