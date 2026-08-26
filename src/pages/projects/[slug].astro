@@ -1,0 +1,297 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+    const projects = await getCollection('projects');
+    return projects.map((project) => ({
+        params: { slug: project.id },
+        props: { project },
+    }));
+}
+
+const { project } = Astro.props;
+const d = project.data;
+const { Content } = await render(project);
+
+// concept / technical / credits は空行で段落に分ける
+const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean);
+---
+
+<Layout title={`${d.title}: Yohta Kitagawa`}>
+    <div class="main-container">
+        <header class="project-header">
+            <h1 class="project-title">{d.title}</h1>
+            <p class="project-meta">{d.contributors} · {d.year}</p>
+        </header>
+
+        <section class="project-top">
+            <div class="loop-block">
+                <div class="loop-wrapper">
+                    {d.loop ? (
+                        <video
+                            class={d.fit === 'contain' ? 'loop-media is-contain' : 'loop-media'}
+                            src={d.loop}
+                            poster={d.poster}
+                            autoplay
+                            muted
+                            loop
+                            playsinline
+                        ></video>
+                    ) : (
+                        <img class={d.fit === 'contain' ? 'loop-media is-contain' : 'loop-media'} src={d.poster} alt={d.title} />
+                    )}
+                    <p class="loop-caption">{d.oneLiner}</p>
+                </div>
+            </div>
+
+            <div class="top-text">
+                <p class="one-liner">{d.oneLiner}</p>
+                {paragraphs(d.concept).map((p) => <p class="body-text">{p}</p>)}
+            </div>
+        </section>
+
+        <section class="project-middle">
+            <div class="middle-left">
+                <h2 class="section-heading">Technical Details</h2>
+                <ul class="technical-list">
+                    {d.technical.map((item) => <li>{item}</li>)}
+                </ul>
+
+                {d.recognition.length > 0 && (
+                    <>
+                        <h2 class="section-heading">Recognition</h2>
+                        <ul class="recognition-list">
+                            {d.recognition.map((item) => (
+                                <li>
+                                    {item.url ? (
+                                        <a href={item.url} target="_blank" rel="noopener noreferrer">{item.text}</a>
+                                    ) : (
+                                        item.text
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    </>
+                )}
+            </div>
+
+            <div class="middle-right">
+                {d.archiveVideo && (
+                    <div class="archive-block">
+                        <video class="archive-video" src={d.archiveVideo} poster={d.poster} controls playsinline></video>
+                    </div>
+                )}
+                {d.fullVideoUrl && (
+                    <p class="full-link">
+                        <a href={d.fullVideoUrl} target="_blank" rel="noopener noreferrer">→ Watch the full video</a>
+                    </p>
+                )}
+            </div>
+        </section>
+
+        <section class="project-process">
+            <h2 class="section-heading">Process</h2>
+            <div class="body-text process-body">
+                <Content />
+            </div>
+        </section>
+
+        <section class="project-credits">
+            <h2 class="section-heading">Credits</h2>
+            {paragraphs(d.credits).map((p) => <p class="body-text">{p}</p>)}
+        </section>
+    </div>
+</Layout>
+
+<style>
+    .main-container {
+        width: 86vw;
+        margin: 0 auto;
+        padding: 24px 0 80px 0;
+    }
+
+    .project-title {
+        font-size: 32px;
+        font-weight: normal;
+        color: #333;
+        margin: 0 0 8px 0;
+        line-height: 1.2;
+    }
+
+    .project-meta {
+        font-size: 16px;
+        color: #888;
+        margin: 0 0 32px 0;
+    }
+
+    .section-heading {
+        font-size: 24px;
+        font-weight: normal;
+        color: #333;
+        margin: 0 0 12px 0;
+    }
+
+    .body-text {
+        font-size: 20px;
+        line-height: 1.6;
+        color: #333;
+        margin: 0 0 20px 0;
+    }
+
+    /* --- 上段: 左にループ、右に1行説明とコンセプト --- */
+    .project-top {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        align-items: start;
+        margin-bottom: 56px;
+    }
+
+    .loop-wrapper {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 3 / 2;
+        overflow: hidden;
+        background-color: #f0f0f0;
+    }
+
+    .loop-media {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .loop-media.is-contain {
+        object-fit: contain;
+    }
+
+    /* ループにhoverしたときだけ1行説明を重ねて出す */
+    .loop-caption {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: 0;
+        padding: 16px;
+        font-size: 18px;
+        color: #fff;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+        opacity: 0;
+        transition: opacity 0.25s ease;
+        pointer-events: none;
+    }
+
+    .loop-wrapper:hover .loop-caption {
+        opacity: 1;
+    }
+
+    .one-liner {
+        font-size: 24px;
+        line-height: 1.4;
+        color: #333;
+        margin: 0 0 24px 0;
+    }
+
+    /* --- 中段: 左にTechnicalとRecognition、右にアーカイブ動画 --- */
+    .project-middle {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        align-items: start;
+        margin-bottom: 56px;
+    }
+
+    .technical-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 32px 0;
+        font-size: 18px;
+        line-height: 1.5;
+    }
+
+    .technical-list li {
+        margin-bottom: 10px;
+        padding-left: 18px;
+        position: relative;
+    }
+
+    .technical-list li::before {
+        content: "–";
+        position: absolute;
+        left: 0;
+        color: #888;
+    }
+
+    .recognition-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.6;
+    }
+
+    .recognition-list li {
+        margin-bottom: 12px;
+    }
+
+    .recognition-list a {
+        color: #333;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        transition: color 0.2s ease;
+    }
+
+    .recognition-list a:hover {
+        color: #888;
+    }
+
+    .archive-video {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        display: block;
+        background-color: #000;
+    }
+
+    .full-link {
+        margin: 12px 0 0 0;
+        font-size: 18px;
+    }
+
+    .full-link a {
+        color: #333;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+    }
+
+    .full-link a:hover {
+        color: #888;
+    }
+
+    /* --- 下段 --- */
+    .project-process {
+        margin-bottom: 56px;
+    }
+
+    .process-body :global(p) {
+        font-size: 20px;
+        line-height: 1.6;
+        color: #333;
+        margin: 0 0 20px 0;
+    }
+
+    .process-body :global(a) {
+        color: #333;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+    }
+
+    @media (max-width: 700px) {
+        .project-top,
+        .project-middle {
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+    }
+</style>

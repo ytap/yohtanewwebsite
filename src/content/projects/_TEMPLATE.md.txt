@@ -1,0 +1,29 @@
+---
+title: タイトル
+contributors: あなたの名前, 共同制作者
+year: "2026"
+oneLiner: 1行説明（トップのhoverに出る文）
+
+order: 99
+published: true
+
+loop: /yohtanewwebsite/assets/slug-loop.mp4
+poster: /yohtanewwebsite/assets/slug.jpg
+
+archiveVideo: /yohtanewwebsite/assets/slug-30s.mp4
+# fullVideoUrl:
+
+concept: |
+  TODO: Why / What。2〜3段落。
+
+technical: |
+  TODO: 技術的な実装。
+
+credits: |
+  TODO: クレジット。
+
+recognition:
+  - text: "TODO"
+---
+
+TODO: Process。プロジェクトの変化の軌跡。

@@ -45,7 +45,7 @@ export function initProjectCardBorders() {
     });
     borderStates.length = 0;
 
-    document.querySelectorAll('.project-block').forEach(card => {
+    document.querySelectorAll('.project-block, .intro-photo').forEach(card => {
         const canvas = document.createElement('canvas');
         canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;';
         card.appendChild(canvas);

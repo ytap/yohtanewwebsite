@@ -1,25 +1,6 @@
 import { initNoiseBackground } from './noiseBackground.js';
 import { initElementBorder } from './projectCardBorder.js';
 
-function setupMenu() {
-    const btn = document.getElementById('menu-btn');
-    const menu = document.getElementById('mobile-menu');
-    const links = menu?.querySelectorAll('a');
-    if (!btn || !menu) return;
-    btn.addEventListener('click', () => {
-        btn.classList.toggle('open');
-        menu.classList.toggle('open');
-    });
-    links?.forEach(link => {
-        link.addEventListener('click', () => {
-            btn.classList.remove('open');
-            menu.classList.remove('open');
-        });
-    });
-}
-document.addEventListener('astro:page-load', setupMenu);
-setupMenu();
-
 function setupLayoutScripts() {
     const isWip = document.body.dataset.isWip === 'true';
     const isHome = document.body.dataset.isHome === 'true';

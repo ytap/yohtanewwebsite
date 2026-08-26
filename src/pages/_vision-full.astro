@@ -1,0 +1,226 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Vision: Yohta Kitagawa">
+    <div class="main-container">
+            <div class="accordion-item active">
+                <button class="accordion-header">
+                    <span class="title-wrapper"><span class="arrow">＞</span>Selected Exhibitions &amp; Performances</span>
+                </button>
+                <div class="accordion-content">
+                    <div class="inner-content">
+                        <ul class="news-list">
+                            <li>
+                                <span class="news-date">Aug 21–23, 2026</span>
+                                Yohta Kitagawa's new piece with Nathan Petree, <em>Spoken Words</em> (page under development), will be presented via audio playback at Cube Fest 2026 (<a href="https://icat.vt.edu/events/2026/08/cube-fest-2026---spoken-words.html" target="_blank" rel="noopener noreferrer">→ icat.vt.edu</a>), held at Virginia Tech.
+                            </li>
+                            <li>
+                                <span class="news-date">Jul 14–17, 2026</span>
+                                Yohta Kitagawa exhibited his new interface <em>Motioning</em> (page under development) at Sound End (<a href="https://soundendo2026.studio.site" target="_blank" rel="noopener noreferrer">→ soundendo2026.studio.site</a>).
+                            </li>
+                            <li>
+                                <span class="news-date">May 13, 2026</span>
+                                Yohta Kitagawa performed <a href="/yohtanewwebsite/projects/noiseloom"><em>NoiseLoom</em></a> and <a href="/yohtanewwebsite/projects/contact"><em>Dancing with Robots</em></a> at BLIP: The Brown Laptop Improvisation Project (<a href="https://events.brown.edu/music/event/332927-blip-the-brown-laptop-improvisation-project" target="_blank" rel="noopener noreferrer">→ events.brown.edu</a>).
+                            </li>
+                            <li>
+                                <span class="news-date">Feb 5, 2026</span>
+                                Yohta Kitagawa's piece, composed with <a href="/yohtanewwebsite/projects/contact-membrane"><em>Contact Membrane</em></a>, was played at the Sited Sound Wintersession final concert at Rhode Island School of Design (<a href="https://www.instagram.com/p/DUQ1ziJjbOS/" target="_blank" rel="noopener noreferrer">→ instagram.com</a>).
+                            </li>
+                        </ul>
+                        <p>More coming soon...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item active">
+                <button class="accordion-header">
+                    <span class="title-wrapper"><span class="arrow">＞</span>Publications</span>
+                </button>
+                <div class="accordion-content">
+                    <div class="inner-content">
+                        <ul class="news-list">
+                            <li>
+                                <span class="news-date">Nov 2–5, 2026</span>
+                                Yohta Kitagawa and Zhiheng Xu (equal contribution). <em>Tele-Bio: Leaving and Receiving Physiological Traces Through a Rotary Telephone</em>. To be presented at the UIST 2026 Student Innovation Contest.
+                            </li>
+                        </ul>
+                        <p>More coming soon...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item active">
+                <button class="accordion-header">
+                    <span class="title-wrapper"><span class="arrow">＞</span>Academic History</span>
+                </button>
+                <div class="accordion-content">
+                    <div class="inner-content">
+                        <ul class="news-list">
+                            <li>
+                                <span class="news-date">Mar 2027 (expected)</span>
+                                B.A. in Environment and Information Studies, Keio University.
+                            </li>
+                            <li>
+                                <span class="news-date">Aug 2025 – May 2026</span>
+                                Exchange student at Brown University, cross-registered at Rhode Island School of Design throughout.
+                            </li>
+                            <li>
+                                <span class="news-date">Apr 2023</span>
+                                Entered the Faculty of Environment and Information Studies, Keio University.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+    </div>
+</Layout>
+
+<script>
+    function setupAccordion() {
+        const headers = document.querySelectorAll('.accordion-header');
+        headers.forEach(header => {
+            // 古いイベントリスナーの重複を防ぐためにノードを複製
+            const newHeader = header.cloneNode(true);
+            if (header.parentNode) header.parentNode.replaceChild(newHeader, header);
+            
+            newHeader.addEventListener('click', () => {
+                const item = newHeader.parentElement;
+                if (!item) return;
+                const content = item.querySelector('.accordion-content');
+                if (!content || !(content instanceof HTMLElement)) return;
+
+                const isOpen = item.classList.contains('active');
+                if (isOpen) {
+                    item.classList.remove('active');
+                    content.style.maxHeight = '0'; // 閉じる
+                } else {
+                    item.classList.add('active');
+                    content.style.maxHeight = content.scrollHeight + 'px'; // 中身の高さに合わせて開く
+                }
+            });
+
+            // 初期状態で開いているものは高さを合わせておく
+            const item = newHeader.parentElement;
+            if (item && item.classList.contains('active')) {
+                const content = item.querySelector('.accordion-content');
+                if (content instanceof HTMLElement) {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            }
+        });
+    }
+
+
+    function initAccordion() {
+        setupAccordion();
+    }
+
+    document.addEventListener('astro:page-load', initAccordion);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAccordion);
+    } else {
+        initAccordion();
+    }
+</script>
+
+<style>
+    .main-container {
+        width: 86vw;
+        margin: 0 auto;
+        padding: 16px 0 40px 0;
+    }
+
+    .accordion-item {
+        border-bottom: 2px solid black;
+        width: 100%;
+    }
+
+    .accordion-item:first-child {
+        border-top: 2px solid black;
+    }
+
+    .accordion-header {
+        width: 100%;
+        background: none;
+        border: none;
+        font-family: inherit;
+        font-size: 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 30px 0;
+        cursor: pointer;
+        text-align: left;
+        color: #333;
+        transition: color 0.2s ease;
+    }
+
+    .accordion-header:hover {
+        color: #888;
+    }
+
+    .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+    }
+
+    .inner-content {
+        padding: 10px 0 40px 0;
+        font-size: 22px;
+        line-height: 1.6;
+    }
+
+    .inner-content a {
+        color: #000;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+    }
+
+    .news-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 24px 0;
+    }
+
+    .news-list li {
+        margin-bottom: 24px;
+    }
+
+    .news-date {
+        display: block;
+        font-size: 16px;
+        color: #888;
+    }
+
+    .news-list a {
+        color: #000;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        transition: color 0.2s ease;
+    }
+
+    .news-list a:hover {
+        color: #888;
+    }
+
+    .title-wrapper {
+        display: flex;
+        align-items: center; 
+    }
+
+    .arrow { 
+        display: inline-block; 
+        margin-right: 12px; 
+        font-family: monospace; 
+        font-size: 0.9em; 
+        transition: transform 0.3s ease; 
+    }
+
+    .accordion-item.active .arrow { 
+        transform: rotate(90deg); 
+    }
+
+</style>

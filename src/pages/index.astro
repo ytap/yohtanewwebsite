@@ -1,170 +1,112 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-const featuredProjects = [
-    {
-        title: 'NoiseLoom',
-        description: 'An intuitive yet unique multiplayer noise improvisation tool, for experts and non-experts.',
-    image: '/yohtanewwebsite/assets/NoiseLoom1.jpg',
-    link: '/yohtanewwebsite/projects/project-a'
-    },
-    {
-        title: 'Knot-music',
-        description: 'Reframing entanglement and sound leakage of wired earphones.',
-    image: '/yohtanewwebsite/assets/Knot-music.JPG',
-    link: '/yohtanewwebsite/projects/knot-music'
-    },
-    {
-        title: 'Contact Membrane',
-        description: 'An interface to listen to mealworm beetles.',
-    image: '/yohtanewwebsite/assets/mealworm1.jpg',
-    link: '/yohtanewwebsite/projects/project-b'
-    },
-    {
-        title: 'Dancing with Robots',
-        description: 'Work in progress project exploring choreography as a method to feel animacy of robots.',
-    image: '/yohtanewwebsite/assets/contact.jpg',
-    link: '/yohtanewwebsite/projects/contact'
-    }
-];
+import { getCollection } from 'astro:content';
+
+// 作品データは src/content/projects/*.md から読む (トップと個別ページで共通)
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const featuredProjects = projects.map((project) => ({
+    title: project.data.title,
+    description: project.data.oneLiner,
+    image: project.data.poster,
+    loop: project.data.loop,
+    fit: project.data.fit,
+    link: project.data.published ? `/yohtanewwebsite/projects/${project.id}` : null,
+}));
+
+const [featureProject, ...subProjects] = featuredProjects;
 ---
 
 <Layout isHome={true}>
     <div class="main-container">
-        <div class="hero-section">
-            <div class="canvas-wrapper">
-                <canvas id="title-canvas" class="procedural-title"></canvas>
-                <canvas id="about-canvas" class="procedural-about"></canvas>
-            </div>
+        <header class="hero-section">
+            <h1 class="site-title">Yohta Kitagawa</h1>
             <canvas id="divider-canvas" class="procedural-divider"></canvas>
-        </div>
+        </header>
 
-        <section class="featured-section">
-            <div class="marquee-container">
-                <div class="marquee-track">
-                    {/* 1周目: 左側の隙間を埋めるバッファ用 */}
-                    {featuredProjects.map((project) => (
-                        <a href={project.link} class="project-block" aria-hidden="true">
-                            <div class="image-wrapper">
-                                <img src={project.image} alt={project.title} class="project-img" />
-                            </div>
-                            <div class="project-text-content">
-                                <h3 class="project-block-title">{project.title}</h3>
-                                <p class="project-block-desc">{project.description}</p>
-                            </div>
-                        </a>
-                    ))}
-
-                    {/* 2周目: 初期状態で中央に表示されるメイン要素 */}
-                    {featuredProjects.map((project) => (
-                        <a href={project.link} class="project-block">
-                            <div class="image-wrapper">
-                                <img src={project.image} alt={project.title} class="project-img" />
-                            </div>
-                            <div class="project-text-content">
-                                <h3 class="project-block-title">{project.title}</h3>
-                                <p class="project-block-desc">{project.description}</p>
-                            </div>
-                        </a>
-                    ))}
-
-                    {/* 3周目: 右側に続くスライド用 */}
-                    {featuredProjects.map((project) => (
-                        <a href={project.link} class="project-block" aria-hidden="true">
-                            <div class="image-wrapper">
-                                <img src={project.image} alt={project.title} class="project-img" />
-                            </div>
-                            <div class="project-text-content">
-                                <h3 class="project-block-title">{project.title}</h3>
-                                <p class="project-block-desc">{project.description}</p>
-                            </div>
-                        </a>
-                    ))}
+        <section class="intro-section" id="vision">
+            <div class="intro-photo">
+                <div class="intro-photo-inner">
+                    <img src="/yohtanewwebsite/assets/portrait.jpg" alt="Yohta Kitagawa" class="intro-photo-img" />
                 </div>
             </div>
-
+            <div class="intro-text">
+                <div class="canvas-wrapper">
+                    <canvas id="about-canvas" class="procedural-about"></canvas>
+                </div>
+                <div class="contact-row">
+                    <p class="intro-contact">Feel free to contact me at <a href="mailto:ykitagawa@keio.jp">ykitagawa@keio.jp</a> / <a href="https://instagram.com/yohta_kitagawa" target="_blank" rel="noopener noreferrer">Instagram</a></p>
+                </div>
+            </div>
         </section>
 
-            <div class="accordion-item active">
-                <button class="accordion-header">
-                    <span class="title-wrapper"><span class="arrow">＞</span>Selected Exhibitions &amp; Performances</span>
-                </button>
-                <div class="accordion-content">
-                    <div class="inner-content">
-                        <ul class="news-list">
-                            <li>
-                                <span class="news-date">Aug 21–23, 2026</span>
-                                Yohta Kitagawa's new piece with Nathan Petree, <em>Spoken Words</em> (page under development), will be presented via audio playback at Cube Fest 2026 (<a href="https://icat.vt.edu/events/2026/08/cube-fest-2026---spoken-words.html" target="_blank" rel="noopener noreferrer">→ icat.vt.edu</a>), held at Virginia Tech.
-                            </li>
-                            <li>
-                                <span class="news-date">Jul 14–17, 2026</span>
-                                Yohta Kitagawa exhibited his new interface <em>Motioning</em> (page under development) at Sound End (<a href="https://soundendo2026.studio.site" target="_blank" rel="noopener noreferrer">→ soundendo2026.studio.site</a>).
-                            </li>
-                            <li>
-                                <span class="news-date">May 13, 2026</span>
-                                Yohta Kitagawa performed <a href="/yohtanewwebsite/projects/project-a"><em>NoiseLoom</em></a> and <a href="/yohtanewwebsite/projects/contact"><em>Dancing with Robots</em></a> at BLIP: The Brown Laptop Improvisation Project (<a href="https://events.brown.edu/music/event/332927-blip-the-brown-laptop-improvisation-project" target="_blank" rel="noopener noreferrer">→ events.brown.edu</a>).
-                            </li>
-                            <li>
-                                <span class="news-date">Feb 5, 2026</span>
-                                Yohta Kitagawa's piece, composed with <a href="/yohtanewwebsite/projects/project-b"><em>Contact Membrane</em></a>, was played at the Sited Sound Wintersession final concert at Rhode Island School of Design (<a href="https://www.instagram.com/p/DUQ1ziJjbOS/" target="_blank" rel="noopener noreferrer">→ instagram.com</a>).
-                            </li>
-                        </ul>
-                        <p>More coming soon...</p>
-                    </div>
-                </div>
-            </div>
+        <section class="featured-section" id="projects">
+            <button id="sound-toggle" class="sound-toggle" type="button" aria-pressed="false" aria-label="Turn sound on">
+                    <svg class="icon-muted" viewBox="0 0 24 24" width="70" height="70" aria-hidden="true">
+                        <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />
+                        <path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" />
+                    </svg>
+                    <svg class="icon-sound" viewBox="0 0 24 24" width="70" height="70" aria-hidden="true">
+                        <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />
+                        <path d="M16.5 9.5a3.5 3.5 0 0 1 0 5M19 7a7 7 0 0 1 0 10" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" />
+                    </svg>
+            </button>
 
-            <div class="accordion-item active">
-                <button class="accordion-header">
-                    <span class="title-wrapper"><span class="arrow">＞</span>Publications</span>
-                </button>
-                <div class="accordion-content">
-                    <div class="inner-content">
-                        <ul class="news-list">
-                            <li>
-                                <span class="news-date">Nov 2–5, 2026</span>
-                                Yohta Kitagawa and Zhiheng Xu (equal contribution). <em>Tele-Bio: Leaving and Receiving Physiological Traces Through a Rotary Telephone</em>. To be presented at the UIST 2026 Student Innovation Contest.
-                            </li>
-                        </ul>
-                        <p>More coming soon...</p>
+            <div class="projects-layout">
+                <a href={featureProject.link} class="project-block project-block-feature">
+                    <div class="image-wrapper">
+                        {featureProject.loop ? (
+                            <video class={featureProject.fit === 'contain' ? 'project-img is-contain' : 'project-img'} src={featureProject.loop} poster={featureProject.image} autoplay muted loop playsinline preload="metadata"></video>
+                        ) : (
+                            <img src={featureProject.image} alt={featureProject.title} class={featureProject.fit === 'contain' ? 'project-img is-contain' : 'project-img'} />
+                        )}
                     </div>
-                </div>
-            </div>
+                    <div class="project-text-content">
+                        <h3 class="project-block-title">{featureProject.title}</h3>
+                        <p class="project-block-desc">{featureProject.description}</p>
+                    </div>
+                </a>
 
-            <div class="accordion-item active">
-                <button class="accordion-header">
-                    <span class="title-wrapper"><span class="arrow">＞</span>Academic History</span>
-                </button>
-                <div class="accordion-content">
-                    <div class="inner-content">
-                        <ul class="news-list">
-                            <li>
-                                <span class="news-date">Mar 2027 (expected)</span>
-                                B.A. in Environment and Information Studies, Keio University.
-                            </li>
-                            <li>
-                                <span class="news-date">Aug 2025 – May 2026</span>
-                                Exchange student at Brown University, cross-registered at Rhode Island School of Design throughout.
-                            </li>
-                            <li>
-                                <span class="news-date">Apr 2023</span>
-                                Entered the Faculty of Environment and Information Studies, Keio University.
-                            </li>
-                        </ul>
-                    </div>
+                <div class="project-sub-grid">
+                    {subProjects.map((project) => (
+                        project.link ? (
+                            <a href={project.link} class="project-block project-block-sub">
+                                <div class="image-wrapper">
+                                    {project.loop ? (
+                                        <video class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} src={project.loop} poster={project.image} autoplay muted loop playsinline preload="metadata"></video>
+                                    ) : (
+                                        <img src={project.image} alt={project.title} class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} />
+                                    )}
+                                </div>
+                                <div class="project-text-content">
+                                    <h3 class="project-block-title">{project.title}</h3>
+                                </div>
+                            </a>
+                        ) : (
+                            <div class="project-block project-block-sub is-upcoming">
+                                <div class="image-wrapper">
+                                    {project.loop ? (
+                                        <video class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} src={project.loop} poster={project.image} autoplay muted loop playsinline preload="metadata"></video>
+                                    ) : (
+                                        <img src={project.image} alt={project.title} class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} />
+                                    )}
+                                </div>
+                                <div class="project-text-content">
+                                    <h3 class="project-block-title">{project.title}</h3>
+                                </div>
+                            </div>
+                        )
+                    ))}
                 </div>
             </div>
+        </section>
 
-            <div class="accordion-item active">
-                <button class="accordion-header">
-                    <span class="title-wrapper"><span class="arrow">＞</span>CV</span>
-                </button>
-                <div class="accordion-content">
-                    <div class="inner-content">
-                        <p>Available upon request. Please contact ykitagawa[at]keio.jp.</p>
-                    </div>
-                </div>
+        <section class="cv-section" id="cv">
+            <div class="cv-embed">
+                <iframe src="/yohtanewwebsite/assets/Yohta_Kitagawa_CV.pdf" title="Yohta Kitagawa CV"></iframe>
             </div>
+            <p class="cv-link"><a href="/yohtanewwebsite/assets/Yohta_Kitagawa_CV.pdf" target="_blank" rel="noopener noreferrer">→ Open CV as PDF</a></p>
+        </section>
 
         </div>
     </Layout>
@@ -172,128 +114,123 @@ const featuredProjects = [
 <script>
     import '../scripts/pages/main-canvas.js';
 
-    function setupAccordion() {
-        const headers = document.querySelectorAll('.accordion-header');
-        headers.forEach(header => {
-            // 古いイベントリスナーの重複を防ぐためにノードを複製
-            const newHeader = header.cloneNode(true);
-            if (header.parentNode) header.parentNode.replaceChild(newHeader, header);
-            
-            newHeader.addEventListener('click', () => {
-                const item = newHeader.parentElement;
-                if (!item) return;
-                const content = item.querySelector('.accordion-content');
-                if (!content || !(content instanceof HTMLElement)) return;
+    // 作品のループ映像: 通常はミュート、hoverしている1本だけ音を出す
+    function setupHoverSound() {
+        const toggle = document.getElementById('sound-toggle');
+        const blocks = Array.from(document.querySelectorAll('.project-block'));
+        if (!toggle || blocks.length === 0) return;
 
-                const isOpen = item.classList.contains('active');
-                if (isOpen) {
-                    item.classList.remove('active');
-                    content.style.maxHeight = '0'; // 閉じる
-                } else {
-                    item.classList.add('active');
-                    content.style.maxHeight = content.scrollHeight + 'px'; // 中身の高さに合わせて開く
+        // hoverできない端末 (スマホなど) では音を扱わない
+        if (!window.matchMedia('(hover: hover)').matches) return;
+
+        const videos = blocks
+            .map(block => ({ block, video: block.querySelector('video') }))
+            .filter(entry => entry.video);
+        if (videos.length === 0) return;
+
+        // hover時の音量 (0〜1)。上げ下げはこの数値だけで調整できる
+        const HOVER_VOLUME = 0.4;
+
+        let soundOn = false;
+        let current = null;
+        // フェードのタイマーは動画ごとに持つ (共有すると前の動画が鳴りっぱなしになる)
+        const fadeTimers = new WeakMap();
+
+        function fadeTo(video, target) {
+            const running = fadeTimers.get(video);
+            if (running) window.clearInterval(running);
+            const id = window.setInterval(() => {
+                const step = 0.04;
+                const next = target > video.volume ? video.volume + step : video.volume - step;
+                const done = target > video.volume ? next >= target : next <= target;
+                video.volume = done ? target : next;
+                if (done) {
+                    window.clearInterval(id);
+                    fadeTimers.delete(video);
+                    if (target === 0) video.muted = true;
+                }
+            }, 25);
+            fadeTimers.set(video, id);
+        }
+
+        function muteNow(video) {
+            const running = fadeTimers.get(video);
+            if (running) {
+                window.clearInterval(running);
+                fadeTimers.delete(video);
+            }
+            video.muted = true;
+            video.volume = 0;
+        }
+
+        // hover中の1本以外は必ずミュートに戻す
+        function enforce() {
+            videos.forEach(({ video }) => {
+                if (video !== current) {
+                    if (!video.muted || video.volume > 0) muteNow(video);
                 }
             });
+        }
 
-            // 初期状態で開いているものは高さを合わせておく
-            const item = newHeader.parentElement;
-            if (item && item.classList.contains('active')) {
-                const content = item.querySelector('.accordion-content');
-                if (content instanceof HTMLElement) {
-                    content.style.maxHeight = content.scrollHeight + 'px';
-                }
-            }
-        });
-    }
+        function stopCurrent() {
+            if (!current) return;
+            const video = current;
+            current = null;
+            fadeTo(video, 0);
+        }
 
-    function setupMarquee() {
-        const track = document.querySelector('.marquee-track');
-        if (!track || !(track instanceof HTMLElement)) return;
-        const blocks = track.querySelectorAll('.project-block');
-        if (blocks.length === 0) return;
-
-        const images = Array.from(track.querySelectorAll('img'));
-        const totalProjects = blocks.length / 3;
-
-        const imageLoadPromises = images.map(img => {
-            if (img.complete) return Promise.resolve();
-            return new Promise(resolve => {
-                img.onload = resolve;
-                img.onerror = resolve;
-            });
-        });
-
-        Promise.all(imageLoadPromises).then(() => {
-            let currentIndex = totalProjects;
-            let stepWidth = 0;
-            let itemWidth = 0;
-
-            function updateLayout() {
-                if (!blocks[0]) return;
-                itemWidth = blocks[0].getBoundingClientRect().width;
-                const style = window.getComputedStyle(blocks[0]);
-                stepWidth = itemWidth + (parseFloat(style.marginRight) || 0);
-                updatePosition(true);
-            }
-
-            function updatePosition(instant = false) {
-                if (instant) {
-                    track.style.transition = 'none';
-                } else {
-                    track.style.transition = 'transform 1s cubic-bezier(0.22, 1, 0.36, 1)';
-                }
-                
-                const centerOffset = (window.innerWidth / 2) - (stepWidth * currentIndex + itemWidth / 2);
-                track.style.transform = `translateX(${centerOffset}px)`;
-            }
-
-            function goToIndex(targetIndex) {
-                currentIndex = targetIndex;
-                updatePosition();
-                setTimeout(() => {
-                    if (currentIndex >= totalProjects * 2) {
-                        currentIndex -= totalProjects;
-                        updatePosition(true);
-                    } else if (currentIndex < totalProjects) {
-                        currentIndex += totalProjects;
-                        updatePosition(true);
-                    }
-                }, 1000);
-            }
-
-            function nextSlide() {
-                goToIndex(currentIndex + 1);
-            }
-
-            // 中央以外のブロックをクリックしたら、そのプロジェクトを中央にスライドさせる
-            blocks.forEach((block, domIndex) => {
-                block.addEventListener('click', (e) => {
-                    if (domIndex === currentIndex) return;
-                    e.preventDefault();
-                    goToIndex(domIndex);
+        function playSound(video) {
+            if (!soundOn || !video) return;
+            if (current && current !== video) muteNow(current);
+            current = video;
+            video.volume = 0;
+            video.muted = false;
+            fadeTo(video, HOVER_VOLUME);
+            const p = video.play();
+            if (p && typeof p.catch === 'function') {
+                p.catch(() => {
+                    muteNow(video);
+                    if (current === video) current = null;
                 });
+            }
+        }
+
+        videos.forEach(({ block, video }) => {
+            block.addEventListener('mouseenter', () => playSound(video));
+            block.addEventListener('mouseleave', () => {
+                if (current === video) stopCurrent();
+                else muteNow(video);
             });
+        });
 
-            window.addEventListener('resize', updateLayout);
-            updateLayout();
-            track.classList.add('is-loaded');
-
-            let intervalId = 0;
-            function startAutoPlay() {
-                intervalId = window.setInterval(nextSlide, 5000);
+        // グリッドの外に出たとき、タブが隠れたときは全部止める
+        const section = document.getElementById('projects');
+        if (section) {
+            section.addEventListener('mouseleave', () => {
+                stopCurrent();
+                enforce();
+            });
+        }
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                current = null;
+                videos.forEach(({ video }) => muteNow(video));
             }
-            function stopAutoPlay() {
-                if (intervalId !== 0) window.clearInterval(intervalId);
+        });
+        window.addEventListener('blur', () => {
+            current = null;
+            videos.forEach(({ video }) => muteNow(video));
+        });
+
+        toggle.addEventListener('click', () => {
+            soundOn = !soundOn;
+            toggle.classList.toggle('is-on', soundOn);
+            toggle.setAttribute('aria-pressed', String(soundOn));
+            toggle.setAttribute('aria-label', soundOn ? 'Turn sound off' : 'Turn sound on');
+            if (!soundOn) {
+                current = null;
+                videos.forEach(({ video }) => muteNow(video));
             }
-
-            // ロード直後にスライドが動くものだと伝えるため、一度だけ早めに送ってから通常の自動再生を始める
-            setTimeout(() => {
-                nextSlide();
-                startAutoPlay();
-            }, 1200);
-
-            track.addEventListener('mouseenter', stopAutoPlay);
-            track.addEventListener('mouseleave', startAutoPlay);
         });
     }
 
@@ -309,6 +246,8 @@ const featuredProjects = [
             }
         })();
 
+        setupHoverSound();
+
         (async () => {
             try {
                 const mod = await import('../scripts/projectCardBorder.js');
@@ -320,8 +259,6 @@ const featuredProjects = [
             }
         })();
         
-        setupAccordion();
-        setupMarquee();
     }
 
     document.addEventListener('astro:page-load', initPage);
@@ -333,25 +270,92 @@ const featuredProjects = [
 </script>
 
 <style>
-    :root {
-        /* ブロック幅は画面幅に追従させる (最小280px / 最大800px) */
-        --project-image-width: clamp(280px, 60vw, 800px);
-        --project-text-width: clamp(280px, 60vw, 800px);
-    }
-
     .hero-section {
-        padding-top: 20px;   /* 💡 画面上部との間の余白を追加（好みに応じて数値を調整） */
+        padding-top: 24px;
         display: flex;
         flex-direction: column;
-        justify-content: flex-start;
         align-items: stretch;
         width: 100%;
     }
+
+    /* 下層ページの .sub-header-title と同じ見え方に揃える */
+    .site-title {
+        font-size: 32px;
+        font-weight: normal;
+        color: #4ac3e1;
+        margin: 0 0 10px 0;
+        line-height: 1.2;
+        opacity: 0;
+        animation: fadeIn 2s ease-out forwards;
+        animation-delay: 0.2s;
+    }
+
+    /* -------------------------------------
+       Intro (portrait + typing about text)
+       ------------------------------------- */
+    .intro-section {
+        display: grid;
+        grid-template-columns: 17% 1fr;
+        gap: 40px;
+        align-items: start;
+        margin: 40px 0 48px 0;
+    }
+
+    .intro-photo {
+        position: relative;
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    .intro-photo-inner {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        overflow: hidden;
+        background-color: #e5e5e5;
+    }
+
+    .intro-photo-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .intro-text {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .intro-contact {
+        margin: 20px 0 0 0;
+        font-size: 20px;
+        color: #333;
+    }
+
+    .intro-contact a {
+        color: #333;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        transition: color 0.2s ease;
+    }
+
+    .intro-contact a:hover {
+        color: #888;
+    }
+
 
     .canvas-wrapper {
         position: relative;
         width: 100%;
         transition: height 0.4s ease-out;
+    }
+
+    /* canvasの青い文字の上に重なる、透明なリンク領域 */
+    .canvas-wrapper :global(.about-link) {
+        display: block;
+        cursor: pointer;
     }
 
     .canvas-wrapper canvas {
@@ -360,6 +364,13 @@ const featuredProjects = [
         left: 0;
         width: 100%;
         height: 100%;
+    }
+
+    @media (max-width: 700px) {
+        .intro-section {
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
     }
 
     .procedural-divider {
@@ -390,136 +401,140 @@ const featuredProjects = [
         padding: 0px 0 40px 0;
     }
 
-    .accordion-item {
-        border-bottom: 2px solid black;
+    /* -------------------------------------
+       Featured Projects
+       ------------------------------------- */
+    .featured-section {
         width: 100%;
+        margin-top: 8px;
+        margin-bottom: 40px;
     }
 
-    .accordion-item:first-child {
-        border-top: 2px solid black;
-    }
-
-    .accordion-header {
-        width: 100%;
-        background: none;
-        border: none;
-        font-family: inherit;
+    .section-title {
         font-size: 32px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 30px 0;
-        cursor: pointer;
-        text-align: left;
+        font-weight: normal;
+        margin: 0 0 20px 0;
         color: #333;
-        transition: color 0.2s ease;
     }
 
-    .accordion-header:hover {
-        color: #888;
+    .cv-section {
+        margin-top: 56px;
     }
 
-    .accordion-content {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease-out;
+    .cv-embed {
+        width: 100%;
+        height: 80vh;
+        max-height: 900px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        margin-bottom: 16px;
     }
 
-    .inner-content {
-        padding: 10px 0 40px 0;
-        font-size: 22px;
-        line-height: 1.6;
-    }
-
-    .news-list {
-        list-style: none;
-        padding: 0;
-        margin: 0 0 24px 0;
-    }
-
-    .news-list li {
-        margin-bottom: 24px;
-    }
-
-    .news-date {
+    .cv-embed iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
         display: block;
-        font-size: 16px;
-        color: #888;
     }
 
-    .news-list a {
-        color: #000;
+    /* モバイル (特にiOS Safari) はPDFのiframe表示が不安定なため、リンクだけ出す */
+    @media (max-width: 700px) {
+        .cv-embed {
+            display: none;
+        }
+    }
+
+    .cv-link {
+        margin: 0;
+        font-size: 20px;
+    }
+
+    .cv-link a {
+        color: #333;
         text-decoration: underline;
         text-underline-offset: 4px;
         transition: color 0.2s ease;
     }
 
-    .news-list a:hover {
+    .cv-link a:hover {
         color: #888;
     }
 
-    .title-wrapper {
-        display: flex;
-        align-items: center; 
-    }
-
-    .arrow { 
-        display: inline-block; 
-        margin-right: 12px; 
-        font-family: monospace; 
-        font-size: 0.9em; 
-        transition: transform 0.3s ease; 
-    }
-
-    .accordion-item.active .arrow { 
-        transform: rotate(90deg); 
-    }
-
-    /* -------------------------------------
-       Featured Projects
-       ------------------------------------- */
+    /* プロジェクトのボックスの真上・右端。浮かせてあるので下のグリッドは動かない */
     .featured-section {
-        width: 100vw;
         position: relative;
-        left: 50%;
-        transform: translateX(-50%);
-        overflow: hidden;
-        margin-top: 0px;
-        margin-bottom: 20px;
     }
 
-    .marquee-container {
-        width: 100%;
-        overflow: hidden;
-        user-select: none;
+    .featured-section .sound-toggle {
+        position: absolute;
+        right: 0;
+        bottom: 100%;
     }
 
-    .marquee-track {
+    .sound-toggle {
+        background: none;
+        border: none;
+        padding: 4px;
+        cursor: pointer;
+        color: #888;
         display: flex;
-        width: max-content;
-        opacity: 0;
-        transition: opacity 0.5s ease;
+        align-items: center;
+        transition: color 0.2s ease;
     }
 
-    .marquee-track.is-loaded {
-        opacity: 1;
+    .sound-toggle:hover {
+        color: #333;
+    }
+
+    /* 音が出る状態のときだけスピーカーのアイコンに切り替える */
+    .sound-toggle .icon-sound {
+        display: none;
+    }
+
+    .sound-toggle.is-on {
+        color: #333;
+    }
+
+    .sound-toggle.is-on .icon-muted {
+        display: none;
+    }
+
+    .sound-toggle.is-on .icon-sound {
+        display: block;
+    }
+
+    /* hoverが無い端末では音を扱わないので、トグル自体を出さない */
+    @media (hover: none), (max-width: 700px) {
+        .sound-toggle {
+            display: none;
+        }
+    }
+
+    .projects-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .project-sub-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
     }
 
     .project-block {
         position: relative;
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-        padding: 20px;
+        align-items: stretch;
+        gap: 12px;
+        padding: 16px;
         background-color: transparent;
         border-radius: 6px;
-        transition: background-color 0.2s ease;
         text-decoration: none;
         color: inherit;
-        flex-shrink: 0;
-        margin-right: 40px;
-        width: var(--project-image-width);
+        transition: background-color 0.2s ease;
     }
 
     .project-block:hover {
@@ -527,9 +542,10 @@ const featuredProjects = [
     }
 
     .image-wrapper {
-        width: var(--project-image-width);
-        aspect-ratio: 16 / 9;
-        border: 2px solid transparent; 
+        position: relative;
+        width: 100%;
+        aspect-ratio: 3 / 2;
+        border: 2px solid transparent;
         box-sizing: border-box;
         overflow: hidden;
         background-color: #f0f0f0;
@@ -542,27 +558,82 @@ const featuredProjects = [
         display: block;
     }
 
+    .project-img.is-contain {
+        object-fit: contain;
+        background-color: #f0f0f0;
+    }
+
+    /* タイトルと説明は画像に重ね、hoverしたときだけ見せる */
     .project-text-content {
+        /* カード自体のpaddingぶん内側に寄せて、画像の上にちょうど重ねる */
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
         display: flex;
         flex-direction: column;
-        justify-content: flex-start;
-        gap: 10px;
-        width: 100%;
-        white-space: normal;
+        gap: 6px;
+        padding: 16px;
+        box-sizing: border-box;
+        color: #fff;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+        opacity: 0;
+        transition: opacity 0.25s ease;
+        pointer-events: none;
+    }
+
+    .project-block:hover .project-text-content,
+    .project-block:focus-visible .project-text-content {
+        opacity: 1;
     }
 
     .project-block-title {
-        font-size: clamp(20px, 2.4vw, 32px);
+        font-size: clamp(18px, 1.8vw, 28px);
         font-weight: bold;
         margin: 0;
         line-height: 1.1;
     }
 
     .project-block-desc {
-        font-size: clamp(14px, 1.4vw, 18px);
-        color: #555;
+        font-size: clamp(13px, 1.05vw, 17px);
+        color: #eee;
         margin: 0;
         line-height: 1.5;
+    }
+
+    .project-block-feature .image-wrapper {
+        aspect-ratio: 3 / 2;
+    }
+
+    .project-block-sub {
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .project-block-sub .project-text-content {
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        padding: 10px;
+    }
+
+    .project-block-sub .image-wrapper {
+        aspect-ratio: 3 / 2;
+    }
+
+    .project-block-sub .project-block-title {
+        font-size: clamp(14px, 1.1vw, 18px);
+    }
+
+    .is-upcoming {
+        cursor: default;
+    }
+
+    @media (max-width: 700px) {
+        .projects-layout {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
     }
 
 </style>

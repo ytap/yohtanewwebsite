@@ -9,19 +9,26 @@ if (typeof window !== 'undefined') {
     const base = 120;
     const range = 255 - base;
     
-    const fontSizePx = 32; 
+    const fontSizePx = 24;
     const startY = 10; 
     const titleAccumulationSpeed = 0.02;
     const lineHeight = fontSizePx * 1.2;
 
     const titleText = "Yohta Kitagawa";
-    const aboutText = "is a Japanese critical media artist and HCI researcher. Guided by his vision of Mediating Animacy, he creates intimate interactions that connect humans to an already animate world. Rooted in sound and robotics, his material-led, experimental practice continually takes on new forms.";
+    const aboutText = "Yohta Kitagawa is a Japanese critical media artist and HCI researcher. Guided by his vision of Mediating Animacy, he creates intimate interactions that connect humans to an already animate world. Rooted in sound and robotics, his material-led, experimental practice continually takes on new forms.";
+
+    // 本文中でVisionページに飛ばすリンク部分
+    const linkText = "Mediating Animacy";
+    const linkHref = "/yohtanewwebsite/vision";
+    const linkStart = aboutText.indexOf(linkText);
+    const linkEnd = linkStart >= 0 ? linkStart + linkText.length : -1;
 
     const measureCanvas = document.createElement('canvas');
     const measureCtx = measureCanvas.getContext('2d');
     measureCtx.font = `normal ${fontSizePx}px CothamSans, sans-serif`;
     
-    const titleWidth = measureCtx.measureText(titleText + " ").width;
+    // タイトルはHTMLのヘッダーに移したので、about文は行頭から始める
+    const titleWidth = 0;
     const words = aboutText.split(' ');
     
     function calculateCanvasHeight(targetWidth) {
@@ -47,76 +54,13 @@ if (typeof window !== 'undefined') {
 
     let canvasHeight = calculateCanvasHeight(cssWidth);
 
-    // wrapperの高さはタイピングの進行に合わせて伸ばすため、まずは1行目分だけ確保する
-    if (wrapper instanceof HTMLElement) {
-      wrapper.style.height = (startY + lineHeight + 5) + 'px';
+    // 本文の実際の高さ (最終行のY + 1行分)。下に続く要素と重ならないよう最初から確保する
+    function contentHeight(positions) {
+      if (!positions || positions.length === 0) return startY + lineHeight + 5;
+      return positions[positions.length - 1].y + lineHeight + 5;
     }
-
-    // TITLE CANVAS
-    const titleCanvas = document.getElementById('title-canvas');
-    if (!(titleCanvas instanceof HTMLCanvasElement)) return;
-    const titleCtx = titleCanvas.getContext('2d');
-    if (!titleCtx) return;
-
-    titleCanvas.width = cssWidth * dpr;
-    titleCanvas.height = canvasHeight * dpr;
-    titleCanvas.style.width = cssWidth + 'px';
-    titleCanvas.style.height = canvasHeight + 'px';
-    titleCtx.scale(dpr, dpr);
-
-    const titleOffCanvas = document.createElement('canvas');
-    titleOffCanvas.width = titleCanvas.width;
-    titleOffCanvas.height = titleCanvas.height;
-    const titleOffCtx = titleOffCanvas.getContext('2d', { willReadFrequently: true });
-    titleOffCtx.scale(dpr, dpr);
-
-    titleOffCtx.font = `normal ${fontSizePx}px CothamSans, sans-serif`;
-    titleOffCtx.textAlign = 'left';
-    titleOffCtx.textBaseline = 'top';
-    titleOffCtx.fillStyle = '#4ac3e1';
-    titleOffCtx.fillText(titleText, 0, startY);
-
-    const titleMaskData = titleOffCtx.getImageData(0, 0, titleOffCanvas.width, titleOffCanvas.height).data;
-    const titleDisplayData = titleCtx.createImageData(titleOffCanvas.width, titleOffCanvas.height);
-    const titleBuffer32 = new Uint32Array(titleDisplayData.data.buffer);
-    const titleAccumulation = new Float32Array(titleBuffer32.length);
 
     let isEffectRunning = true;
-
-    function renderTitle() {
-      if (!isEffectRunning) return;
-      let isFinished = true;
-      for (let i = 0; i < titleBuffer32.length; i++) {
-        const maskAlpha = titleMaskData[i * 4 + 3];
-        if (maskAlpha > 0) {
-          if (titleAccumulation[i] < 1.0) {
-            isFinished = false;
-            const r = base + Math.random() * range;
-            const g = base + Math.random() * range;
-            const b = base + Math.random() * range;
-            titleAccumulation[i] += Math.random() * titleAccumulationSpeed;
-            if (titleAccumulation[i] > 1.0) titleAccumulation[i] = 1.0;
-            const acc = titleAccumulation[i];
-            const targetR = titleMaskData[i * 4 + 0];
-            const targetG = titleMaskData[i * 4 + 1];
-            const targetB = titleMaskData[i * 4 + 2];
-            const currentR = r * (1 - acc) + targetR * acc;
-            const currentG = g * (1 - acc) + targetG * acc;
-            const currentB = b * (1 - acc) + targetB * acc;
-            const alpha = Math.min(255, Math.floor(acc * maskAlpha));
-            titleBuffer32[i] = alpha * 16777216 + Math.floor(currentB) * 65536 + Math.floor(currentG) * 256 + Math.floor(currentR);
-          }
-        } else {
-          titleBuffer32[i] = 0;
-        }
-      }
-      titleCtx.putImageData(titleDisplayData, 0, 0);
-      if (!isFinished) requestAnimationFrame(renderTitle);
-      else {
-        titleCtx.clearRect(0, 0, cssWidth, canvasHeight);
-        titleCtx.drawImage(titleOffCanvas, 0, 0, titleOffCanvas.width / dpr, titleOffCanvas.height / dpr);
-      }
-    }
 
     // ABOUT CANVAS
     const aboutCanvas = document.getElementById('about-canvas');
@@ -171,35 +115,54 @@ if (typeof window !== 'undefined') {
     // タイピングアニメーション用の変数設定
     aboutCtx.font = `normal ${fontSizePx}px CothamSans, sans-serif`;
     let charPositions = calculateCharPositions(aboutCtx, aboutText, 0, startY, cssWidth, lineHeight, titleWidth);
-
-    // 2行目の開始位置と3行目の開始位置を求める(1行目は速く、2行目の間に基準速度まで減速させるため)
-    function getDecelRange(positions) {
-      let lineStartIndex = positions.length;
-      let lineEndIndex = positions.length;
-      if (positions.length === 0) return { lineStartIndex, lineEndIndex };
-      let lastY = positions[0].y;
-      let found = 0;
-      for (let i = 1; i < positions.length; i++) {
-        if (positions[i].y !== lastY) {
-          lastY = positions[i].y;
-          found++;
-          if (found === 1) lineStartIndex = i;
-          if (found === 2) {
-            lineEndIndex = i;
-            break;
-          }
-        }
-      }
-      if (found < 2) lineEndIndex = positions.length;
-      return { lineStartIndex, lineEndIndex };
+    if (wrapper instanceof HTMLElement) {
+      wrapper.style.height = (startY + lineHeight + 5) + 'px';
     }
 
     let typeProgress = 0;
-    const charsPerFrame = 0.6; // 1フレームあたりの文字表示速度（最終的な基準速度）
-    const typeStartSpeedMultiplier = 3; // 1行目の間の速度倍率
-    let { lineStartIndex: typeDecelStart, lineEndIndex: typeDecelEnd } = getDecelRange(charPositions);
+    const charsPerFrame = 0.9; // 1フレームあたりの文字表示速度（最終的な基準速度）
+    const typeStartSpeedMultiplier = 8; // 減速が始まるまでの速度倍率
+    // "animate world"までを一気に打ち、その次の文 (Rooted...) から文末にかけて減速する
+    const decelAnchorWord = 'Rooted';
+    function getDecelIndices(positions) {
+      const anchor = aboutText.indexOf(decelAnchorWord);
+      const start = anchor >= 0 ? Math.min(anchor, positions.length) : Math.floor(positions.length * 0.8);
+      return { start, end: positions.length };
+    }
+    let { start: typeDecelStart, end: typeDecelEnd } = getDecelIndices(charPositions);
     let frameCount = 0;
     let wrapperLineY = startY; // 直近でwrapperの高さを合わせた行のY座標
+
+    // 青い文字の上に透明な<a>を重ねて、canvasの文字をクリックできるようにする
+    function updateLinkHotspots() {
+      if (!(wrapper instanceof HTMLElement) || linkStart < 0) return;
+      wrapper.querySelectorAll('.about-link').forEach(el => el.remove());
+
+      const slice = charPositions.slice(linkStart, linkEnd);
+      if (slice.length === 0) return;
+
+      // 折り返しをまたぐ場合があるので、行 (y座標) ごとに矩形を作る
+      const byLine = new Map();
+      for (const pos of slice) {
+        const line = byLine.get(pos.y);
+        const right = pos.x + aboutCtx.measureText(pos.char).width;
+        if (!line) {
+          byLine.set(pos.y, { left: pos.x, right });
+        } else {
+          line.left = Math.min(line.left, pos.x);
+          line.right = Math.max(line.right, right);
+        }
+      }
+
+      for (const [y, box] of byLine) {
+        const a = document.createElement('a');
+        a.className = 'about-link';
+        a.href = linkHref;
+        a.setAttribute('aria-label', linkText);
+        a.style.cssText = `position:absolute;left:${box.left}px;top:${y}px;width:${box.right - box.left}px;height:${lineHeight}px;z-index:2;`;
+        wrapper.appendChild(a);
+      }
+    }
 
     function renderAbout() {
       if (!isEffectRunning) return;
@@ -213,11 +176,13 @@ if (typeof window !== 'undefined') {
 
       const currentTypeCount = Math.min(Math.floor(typeProgress), charPositions.length);
 
-      // 表示済みの文字を描画
+      // 表示済みの文字を描画 (リンク部分だけ青くする)
       for (let i = 0; i < currentTypeCount; i++) {
         const pos = charPositions[i];
+        aboutCtx.fillStyle = (linkStart >= 0 && i >= linkStart && i < linkEnd) ? '#4ac3e1' : '#333';
         aboutCtx.fillText(pos.char, pos.x, pos.y);
       }
+      aboutCtx.fillStyle = '#333';
 
       // カーソルの位置計算
       let cursorX, cursorY;
@@ -236,10 +201,13 @@ if (typeof window !== 'undefined') {
       }
 
       // 改行してカーソルの行が変わったら、wrapperの高さを伸ばして点線を下に追従させる
+      // 改行するたびに1行ぶんずつ伸ばす。CSSのtransitionで滑らかに下がる
       if (cursorY !== wrapperLineY) {
         wrapperLineY = cursorY;
+        updateLinkHotspots();
         if (wrapper instanceof HTMLElement) {
-          wrapper.style.height = Math.min(cursorY + lineHeight + 5, canvasHeight) + 'px';
+          const grown = Math.min(cursorY + lineHeight + 5, contentHeight(charPositions));
+          wrapper.style.height = grown + 'px';
         }
       }
 
@@ -352,21 +320,6 @@ if (typeof window !== 'undefined') {
           }
           canvasHeight = calculateCanvasHeight(cssWidth);
 
-          if (wrapper instanceof HTMLElement) {
-            wrapper.style.height = canvasHeight + 'px';
-          }
-
-          titleCanvas.width = cssWidth * dpr;
-          titleCanvas.height = canvasHeight * dpr;
-          titleCanvas.style.width = cssWidth + 'px';
-          titleCanvas.style.height = canvasHeight + 'px';
-          titleCtx.scale(dpr, dpr);
-          titleCtx.font = `normal ${fontSizePx}px CothamSans, sans-serif`;
-          titleCtx.fillStyle = '#4ac3e1';
-          titleCtx.textAlign = 'left';
-          titleCtx.textBaseline = 'top';
-          titleCtx.fillText(titleText, 0, startY);
-
           // リサイズイベント内の aboutCanvas 更新部分
           aboutCanvas.width = cssWidth * dpr;
           aboutCanvas.height = canvasHeight * dpr;
@@ -381,10 +334,16 @@ if (typeof window !== 'undefined') {
           // リサイズ時は再計算して全文字を即時描画する
           aboutCtx.clearRect(0, 0, cssWidth, canvasHeight);
           charPositions = calculateCharPositions(aboutCtx, aboutText, 0, startY, cssWidth, lineHeight, titleWidth);
+          if (wrapper instanceof HTMLElement) {
+            wrapper.style.height = contentHeight(charPositions) + 'px';
+          }
           for (let i = 0; i < charPositions.length; i++) {
             const pos = charPositions[i];
+            aboutCtx.fillStyle = (linkStart >= 0 && i >= linkStart && i < linkEnd) ? '#4ac3e1' : '#333';
             aboutCtx.fillText(pos.char, pos.x, pos.y);
           }
+          aboutCtx.fillStyle = '#333';
+          updateLinkHotspots();
 
           dividerWidth = window.innerWidth;
           dividerCanvas.width = dividerWidth * dpr;
@@ -394,7 +353,7 @@ if (typeof window !== 'undefined') {
       }
     }
 
-    setTimeout(() => { requestAnimationFrame(renderTitle); }, 200);
+    updateLinkHotspots();
     setTimeout(() => { requestAnimationFrame(renderAbout); }, 700);
   });
 }
