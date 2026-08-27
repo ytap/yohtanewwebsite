@@ -242,7 +242,7 @@ if (typeof window !== 'undefined') {
   /** @type {{x:number,length:number,text?:string}[]} */
   let lines = [];
   let currentSpeed = 90;
-  const targetSpeed = 1.9;
+  const targetSpeed = 0.5; // 描き切ったあとの巡回速度 (ゆっくり)
   let brakeForce = 0.05;
 
         // 点線の合間に時折混ざる「製作中」の文言

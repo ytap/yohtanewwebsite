@@ -19,6 +19,8 @@ import Layout from '../layouts/Layout.astro';
             </div>
         </section>
 
+        <p class="pdf-note">Unpublished manuscript, 2026. Not peer reviewed.</p>
+
         <div class="pdf-embed">
             <iframe src="/yohtanewwebsite/assets/mediatingAnimacyV1.pdf#zoom=page-width" title="Mediating Animacy"></iframe>
         </div>
@@ -101,6 +103,13 @@ import Layout from '../layouts/Layout.astro';
         line-height: 1.55;
         color: #333;
         margin: 0 0 20px 0;
+    }
+
+    .pdf-note {
+        max-width: 1100px;
+        margin: 0 auto 12px auto;
+        font-size: 18px;
+        color: #888;
     }
 
     /* PDFは埋め込みのまま。枠を紙に近い縦横比にして中央に置く */

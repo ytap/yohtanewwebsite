@@ -38,7 +38,7 @@ function setupLayoutScripts() {
 
             let lines = /** @type {Array<{x:number,length:number}>} */ ([]);
             let currentSpeed = 90;
-            const targetSpeed = 1.9;
+            const targetSpeed = 0.5; // 描き切ったあとの巡回速度 (ゆっくり)
             let brakeForce = 0.05;
 
             function renderDivider() {

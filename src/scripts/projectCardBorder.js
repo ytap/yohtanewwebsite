@@ -27,11 +27,17 @@ export function initElementBorder(el, mode = 'rect') {
     canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;';
     el.appendChild(canvas);
 
+    const drawSpeed = mode === 'underline' ? 0.75 : 1.5;
+    const idleSpeed = mode === 'underline' ? 0.1 : 0.2;
+    const DECEL_FRAMES = 30; // 約0.5秒かけて巡回速度まで落とす
+
     const state = {
         canvas,
         mode,
         dashArray: makeDashArray(mode),
         offset: 0,
+        orbitSpeed: drawSpeed,
+        orbitStep: (drawSpeed - idleSpeed) / DECEL_FRAMES,
         revealLength: 0,
         revealSpeed: REVEAL_INITIAL_SPEED,
         revealBrake: REVEAL_BRAKE_START,
@@ -66,6 +72,8 @@ export function initProjectCardBorders() {
             canvas,
             dashArray: makeDashArray(),
             offset: 0,
+            orbitSpeed: 1.5,
+            orbitStep: (1.5 - 0.2) / 30,
             revealLength: 0,
             revealSpeed: REVEAL_INITIAL_SPEED,
             revealBrake: REVEAL_BRAKE_START,
@@ -148,9 +156,15 @@ function loop() {
         ctx.strokeStyle = '#000';
         ctx.lineWidth = s.mode === 'underline' ? 1.5 : 2;
 
-        // マーチングアンツは登場中も止めず、常に進めておく
-        // 下線は点線が細かいぶん同じ速度だと速く見えるので、見た目を枠と揃えるため半分にする
-        s.offset -= s.mode === 'underline' ? 0.75 : 1.5;
+        // マーチングアンツは登場中も止めず、常に進めておく。
+        // 描き始めの速度から巡回速度まで、一定の割合で線形に減速する
+        // (動きっぱなしだと目が疲れるため、最終的にはほぼ止まって見える速さにする)
+        // 下線は点線が細かいぶん同じ速度だと速く見えるので、枠の半分にしている
+        const idleSpeed = s.mode === 'underline' ? 0.1 : 0.2;
+        if (s.orbitSpeed > idleSpeed) {
+            s.orbitSpeed = Math.max(idleSpeed, s.orbitSpeed - s.orbitStep);
+        }
+        s.offset -= s.orbitSpeed;
 
         if (!s.revealed) {
             // 上の点線と同じ減速カーブで、枠線を最初は速く・徐々にゆっくり描き込む
