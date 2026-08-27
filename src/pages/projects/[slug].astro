@@ -22,7 +22,7 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
     <div class="main-container">
         <header class="project-header">
             <h1 class="project-title">{d.title}</h1>
-            <p class="project-meta">{d.contributors} · {d.year}</p>
+            <p class="project-meta">{d.contributors} · {d.year}{d.role ? ` · ${d.role}` : ''}</p>
         </header>
 
         <section class="project-top">
@@ -31,13 +31,16 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
                     {d.loop ? (
                         <video
                             class={d.fit === 'contain' ? 'loop-media is-contain' : 'loop-media'}
-                            src={d.loop}
                             poster={d.poster}
                             autoplay
                             muted
                             loop
                             playsinline
-                        ></video>
+                            preload="auto"
+                        >
+                            <source src={d.loop.replace('.mp4', '.webm')} type="video/webm" />
+                            <source src={d.loop} type="video/mp4" />
+                        </video>
                     ) : (
                         <img class={d.fit === 'contain' ? 'loop-media is-contain' : 'loop-media'} src={d.poster} alt={d.title} />
                     )}
@@ -45,7 +48,7 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
                 </div>
             </div>
 
-            <div class="top-text">
+            <div class="top-text bordered-block">
                 <p class="one-liner">{d.oneLiner}</p>
                 {paragraphs(d.concept).map((p) => <p class="body-text">{p}</p>)}
             </div>
@@ -53,13 +56,15 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
 
         <section class="project-middle">
             <div class="middle-left">
-                <h2 class="section-heading">Technical Details</h2>
-                <ul class="technical-list">
-                    {d.technical.map((item) => <li>{item}</li>)}
-                </ul>
+                <div class="bordered-block">
+                    <h2 class="section-heading">Technical Details</h2>
+                    <ul class="technical-list">
+                        {d.technical.map((item) => <li>{item}</li>)}
+                    </ul>
+                </div>
 
                 {d.recognition.length > 0 && (
-                    <>
+                    <div class="bordered-block">
                         <h2 class="section-heading">Recognition</h2>
                         <ul class="recognition-list">
                             {d.recognition.map((item) => (
@@ -72,7 +77,7 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
                                 </li>
                             ))}
                         </ul>
-                    </>
+                    </div>
                 )}
             </div>
 
@@ -90,19 +95,35 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
             </div>
         </section>
 
-        <section class="project-process">
+        <section class="project-process bordered-block">
             <h2 class="section-heading">Process</h2>
             <div class="body-text process-body">
                 <Content />
             </div>
         </section>
 
-        <section class="project-credits">
+        <section class="project-credits bordered-block">
             <h2 class="section-heading">Credits</h2>
             {paragraphs(d.credits).map((p) => <p class="body-text">{p}</p>)}
         </section>
     </div>
 </Layout>
+
+<script>
+    import { initElementBorder, initElementUnderline } from '../../scripts/projectCardBorder.js';
+
+    function initBorders() {
+        document.querySelectorAll('.bordered-block').forEach(block => initElementBorder(block));
+        document.querySelectorAll('.section-heading, .one-liner').forEach(el => initElementUnderline(el));
+    }
+
+    document.addEventListener('astro:page-load', initBorders);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initBorders);
+    } else {
+        initBorders();
+    }
+</script>
 
 <style>
     .main-container {
@@ -125,11 +146,36 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
         margin: 0 0 32px 0;
     }
 
+    /* トップの作品カードと同じ、手描き風の点線で囲うブロック */
+    .bordered-block {
+        position: relative;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    .bordered-block > :last-child {
+        margin-bottom: 0;
+    }
+
+    .middle-left {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    /* 見出しは文字幅ぶんだけ、下に動く点線を引く (線はcanvasで描画) */
+    .section-heading,
+    .one-liner {
+        display: inline-block;
+        position: relative;
+        padding-bottom: 5px;
+    }
+
     .section-heading {
         font-size: 24px;
         font-weight: normal;
         color: #333;
-        margin: 0 0 12px 0;
+        margin: 0 0 16px 0;
     }
 
     .body-text {
@@ -163,8 +209,10 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
         display: block;
     }
 
+    /* 図版など、切りたくない画像は余白付きで全体を出す (背景は白) */
     .loop-media.is-contain {
         object-fit: contain;
+        background-color: #fff;
     }
 
     /* ループにhoverしたときだけ1行説明を重ねて出す */
@@ -206,7 +254,7 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
     .technical-list {
         list-style: none;
         padding: 0;
-        margin: 0 0 32px 0;
+        margin: 0;
         font-size: 18px;
         line-height: 1.5;
     }
@@ -224,16 +272,26 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
         color: #888;
     }
 
+    /* Technical Details と同じ位置・同じ記号で揃える */
     .recognition-list {
         list-style: none;
         padding: 0;
         margin: 0;
         font-size: 18px;
-        line-height: 1.6;
+        line-height: 1.5;
     }
 
     .recognition-list li {
-        margin-bottom: 12px;
+        margin-bottom: 10px;
+        padding-left: 18px;
+        position: relative;
+    }
+
+    .recognition-list li::before {
+        content: "–";
+        position: absolute;
+        left: 0;
+        color: #888;
     }
 
     .recognition-list a {

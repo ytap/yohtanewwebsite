@@ -2,6 +2,7 @@
 title: Contact Membrane
 contributors: Yohta Kitagawa
 year: "2026"
+role: "Solo project"
 oneLiner: An interface for listening with a mealworm beetle.
 
 order: 1

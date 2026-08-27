@@ -56,7 +56,10 @@ const [featureProject, ...subProjects] = featuredProjects;
                 <a href={featureProject.link} class="project-block project-block-feature">
                     <div class="image-wrapper">
                         {featureProject.loop ? (
-                            <video class={featureProject.fit === 'contain' ? 'project-img is-contain' : 'project-img'} src={featureProject.loop} poster={featureProject.image} autoplay muted loop playsinline preload="metadata"></video>
+                            <video class={featureProject.fit === 'contain' ? 'project-img is-contain' : 'project-img'} poster={featureProject.image} autoplay muted loop playsinline preload="auto">
+                                <source src={featureProject.loop.replace('.mp4', '.webm')} type="video/webm" />
+                                <source src={featureProject.loop} type="video/mp4" />
+                            </video>
                         ) : (
                             <img src={featureProject.image} alt={featureProject.title} class={featureProject.fit === 'contain' ? 'project-img is-contain' : 'project-img'} />
                         )}
@@ -73,7 +76,10 @@ const [featureProject, ...subProjects] = featuredProjects;
                             <a href={project.link} class="project-block project-block-sub">
                                 <div class="image-wrapper">
                                     {project.loop ? (
-                                        <video class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} src={project.loop} poster={project.image} autoplay muted loop playsinline preload="metadata"></video>
+                                        <video class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} poster={project.image} autoplay muted loop playsinline preload="auto">
+                                            <source src={project.loop.replace('.mp4', '.webm')} type="video/webm" />
+                                            <source src={project.loop} type="video/mp4" />
+                                        </video>
                                     ) : (
                                         <img src={project.image} alt={project.title} class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} />
                                     )}
@@ -86,7 +92,10 @@ const [featureProject, ...subProjects] = featuredProjects;
                             <div class="project-block project-block-sub is-upcoming">
                                 <div class="image-wrapper">
                                     {project.loop ? (
-                                        <video class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} src={project.loop} poster={project.image} autoplay muted loop playsinline preload="metadata"></video>
+                                        <video class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} poster={project.image} autoplay muted loop playsinline preload="auto">
+                                            <source src={project.loop.replace('.mp4', '.webm')} type="video/webm" />
+                                            <source src={project.loop} type="video/mp4" />
+                                        </video>
                                     ) : (
                                         <img src={project.image} alt={project.title} class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} />
                                     )}
@@ -106,6 +115,29 @@ const [featureProject, ...subProjects] = featuredProjects;
                 <iframe src="/yohtanewwebsite/assets/Yohta_Kitagawa_CV.pdf" title="Yohta Kitagawa CV"></iframe>
             </div>
             <p class="cv-link"><a href="/yohtanewwebsite/assets/Yohta_Kitagawa_CV.pdf" target="_blank" rel="noopener noreferrer">→ Open CV as PDF</a></p>
+
+            {/* 埋め込みPDFの中のリンクはDrive側の制限で開けないため、同じリンクをここに並べておく */}
+            <div class="cv-links">
+                <div class="cv-links-group">
+                    <h3 class="cv-links-title">Papers</h3>
+                    <ul>
+                        <li><a href="https://drive.google.com/file/d/1m-BNBD6vwnPbsP8USmHxWUY8O4puRIaX/view" target="_blank" rel="noopener noreferrer">Contact Membrane — SIGGRAPH Asia 2026 Art Papers</a></li>
+                        <li><a href="https://drive.google.com/file/d/1vsCOKhJakygJK4sK4imKwEAZeH-F5iPs/view" target="_blank" rel="noopener noreferrer">Knot-music</a></li>
+                        <li><a href="https://drive.google.com/file/d/1V1u49kPSAruoYXEBNlxZtJlfUSdHNxpq/view" target="_blank" rel="noopener noreferrer">Tele-Bio — ACM UIST 2026 Student Innovation Contest</a></li>
+                        <li><a href="https://drive.google.com/file/d/1LuURZza8ffsDptJcvqLLxj78bsunm9E0/view" target="_blank" rel="noopener noreferrer">Motioning</a></li>
+                    </ul>
+                </div>
+
+                <div class="cv-links-group">
+                    <h3 class="cv-links-title">Videos</h3>
+                    <ul>
+                        <li><a href="/yohtanewwebsite/projects/contact-membrane">Contact Membrane</a></li>
+                        <li><a href="/yohtanewwebsite/projects/knot-music">Knot-music</a></li>
+                        <li><a href="/yohtanewwebsite/projects/noiseloom">NoiseLoom</a></li>
+                        <li><a href="https://drive.google.com/file/d/15BqrXga3WOnNYGmkFKo42O117GeZ5Dsi/view" target="_blank" rel="noopener noreferrer">Supplementary video</a></li>
+                    </ul>
+                </div>
+            </div>
         </section>
 
         </div>
@@ -460,6 +492,58 @@ const [featureProject, ...subProjects] = featuredProjects;
         color: #888;
     }
 
+    .cv-links {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px 40px;
+        margin-top: 28px;
+    }
+
+    .cv-links-title {
+        font-size: 20px;
+        font-weight: normal;
+        color: #333;
+        margin: 0 0 10px 0;
+    }
+
+    .cv-links ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.5;
+    }
+
+    .cv-links li {
+        margin-bottom: 10px;
+        padding-left: 18px;
+        position: relative;
+    }
+
+    .cv-links li::before {
+        content: "–";
+        position: absolute;
+        left: 0;
+        color: #888;
+    }
+
+    .cv-links a {
+        color: #333;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        transition: color 0.2s ease;
+    }
+
+    .cv-links a:hover {
+        color: #888;
+    }
+
+    @media (max-width: 700px) {
+        .cv-links {
+            grid-template-columns: 1fr;
+        }
+    }
+
     /* プロジェクトのボックスの真上・右端。浮かせてあるので下のグリッドは動かない */
     .featured-section {
         position: relative;
@@ -560,7 +644,7 @@ const [featureProject, ...subProjects] = featuredProjects;
 
     .project-img.is-contain {
         object-fit: contain;
-        background-color: #f0f0f0;
+        background-color: #fff;
     }
 
     /* タイトルと説明は画像に重ね、hoverしたときだけ見せる */

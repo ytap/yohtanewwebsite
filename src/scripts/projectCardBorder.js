@@ -9,8 +9,19 @@ const REVEAL_BRAKE_START = 0.05;
 const REVEAL_BRAKE_MAX = 0.08;
 const REVEAL_BRAKE_STEP = 0.0005;
 
-export function initElementBorder(el) {
+// 要素の下辺だけに、枠と同じ動く点線を引く (文字幅に合わせたい場合は要素をinline-blockに)
+export function initElementUnderline(el) {
+    initElementBorder(el, 'underline');
+}
+
+export function initElementBorder(el, mode = 'rect') {
     if (!(el instanceof Element)) return;
+
+    // 枠のcanvasは要素基準で配置するため、positionが未指定なら相対配置にしておく
+    // (これが無いとcanvasが画面全体に広がり、ページの外周に点線が描かれてしまう)
+    if (el instanceof HTMLElement && getComputedStyle(el).position === 'static') {
+        el.style.position = 'relative';
+    }
 
     const canvas = document.createElement('canvas');
     canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;';
@@ -18,7 +29,8 @@ export function initElementBorder(el) {
 
     const state = {
         canvas,
-        dashArray: makeDashArray(),
+        mode,
+        dashArray: makeDashArray(mode),
         offset: 0,
         revealLength: 0,
         revealSpeed: REVEAL_INITIAL_SPEED,
@@ -75,11 +87,13 @@ function fit(canvas, card) {
     canvas.height = r.height;
 }
 
-function makeDashArray() {
+// 下線は文字のスケールに合わせて、枠よりも細かく密な点線にする
+function makeDashArray(mode = 'rect') {
     const arr = [];
-    for (let total = 0; total < 1200;) {
-        const d = 8 + Math.random() * 30;
-        const g = 20 + Math.random() * 70;
+    const limit = mode === 'underline' ? 600 : 1200;
+    for (let total = 0; total < limit;) {
+        const d = mode === 'underline' ? 2 + Math.random() * 6 : 8 + Math.random() * 30;
+        const g = mode === 'underline' ? 4 + Math.random() * 8 : 20 + Math.random() * 70;
         arr.push(d, g);
         total += d + g;
     }
@@ -132,10 +146,11 @@ function loop() {
 
         ctx.clearRect(0, 0, w, h);
         ctx.strokeStyle = '#000';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = s.mode === 'underline' ? 1.5 : 2;
 
         // マーチングアンツは登場中も止めず、常に進めておく
-        s.offset -= 1.5;
+        // 下線は点線が細かいぶん同じ速度だと速く見えるので、見た目を枠と揃えるため半分にする
+        s.offset -= s.mode === 'underline' ? 0.75 : 1.5;
 
         if (!s.revealed) {
             // 上の点線と同じ減速カーブで、枠線を最初は速く・徐々にゆっくり描き込む
@@ -145,7 +160,7 @@ function loop() {
             s.revealSpeed += (REVEAL_TARGET_SPEED - s.revealSpeed) * s.revealBrake;
             s.revealLength += s.revealSpeed;
 
-            const perimeter = getPerimeter(w, h, 6);
+            const perimeter = s.mode === 'underline' ? Math.max(w, 1) : getPerimeter(w, h, 6);
             if (s.revealLength >= perimeter) {
                 s.revealLength = perimeter;
                 s.revealed = true;
@@ -157,7 +172,11 @@ function loop() {
         ctx.lineDashOffset = s.offset;
 
         ctx.beginPath();
-        if (ctx.roundRect) {
+        if (s.mode === 'underline') {
+            const y = h - 1;
+            ctx.moveTo(0, y);
+            ctx.lineTo(w, y);
+        } else if (ctx.roundRect) {
             ctx.roundRect(1, 1, w - 2, h - 2, 6);
         } else {
             ctx.rect(1, 1, w - 2, h - 2);

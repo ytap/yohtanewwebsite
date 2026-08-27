@@ -2,6 +2,7 @@
 title: NoiseLoom
 contributors: Yohta Kitagawa
 year: "2026"
+role: "Solo project"
 oneLiner: Networked noise improvisation through collaborative spectral drawing.
 
 order: 3

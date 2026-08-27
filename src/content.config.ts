@@ -10,6 +10,8 @@ const projects = defineCollection({
         contributors: z.string(),
         // 「2026」「2025–2026」など、表示したい文字列をそのまま書く
         year: z.string(),
+        // 年の隣に出す関わり方。例: "Solo project" / "Role: Interaction design, concept co-creation"
+        role: z.string().optional(),
         // 1行説明。トップのhoverと、ページ右上の両方で使う
         oneLiner: z.string(),
 

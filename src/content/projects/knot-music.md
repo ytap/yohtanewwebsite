@@ -2,6 +2,7 @@
 title: Knot-music
 contributors: Yohta Kitagawa, Shinnosuke Hirose
 year: "2025"
+role: "Role: Concept, interaction design, hardware design"
 oneLiner: A spatial performance made by untangling wired earphones.
 
 order: 2
