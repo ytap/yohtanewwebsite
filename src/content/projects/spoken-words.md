@@ -3,7 +3,7 @@ title: Spoken Words
 contributors: Yohta Kitagawa, Nathan Petree
 year: "2026"
 role: "Role: Concept, system design, spatial audio system"
-oneLiner: A conversation between a human voice and a machine learning to imitate it.
+oneLiner: A call and response between a human voice and its machine-made reflection.
 
 order: 4
 published: true
@@ -15,34 +15,35 @@ archiveVideo: /yohtanewwebsite/assets/spoken-words-archive.mp4
 fullVideoUrl: https://drive.google.com/file/d/1EZR0Yrpy6_n-il-eQRSuqRF_Rf_oVKJs/view
 
 concept: |
-  Nathan Petree repeats the phrase "spoken words." A machine listens, learns the
-  movement of his voice, and answers through a growing choir of accordion-like
-  tones. The same words pass back and forth, but the response changes each time.
+  The performer repeatedly says "spoken words." A machine listens to his voice
+  and returns its pitch and movement as synthesized sound. Each response becomes
+  denser and more musical, until imitation develops into an exchange that neither
+  side fully controls.
 
-  Spoken Words shares its concept with お-な-じ: a person confronting a machine
-  that acts as an imperfect mirror. As imitation becomes conversation and
-  overlap, the human and machine voices approach, cross, and exchange positions
-  in the room. The mirror begins to move.
+  Contemporary algorithms often act like mirrors, learning our expressions and
+  returning amplified versions of them. Spoken Words stays with that mirror. The
+  performer keeps answering his imitation until the exchange becomes an argument,
+  a collision, and eventually a dance.
 
 technical:
-  - "Built in Max/MSP; each utterance is analyzed for pitch, loudness, and spectral features."
+  - "Built in Max/MSP; each utterance is analyzed for pitch, loudness, duration, and spectral features."
   - "A JavaScript state machine learns recurring patterns from what it hears."
   - "Those patterns drive three banks of physically modeled accordion reeds."
   - "Both voices are encoded in third-order Ambisonics."
-  - "When they overlap, their sound fields move together and exchange positions across Virginia Tech's multichannel Cube."
+  - "When they overlap, their sound fields approach, meet, and exchange positions across Virginia Tech's multichannel Cube."
   - "At Cube Fest 2026 the performance was streamed live in Ambisonics between the United States and Japan."
 
 credits: |
   Created by Yohta Kitagawa and Nathan Petree.
-  Performed by Nathan Petree.
+  Performed by Yohta Kitagawa.
 
 recognition:
   - text: "Performed live at Cube Fest 2026, Virginia Tech (Aug 21–23, 2026)"
     url: https://icat.vt.edu/events/2026/08/cube-fest-2026---spoken-words.html
 ---
 
-Spoken Words developed from お-な-じ, which paired a voice with a synthesizer that imitated its pitch. Working with Nathan Petree, the short exchange became a fifteen-minute performance built around repeating the same phrase.
+The work began with a simple exchange: the performer speaks, and a synthesizer returns the pitch of his voice. Repeating the same phrase removes linguistic development, leaving the changing relationship between the voice and its imitation exposed.
 
-The machine gradually moves from simple imitation toward denser responses. Its development follows the number of utterances it has heard, allowing the instrument to learn through the performance itself.
+As the machine hears more repetitions, it learns recurring pitches and timings. Its response grows from a small tone into layered, accordion-like sound that continues after the performer stops speaking.
 
-For Cube Fest, the exchange became spatial. The human and machine begin on opposite sides of the room; sustained overlap draws them together until their positions cross. Their conversation becomes a physical movement through the loudspeaker space.
+For Cube Fest, this exchange became spatial. The human and machine begin on opposite sides of the room. As their voices overlap, they move toward each other, meet, and cross, turning imitation into movement through the loudspeaker space.
