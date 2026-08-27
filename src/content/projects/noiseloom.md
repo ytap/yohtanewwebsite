@@ -3,7 +3,7 @@ title: NoiseLoom
 contributors: Yohta Kitagawa
 year: "2026"
 role: "Solo project"
-oneLiner: Networked noise improvisation through collaborative spectral drawing.
+oneLiner: An accessible interface for improvising noise and finding the sound together.
 
 order: 3
 published: true
@@ -32,14 +32,15 @@ technical:
 
 credits: |
   Created by Yohta Kitagawa.
+  Videography by <a href="https://www.instagram.com/ingridjarvi_studio/" target="_blank" rel="noopener noreferrer">Ingrid Jarvi</a>.
 
 recognition:
   - text: "Poster submitted to ACM UIST 2026."
   - text: "Exhibited at BLIP, Brown University (May 13, 2026)."
 ---
 
-NoiseLoom began from the question of how people without specialized software could improvise with complex sound together. A browser-based interface made it possible to join immediately from a phone.
+NoiseLoom began with a question: how can people improvise with complex sound together without specialized software? A browser-based interface answered it, letting anyone join from their own phone within seconds.
 
-The current system turns a shared spectrogram into both an image and an instrument. Overlapping edits accumulate instead of replacing one another, so the sound remains a collective construction.
+Turning the shared spectrogram into both an image and an instrument made the collective nature of the work explicit. Edits accumulate rather than replace one another, so the sound stays a construction that no single participant owns.
 
-A preliminary study with 11 participants showed strong social connectedness, while some newcomers felt less confident controlling the sound. This led toward clearer feedback, more varied sound materials, and further spatial-audio experiments.
+A preliminary study with eleven participants reported a strong sense of social connectedness, while newcomers felt less confident shaping the sound. That gap now guides the work toward clearer feedback, a wider range of sound materials, and further spatial-audio experiments.

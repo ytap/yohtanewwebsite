@@ -1,9 +1,24 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
 ---
 
 <Layout title="Vision: Yohta Kitagawa">
     <div class="main-container">
+        <p class="vision-lead">What if we ask, "How can we connect to an already animate world"<br />rather than "How can we make the world animate?"</p>
+
+        <section class="vision-intro">
+            <div class="vision-summary">
+                <p>The world is already changing before we notice it.</p>
+                <p>Mediating Animacy explores interfaces that make subtle changes in other beings, materials, and environments perceptible.</p>
+                <p>By responding to these changes, we enter relationships that were already underway, and potentially animate. Through this, mediating animacy aims to question how computational media may make something feel alive, or objectify them.</p>
+            </div>
+
+            <div class="vision-diagram">
+                <img src="/yohtanewwebsite/assets/animacy-diagram.png" alt="Diagram: needs-driven HCI compared with Mediating Animacy" />
+            </div>
+        </section>
+
         <div class="pdf-embed">
             <iframe src="/yohtanewwebsite/assets/mediatingAnimacyV1.pdf#zoom=page-width" title="Mediating Animacy"></iframe>
         </div>
@@ -18,13 +33,84 @@ import Layout from '../layouts/Layout.astro';
         padding: 24px 0 80px 0;
     }
 
+    /* 左にダイアグラム、右にテキスト */
+    /* 高さは左のテキストが決める。図は正方形なので、その高さぶんの幅を取る */
+    /* DOM順はテキストが先 (この順でないと図の幅が決まらない)。
+       表示は左右を反転して、図を左・テキストを右に見せる */
+    .vision-intro {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: stretch;
+        gap: 48px;
+        margin-bottom: 56px;
+    }
+
+    .vision-summary {
+        flex: 1;
+        min-width: 0;
+    }
+
+    /* 図の枠は幅で決める。高さはテキストに合わせて伸び、図はその中に収まる */
+    .vision-diagram {
+        flex: 0 0 clamp(260px, 34%, 460px);
+        position: relative;
+        min-height: 260px;
+    }
+
+    .vision-diagram img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+        display: block;
+    }
+
+    @media (max-width: 700px) {
+        .vision-intro {
+            flex-direction: column-reverse;
+            gap: 24px;
+        }
+
+        /* 縦並びのときは高さを揃える必要がないので、画像本来の比率で置く */
+        .vision-diagram {
+            position: static;
+        }
+
+        .vision-diagram img {
+            position: static;
+            height: auto;
+        }
+    }
+
+    /* 見出しは横幅いっぱい */
+    .vision-lead {
+        font-size: 40px;
+        line-height: 1.3;
+        color: #333;
+        margin: 0 0 36px 0;
+    }
+
+    .vision-summary {
+        margin-bottom: 0;
+    }
+
+    .vision-summary p {
+        font-size: 30px;
+        line-height: 1.55;
+        color: #333;
+        margin: 0 0 20px 0;
+    }
+
+    /* PDFは埋め込みのまま。枠を紙に近い縦横比にして中央に置く */
     .pdf-embed {
         width: 100%;
-        height: 80vh;
-        max-height: 900px;
+        max-width: 1100px;
+        aspect-ratio: 1 / 1.32;
+        margin: 0 auto 16px auto;
         border: 1px solid #ccc;
         background-color: #fff;
-        margin-bottom: 16px;
     }
 
     .pdf-embed iframe {
@@ -43,6 +129,7 @@ import Layout from '../layouts/Layout.astro';
 
     .pdf-link {
         margin: 0;
+        text-align: center;
         font-size: 20px;
     }
 

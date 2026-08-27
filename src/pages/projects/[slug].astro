@@ -14,6 +14,7 @@ const { project } = Astro.props;
 const d = project.data;
 const { Content } = await render(project);
 
+
 // concept / technical / credits は空行で段落に分ける
 const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean);
 ---
@@ -59,7 +60,8 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
                 <div class="bordered-block">
                     <h2 class="section-heading">Technical Details</h2>
                     <ul class="technical-list">
-                        {d.technical.map((item) => <li>{item}</li>)}
+                        {/* 項目内にリンクを書けるようにHTMLとして出力する */}
+                        {d.technical.map((item) => <li set:html={item} />)}
                     </ul>
                 </div>
 
@@ -82,10 +84,12 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
             </div>
 
             <div class="middle-right">
-                {d.archiveVideo && (
+                {d.archiveVideo ? (
                     <div class="archive-block">
                         <video class="archive-video" src={d.archiveVideo} poster={d.poster} controls playsinline></video>
                     </div>
+                ) : (
+                    <p class="archive-pending">Documentation currently in progress...</p>
                 )}
                 {d.fullVideoUrl && (
                     <p class="full-link">
@@ -94,6 +98,13 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
                 )}
             </div>
         </section>
+
+        {d.extraImage && (
+            <section class="project-extra">
+                <img src={d.extraImage} alt={d.extraCaption ?? d.title} />
+                {d.extraCaption && <p class="extra-caption">{d.extraCaption}</p>}
+            </section>
+        )}
 
         <section class="project-process bordered-block">
             <h2 class="section-heading">Process</h2>
@@ -104,8 +115,19 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
 
         <section class="project-credits bordered-block">
             <h2 class="section-heading">Credits</h2>
-            {paragraphs(d.credits).map((p) => <p class="body-text">{p}</p>)}
+            {/* クレジット内にリンクを書けるようにHTMLとして出力する */}
+            {paragraphs(d.credits).map((p) => <p class="body-text" set:html={p} />)}
         </section>
+
+        {d.paper && (
+            <section class="project-paper bordered-block">
+                <h2 class="section-heading">Paper</h2>
+                <div class="paper-embed">
+                    <iframe src={`${d.paper}#zoom=page-width`} title={`${d.title} paper`}></iframe>
+                </div>
+                <p class="paper-link"><a href={d.paper} target="_blank" rel="noopener noreferrer">→ Open as PDF</a></p>
+            </section>
+        )}
     </div>
 </Layout>
 
@@ -265,6 +287,17 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
         position: relative;
     }
 
+    .technical-list a {
+        color: #333;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        transition: color 0.2s ease;
+    }
+
+    .technical-list a:hover {
+        color: #888;
+    }
+
     .technical-list li::before {
         content: "–";
         position: absolute;
@@ -327,6 +360,29 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
         color: #888;
     }
 
+    .archive-pending {
+        margin: 0;
+        font-size: 18px;
+        color: #888;
+    }
+
+    .project-extra {
+        margin-bottom: 24px;
+    }
+
+    .project-extra img {
+        width: 100%;
+        max-width: 860px;
+        height: auto;
+        display: block;
+    }
+
+    .extra-caption {
+        margin: 12px 0 0 0;
+        font-size: 18px;
+        color: #555;
+    }
+
     /* --- 下段 --- */
     .project-process {
         margin-bottom: 56px;
@@ -339,10 +395,65 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
         margin: 0 0 20px 0;
     }
 
+    .project-credits a {
+        color: #333;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        transition: color 0.2s ease;
+    }
+
+    .project-credits a:hover {
+        color: #888;
+    }
+
     .process-body :global(a) {
         color: #333;
         text-decoration: underline;
         text-underline-offset: 4px;
+    }
+
+    .project-paper {
+        margin-top: 24px;
+    }
+
+    /* 論文はスクロールできる埋め込みのまま。枠は紙に近い縦横比にして倍率を安定させる */
+    .paper-embed {
+        width: 100%;
+        max-width: 1100px;
+        aspect-ratio: 1 / 1.32;
+        margin: 0 auto 16px auto;
+        border: 1px solid #ccc;
+        background-color: #fff;
+    }
+
+    .paper-embed iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        display: block;
+    }
+
+    /* モバイル (特にiOS Safari) はPDFのiframe表示が不安定なため、リンクだけ出す */
+    @media (max-width: 700px) {
+        .paper-embed {
+            display: none;
+        }
+    }
+
+    .paper-link {
+        margin: 0;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .paper-link a {
+        color: #333;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+    }
+
+    .paper-link a:hover {
+        color: #888;
     }
 
     @media (max-width: 700px) {

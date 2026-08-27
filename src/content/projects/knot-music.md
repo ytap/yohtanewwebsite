@@ -1,9 +1,9 @@
 ---
 title: Knot-music
 contributors: Yohta Kitagawa, Shinnosuke Hirose
-year: "2025"
+year: "2026"
 role: "Role: Concept, interaction design, hardware design"
-oneLiner: A spatial performance made by untangling wired earphones.
+oneLiner: Tangled earphones choreograph bodies, sound, and space.
 
 order: 2
 published: true
@@ -33,12 +33,15 @@ technical:
 credits: |
   Created and performed by Yohta Kitagawa and Shinnosuke Hirose.
 
+extraImage: /yohtanewwebsite/assets/Knot-hat.JPG
+extraCaption: "Knot-hat (2026, in progress)"
+
+paper: /yohtanewwebsite/assets/paperknot-music.pdf
+
 recognition:
   - text: "Poster under review at SIGGRAPH Asia 2026."
 ---
 
-Knot-music began with the everyday act of untangling earphones. By playing different tracks through three entangled pairs, the performers' practical task became a changing spatial composition.
+Knot-music began with the everyday act of untangling earphones. Playing three different tracks through three entangled pairs turned a practical task into a spatial composition that changes with every pull and knot.
 
-One performer begins alone and the second joins midway, adding another body to the shared constraint. The same material exploration later developed into Knot-hat, a wearable structure woven from approximately 100 wired earphones.
-
-Knot-music and Knot-hat form the beginning of an ongoing series that treats earphone cables as both sound pathways and physical material.
+The same material exploration continued in Knot-hat, a wearable structure woven from roughly a hundred wired earphones. Together the two works open an ongoing series that treats earphone cables as sound pathways and as physical material at once.

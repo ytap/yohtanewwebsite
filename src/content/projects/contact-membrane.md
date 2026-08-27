@@ -1,9 +1,9 @@
 ---
 title: Contact Membrane
 contributors: Yohta Kitagawa
-year: "2026"
+year: "2025–2026"
 role: "Solo project"
-oneLiner: An interface for listening with a mealworm beetle.
+oneLiner: How can we listen to other species?
 
 order: 1
 published: true
@@ -32,6 +32,9 @@ technical:
 
 credits: |
   Created and performed by Yohta Kitagawa.
+  Videography by <a href="https://www.instagram.com/ingridjarvi_studio/" target="_blank" rel="noopener noreferrer">Ingrid Jarvi</a>.
+
+paper: /yohtanewwebsite/assets/contactpaper.pdf
 
 recognition:
   - text: "Accepted to SIGGRAPH Asia 2026 Art Papers. Oral presentation, Dec 1–4, 2026."
@@ -39,8 +42,4 @@ recognition:
     url: https://www.instagram.com/p/DUQ1ziJjbOS/
 ---
 
-The first prototype was an insect-sized hammock whose movement was translated into sound. After observers questioned whether the beetle had become an instrument, the hammock was replaced with a tensioned paper membrane that captures the friction of its footsteps directly.
-
-The performer follows the beetle and tilts the surface in response. Granular processing stretches its small movements into audible events, while the membrane's angle controls their position in the room.
-
-The beetle is never restrained or attached to the surface. Performances last under ten minutes and stop if it repeatedly attempts to leave.
+The first prototype was an insect-sized hammock that translated the beetle's movement into sound. When observers began asking whether the beetle had become an instrument, the hammock gave way to a tensioned paper membrane that picks up the friction of its footsteps directly, leaving the animal free to walk, stop, or turn away.

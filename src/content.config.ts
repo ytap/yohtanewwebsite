@@ -38,6 +38,13 @@ const projects = defineCollection({
         // クレジット
         credits: z.string(),
 
+        // Recognitionの下、Processの上に置く補足画像
+        extraImage: z.string().optional(),
+        extraCaption: z.string().optional(),
+
+        // Creditsの下に埋め込む論文PDF (public/assets/ 以下のパス)
+        paper: z.string().optional(),
+
         // 受賞・論文など。textが本文、urlがあればリンクになる
         recognition: z.array(z.object({
             text: z.string(),

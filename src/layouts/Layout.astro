@@ -122,7 +122,9 @@ const { title = "Portfolio: Yohta Kitagawa", isHome = false, isWip = false } = A
     </style>
 </head>
 <body data-is-home={String(isHome)} data-is-wip={String(isWip)}>
-    {/* Vision / Projects のタブは一旦非表示。復活させるときはここを戻す */}
+    <nav class="site-nav">
+        <a href="/yohtanewwebsite/vision">Vision</a>
+    </nav>
 
     {!isHome && (
         <div class="main-container" style="padding-bottom:0">
