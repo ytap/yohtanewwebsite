@@ -139,6 +139,20 @@ const { title = "Portfolio: Yohta Kitagawa", isHome = false, isWip = false } = A
         <slot />
     </main>
 
+    <script is:inline>
+        // CVのPDFビューア(iframe)の中からサイト内リンクを踏むと、
+        // サイトの中にサイトが表示されてしまうため、最前面のウィンドウに開き直す
+        (function () {
+            try {
+                if (window.top !== window.self) {
+                    window.top.location.replace(window.location.href);
+                }
+            } catch (e) {
+                // 別オリジンに埋め込まれている場合は何もしない
+            }
+        })();
+    </script>
+
     <script src="../scripts/layoutInit.js"></script>
 </body>
 </html>
