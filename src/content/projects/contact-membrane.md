@@ -32,9 +32,9 @@ technical:
 
 credits: |
   Created and performed by Yohta Kitagawa.
+  Originally created in classes at Rhode Island School of Design and Brown University.
+  Thanks to Professor <a href="https://www.tessodesign.com" target="_blank" rel="noopener noreferrer">Tess Oldfield</a>, Professor <a href="https://vivo.brown.edu/display/eosborn" target="_blank" rel="noopener noreferrer">Ed Osborn</a>, Professor <a href="https://www.drelodiefreymann.com" target="_blank" rel="noopener noreferrer">Elodie Freymann</a>, and Professor <a href="https://www.risd.edu/academics/digital-media/faculty/shawn-greenlee" target="_blank" rel="noopener noreferrer">Shawn Greenlee</a>.
   Videography by <a href="https://www.instagram.com/ingridjarvi_studio/" target="_blank" rel="noopener noreferrer">Ingrid Jarvi</a>.
-
-paper: /yohtanewwebsite/assets/contactpaper.pdf
 
 recognition:
   - text: "Accepted to SIGGRAPH Asia 2026 Art Papers. Oral presentation, Dec 1–4, 2026."
