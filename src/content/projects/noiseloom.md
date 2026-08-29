@@ -32,6 +32,8 @@ technical:
 
 credits: |
   Created by Yohta Kitagawa.
+  Originally created in a class at Brown University.
+  Thanks to Professor <a href="https://vivo.brown.edu/display/jrovan" target="_blank" rel="noopener noreferrer">Butch Rovan</a>.
   Videography by <a href="https://www.instagram.com/ingridjarvi_studio/" target="_blank" rel="noopener noreferrer">Ingrid Jarvi</a>.
 
 recognition:
