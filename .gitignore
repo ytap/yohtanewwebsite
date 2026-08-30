@@ -26,3 +26,4 @@ pnpm-debug.log*
 
 # 元動画 (書き出し前の素材。サイトには含めない)
 media-src/
+.withheld-papers/

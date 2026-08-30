@@ -36,7 +36,6 @@ credits: |
 extraImage: /yohtanewwebsite/assets/Knot-hat.JPG
 extraCaption: "Knot-hat (2026, in progress)"
 
-paper: /yohtanewwebsite/assets/paperknot-music.pdf
 
 recognition:
   - text: "Poster under review at SIGGRAPH Asia 2026."

@@ -3,7 +3,7 @@ title: Tele-Bio
 contributors: Yohta Kitagawa, Zhiheng Xu (equal contribution)
 year: "2026"
 role: "Role: Concept, physical computing, interaction design"
-oneLiner: Leaving and receiving physiological traces through a rotary telephone.
+oneLiner: Leaving and receiving physiological traces through a public telephone.
 
 order: 5
 published: true
