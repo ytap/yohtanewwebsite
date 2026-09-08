@@ -33,8 +33,13 @@ technical:
 credits: |
   Created and performed by Yohta Kitagawa and Shinnosuke Hirose.
 
-extraImage: /yohtanewwebsite/assets/Knot-hat.JPG
-extraCaption: "Knot-hat (2026, in progress)"
+extraImages:
+  - src: /yohtanewwebsite/assets/Knot-hat.JPG
+    caption: "Knot-hat (2026, in progress)"
+  - src: /yohtanewwebsite/assets/knotplant.jpeg
+    caption: "Knot-plant (2026, in progress)"
+  - src: /yohtanewwebsite/assets/knotsudare.jpeg
+    caption: "Knot-sudare (2026, in progress)"
 
 
 recognition:

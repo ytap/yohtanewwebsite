@@ -39,8 +39,10 @@ const projects = defineCollection({
         credits: z.string(),
 
         // Recognitionの下、Processの上に置く補足画像
-        extraImage: z.string().optional(),
-        extraCaption: z.string().optional(),
+        extraImages: z.array(z.object({
+            src: z.string(),
+            caption: z.string().optional(),
+        })).default([]),
 
         // Creditsの下に埋め込む論文PDF (public/assets/ 以下のパス)
         paper: z.string().optional(),

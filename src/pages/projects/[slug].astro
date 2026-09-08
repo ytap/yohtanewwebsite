@@ -99,12 +99,12 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
             </div>
         </section>
 
-        {d.extraImage && (
+        {d.extraImages.map((image) => (
             <section class="project-extra">
-                <img src={d.extraImage} alt={d.extraCaption ?? d.title} />
-                {d.extraCaption && <p class="extra-caption">{d.extraCaption}</p>}
+                <img src={image.src} alt={image.caption ?? d.title} />
+                {image.caption && <p class="extra-caption">{image.caption}</p>}
             </section>
-        )}
+        ))}
 
         <section class="project-process bordered-block">
             <h2 class="section-heading">Process</h2>
