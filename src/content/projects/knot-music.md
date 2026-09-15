@@ -9,6 +9,7 @@ order: 2
 published: true
 
 loop: /yohtanewwebsite/assets/knot-music-loop.mp4
+homeLoop: /yohtanewwebsite/assets/knot-music-home-loop.mp4
 poster: /yohtanewwebsite/assets/knot-music-poster.jpg
 
 archiveVideo: /yohtanewwebsite/assets/knot-music-archive.mp4

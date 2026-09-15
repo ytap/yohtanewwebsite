@@ -14,7 +14,7 @@ const featuredProjects = projects.map((project) => ({
     title: project.data.title,
     description: project.data.oneLiner,
     image: project.data.poster,
-    loop: project.data.loop,
+    loop: project.data.homeLoop ?? project.data.loop,
     fit: project.data.fit,
     link: project.data.published ? `/yohtanewwebsite/projects/${project.id}` : null,
 }));

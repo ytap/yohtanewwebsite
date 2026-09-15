@@ -17,6 +17,9 @@ import Layout from '../layouts/Layout.astro';
             <div class="vision-diagram">
                 <img src="/yohtanewwebsite/assets/animacy-diagram-v2.jpg" alt="Diagram: needs-driven HCI compared with Mediating Animacy" />
             </div>
+            <div class="vision-photo">
+                <img src="/yohtanewwebsite/assets/shoryuuma.png" alt="Shoryuuma" />
+            </div>
         </section>
 
         <p class="pdf-note">Unpublished manuscript, 2026. Not peer reviewed.</p>
@@ -35,26 +38,25 @@ import Layout from '../layouts/Layout.astro';
         padding: 24px 0 80px 0;
     }
 
-    /* 左にダイアグラム、右にテキスト */
-    /* 高さは左のテキストが決める。図は正方形なので、その高さぶんの幅を取る */
-    /* DOM順はテキストが先 (この順でないと図の幅が決まらない)。
-       表示は左右を反転して、図を左・テキストを右に見せる */
+    /* 1行目の高さはテキストが決め、ダイアグラムは元の枠内に収める */
     .vision-intro {
-        display: flex;
-        flex-direction: row-reverse;
-        align-items: stretch;
-        gap: 48px;
+        display: grid;
+        grid-template-columns: clamp(260px, 34%, 460px) minmax(0, 1fr);
+        column-gap: 48px;
+        row-gap: 24px;
         margin-bottom: 56px;
     }
 
     .vision-summary {
-        flex: 1;
+        grid-column: 2;
+        grid-row: 1;
         min-width: 0;
     }
 
-    /* 図の枠は幅で決める。高さはテキストに合わせて伸び、図はその中に収まる */
+    /* 元のダイアグラムと同じく、説明文の高さを上限に収める */
     .vision-diagram {
-        flex: 0 0 clamp(260px, 34%, 460px);
+        grid-column: 1;
+        grid-row: 1;
         position: relative;
         min-height: 260px;
     }
@@ -69,20 +71,41 @@ import Layout from '../layouts/Layout.astro';
         display: block;
     }
 
+    .vision-photo {
+        grid-column: 1;
+        grid-row: 2;
+        width: min(100%, 360px);
+    }
+
+    .vision-photo img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
     @media (max-width: 700px) {
         .vision-intro {
-            flex-direction: column-reverse;
-            gap: 24px;
+            grid-template-columns: 1fr;
+            row-gap: 24px;
         }
 
-        /* 縦並びのときは高さを揃える必要がないので、画像本来の比率で置く */
         .vision-diagram {
             position: static;
+            min-height: 0;
         }
 
         .vision-diagram img {
             position: static;
             height: auto;
+        }
+
+        .vision-photo {
+            width: min(100%, 320px);
+        }
+
+        .vision-summary {
+            grid-column: 1;
+            grid-row: 3;
         }
     }
 

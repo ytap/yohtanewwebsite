@@ -25,6 +25,8 @@ const projects = defineCollection({
 
         // ループ再生する短い動画と、その静止画 (動画が無い間は静止画だけでも動く)
         loop: z.string().optional(),
+        // トップページだけ別のループを使いたい場合
+        homeLoop: z.string().optional(),
         poster: z.string(),
 
         // 30秒のアーカイブ動画と、フル尺へのリンク
