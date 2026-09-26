@@ -36,6 +36,7 @@ const projects = defineCollection({
         // WhyとWhatに答える簡潔なコンセプト。YAMLの | で複数段落書ける
         concept: z.string(),
         // 技術的な実装。箇条書きで1項目1行
+        technicalHeading: z.string().default('Technical Details'),
         technical: z.array(z.string()).default([]),
         // クレジット
         credits: z.string(),

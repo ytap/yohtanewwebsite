@@ -2,13 +2,13 @@
 title: Knot-music
 contributors: Yohta Kitagawa, Shinnosuke Hirose
 year: "2026"
-role: "Role: Concept, interaction design, hardware design"
-oneLiner: Tangled earphones choreograph bodies, sound, and space.
+role: "Role: Co-created all objects while taking responsibility on concept, interaction design, fabrication."
+oneLiner: How can wired earphones weave tangible, embodied, and entangled experiences?
 
 order: 2
 published: true
 
-loop: /yohtanewwebsite/assets/knot-music-loop.mp4
+loop: /yohtanewwebsite/assets/knot-music-home-loop.mp4
 homeLoop: /yohtanewwebsite/assets/knot-music-home-loop.mp4
 poster: /yohtanewwebsite/assets/knot-music-poster.jpg
 
@@ -16,15 +16,13 @@ archiveVideo: /yohtanewwebsite/assets/knot-music-archive.mp4
 fullVideoUrl: https://www.youtube.com/watch?v=_6essndey40
 
 concept: |
-  Wired earphones are made for private listening, yet they leak sound and become
-  tangled. Knot-music turns these familiar inconveniences into a musical
-  instrument. Three earphones play different tracks while two performers
-  untangle their cables.
+  Knot-music uses wired earphones to recreate existing objects in the world.
+  Focusing on its material properties, such as the form and data flow being
+  the same, the leakage of sound blurring the public and private, Knot-music
+  envisions and inspires people to rethink boundaries in an entangled and
+  complex world we live in.
 
-  The cables carry sound while constraining the performers' hands. Every action
-  changes the tangle, the positions of the earphones, and the mix heard by the
-  listener. Friction and impact from handling become part of the music.
-
+technicalHeading: "Iteration 1: Knot-music (Performance)"
 technical:
   - "Three MP3 players drive three wired earphones."
   - "Four microphones around the performance area capture sound leakage and handling noise."
@@ -47,6 +45,6 @@ recognition:
   - text: "Poster under review at SIGGRAPH Asia 2026."
 ---
 
-Knot-music began with the everyday act of untangling earphones. Playing three different tracks through three entangled pairs turned a practical task into a spatial composition that changes with every pull and knot.
+Knot-music began with the everyday act of untangling earphones. For the first iteration, playing three different tracks through three entangled pairs turned the task of untangling into a spatial composition that changes with every pull and knot.
 
-The same material exploration continued in Knot-hat, a wearable structure woven from roughly a hundred wired earphones. Together the two works open an ongoing series that treats earphone cables as sound pathways and as physical material at once.
+The same material exploration continued in Knot-hat, a wearable structure woven from roughly a hundred wired earphones. We pushed this way of making to Knot-plant and Knot-sudare, slowly seeing the world through the lens of wired earphones. The project is ongoing, and we are actively thinking what can be said from this practice.

@@ -58,7 +58,7 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
         <section class="project-middle">
             <div class="middle-left">
                 <div class="bordered-block">
-                    <h2 class="section-heading">Technical Details</h2>
+                    <h2 class="section-heading">{d.technicalHeading}</h2>
                     <ul class="technical-list">
                         {/* 項目内にリンクを書けるようにHTMLとして出力する */}
                         {d.technical.map((item) => <li set:html={item} />)}
@@ -99,8 +99,11 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
             </div>
         </section>
 
-        {d.extraImages.map((image) => (
+        {d.extraImages.map((image, index) => (
             <section class="project-extra">
+                {project.id === 'knot-music' && index === 0 && (
+                    <h2 class="section-heading future-iterations-heading">Future Iterations</h2>
+                )}
                 <img src={image.src} alt={image.caption ?? d.title} />
                 {image.caption && <p class="extra-caption">{image.caption}</p>}
             </section>

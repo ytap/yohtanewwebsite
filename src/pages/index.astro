@@ -13,7 +13,7 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
 const featuredProjects = projects.map((project) => ({
     title: project.data.title,
     description: project.data.oneLiner,
-    image: project.data.poster,
+    image: project.id === 'knot-music' ? '/yohtanewwebsite/assets/Knot-hat.JPG' : project.data.poster,
     loop: project.data.homeLoop ?? project.data.loop,
     fit: project.data.fit,
     link: project.data.published ? `/yohtanewwebsite/projects/${project.id}` : null,
