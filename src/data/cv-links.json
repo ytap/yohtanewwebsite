@@ -1,93 +1,42 @@
 [
  {
   "href": "https://ytap.github.io/yohtanewwebsite/",
-  "left": 28.468,
-  "top": 8.324,
-  "width": 6.573,
-  "height": 1.653
- },
- {
-  "href": "https://drive.google.com/file/d/14-eNW2zx_5TcRajRujE542uagfaqT1sB/view?usp=share_link",
-  "left": 26.694,
-  "top": 38.227,
-  "width": 59.758,
-  "height": 1.397
- },
- {
-  "href": "https://drive.google.com/file/d/1gCVeWMUgNI_t1-2tF1aal6gMO73L7hvi/view?usp=share_link",
-  "left": 21.653,
-  "top": 41.676,
-  "width": 66.129,
-  "height": 1.397
- },
- {
-  "href": "https://drive.google.com/file/d/1gCVeWMUgNI_t1-2tF1aal6gMO73L7hvi/view?usp=share_link",
-  "left": 12.218,
-  "top": 43.073,
-  "width": 11.008,
-  "height": 2.081
- },
- {
-  "href": "https://drive.google.com/file/d/1LuURZza8ffsDptJcvqLLxj78bsunm9E0/view?usp=sharing",
-  "left": 21.653,
-  "top": 49.23,
-  "width": 54.839,
-  "height": 1.397
+  "label": "Portfolio Link",
+  "left": 9.804,
+  "top": 3.443,
+  "width": 11.888,
+  "height": 2.077
  },
  {
   "href": "https://icat.vt.edu/events/2026/08/cube-fest-2026---spoken-words.html",
-  "left": 39.113,
-  "top": 55.787,
-  "width": 12.137,
-  "height": 2.109
+  "label": "Cube Fest 2026",
+  "left": 37.616,
+  "top": 76.015,
+  "width": 11.588,
+  "height": 1.841
  },
  {
-  "href": "https://soundendo2026.studio.site/",
-  "left": 21.613,
-  "top": 57.896,
-  "width": 8.669,
-  "height": 2.109
+  "href": "https://soundendo2026.studio.site",
+  "label": "Sound End",
+  "left": 19.598,
+  "top": 77.533,
+  "width": 7.845,
+  "height": 1.731
  },
  {
   "href": "https://events.brown.edu/music/event/332927-blip-the-brown-laptop-improvisation-project",
-  "left": 39.758,
-  "top": 60.006,
-  "width": 4.194,
-  "height": 2.138
+  "label": "BLIP",
+  "left": 38.207,
+  "top": 79.048,
+  "width": 3.206,
+  "height": 1.731
  },
  {
   "href": "https://www.instagram.com/p/DUQ1ziJjbOS/",
-  "left": 28.266,
-  "top": 62.144,
-  "width": 18.79,
-  "height": 2.109
- },
- {
-  "href": "https://ytap.github.io/yohtanewwebsite/projects/contact-membrane/",
-  "left": 12.218,
-  "top": 66.847,
-  "width": 14.556,
-  "height": 1.511
- },
- {
-  "href": "https://ytap.github.io/yohtanewwebsite/projects/noiseloom/",
-  "left": 12.218,
-  "top": 73.461,
-  "width": 8.911,
-  "height": 1.511
- },
- {
-  "href": "https://ytap.github.io/yohtanewwebsite/projects/knot-music/",
-  "left": 12.218,
-  "top": 78.677,
-  "width": 8.992,
-  "height": 1.511
- },
- {
-  "href": "https://drive.google.com/file/d/1IVxdbGjkRMYXQYY8DqTKlD4J60ie9ZYQ/view?usp=sharing",
-  "left": 12.218,
-  "top": 83.894,
-  "width": 15.645,
-  "height": 1.511
+  "label": "Sited Sound final concert",
+  "left": 26.574,
+  "top": 80.563,
+  "width": 18.65,
+  "height": 1.731
  }
 ]

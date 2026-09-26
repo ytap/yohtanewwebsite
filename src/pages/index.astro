@@ -125,6 +125,8 @@ const [featureProject, ...subProjects] = featuredProjects;
                             <a
                                 class="cv-page-link"
                                 href={link.href}
+                                aria-label={link.label}
+                                title={link.label}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={`left:${link.left}%;top:${link.top}%;width:${link.width}%;height:${link.height}%;`}
@@ -133,7 +135,10 @@ const [featureProject, ...subProjects] = featuredProjects;
                     </div>
                 ))}
             </div>
-            <p class="cv-link"><a href="/yohtanewwebsite/assets/Yohta_Kitagawa_CV.pdf" target="_blank" rel="noopener noreferrer">→ Open CV as PDF</a></p>
+            <p class="cv-link">
+                <a href="/yohtanewwebsite/assets/Yohta_Kitagawa_CV.pdf">→ Open CV as PDF</a>
+                <a class="cv-download" href="/yohtanewwebsite/assets/Yohta_Kitagawa_CV.pdf" download="Yohta_Kitagawa_CV.pdf">Download PDF</a>
+            </p>
 
         </section>
 
@@ -523,6 +528,15 @@ const [featureProject, ...subProjects] = featuredProjects;
     .cv-page-link {
         position: absolute;
         display: block;
+        cursor: pointer;
+        border-radius: 2px;
+    }
+
+    .cv-page-link:hover,
+    .cv-page-link:focus-visible {
+        background: rgba(62, 105, 151, 0.12);
+        outline: 2px solid #3e6997;
+        outline-offset: 2px;
     }
 
     .cv-link {
@@ -540,6 +554,13 @@ const [featureProject, ...subProjects] = featuredProjects;
 
     .cv-link a:hover {
         color: #888;
+    }
+
+    .cv-download {
+        display: block;
+        width: fit-content;
+        margin: 10px auto 0;
+        font-size: 16px;
     }
 
     .projects-layout {
