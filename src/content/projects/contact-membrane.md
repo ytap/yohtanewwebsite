@@ -9,6 +9,7 @@ order: 1
 published: true
 
 loop: /yohtanewwebsite/assets/contact-membrane-loop.mp4
+homePoster: /yohtanewwebsite/assets/contact-membrane-home-first-frame.jpg
 poster: /yohtanewwebsite/assets/contact-membrane-poster.jpg
 
 archiveVideo: /yohtanewwebsite/assets/contact-membrane-archive.mp4

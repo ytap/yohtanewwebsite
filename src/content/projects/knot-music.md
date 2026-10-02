@@ -10,6 +10,7 @@ published: true
 
 loop: /yohtanewwebsite/assets/knot-music-home-loop.mp4
 homeLoop: /yohtanewwebsite/assets/knot-music-home-loop.mp4
+homePoster: /yohtanewwebsite/assets/knot-music-home-first-frame.jpg
 poster: /yohtanewwebsite/assets/knot-music-poster.jpg
 
 archiveVideo: /yohtanewwebsite/assets/knot-music-archive.mp4

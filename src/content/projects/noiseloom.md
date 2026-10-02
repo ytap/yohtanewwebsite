@@ -9,6 +9,7 @@ order: 3
 published: true
 
 loop: /yohtanewwebsite/assets/noiseloom-loop.mp4
+homePoster: /yohtanewwebsite/assets/noiseloom-home-first-frame.jpg
 poster: /yohtanewwebsite/assets/noiseloom-poster.jpg
 
 archiveVideo: /yohtanewwebsite/assets/noiseloom-archive.mp4

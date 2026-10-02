@@ -9,6 +9,7 @@ order: 5
 published: true
 
 homeLoop: /yohtanewwebsite/assets/tele-bio-loop.mp4
+homePoster: /yohtanewwebsite/assets/tele-bio-home-first-frame.jpg
 poster: /yohtanewwebsite/assets/telebio-left.png
 fit: contain
 homeFit: cover

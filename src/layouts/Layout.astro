@@ -4,14 +4,16 @@ interface Props {
     title?: string;
     isHome?: boolean;
     isWip?: boolean;
+    preloadImages?: string[];
 }
 
-const { title = "Portfolio: Yohta Kitagawa", isHome = false, isWip = false } = Astro.props;
+const { title = "Portfolio: Yohta Kitagawa", isHome = false, isWip = false, preloadImages = [] } = Astro.props;
 ---
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <title>{title}</title>
+    {preloadImages.map((src) => <link rel="preload" as="image" href={src} />)}
     <style is:global>
         @font-face {
             font-family: 'CothamSans';

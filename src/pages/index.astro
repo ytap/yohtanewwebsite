@@ -13,7 +13,7 @@ const projects = (await getCollection('projects')).sort((a, b) => a.data.order -
 const featuredProjects = projects.map((project) => ({
     title: project.data.title,
     description: project.data.oneLiner,
-    image: project.id === 'knot-music' ? '/yohtanewwebsite/assets/Knot-hat.JPG' : project.data.poster,
+    image: project.data.homePoster ?? (project.id === 'knot-music' ? '/yohtanewwebsite/assets/Knot-hat.JPG' : project.data.poster),
     loop: project.data.homeLoop ?? project.data.loop,
     fit: project.data.homeFit ?? project.data.fit,
     link: project.data.published ? `/yohtanewwebsite/projects/${project.id}` : null,
@@ -22,7 +22,7 @@ const featuredProjects = projects.map((project) => ({
 const [featureProject, ...subProjects] = featuredProjects;
 ---
 
-<Layout isHome={true}>
+<Layout isHome={true} preloadImages={featuredProjects.map((project) => project.image)}>
     <div class="main-container">
         <header class="hero-section">
             <h1 class="site-title">Yohta Kitagawa</h1>
@@ -62,10 +62,13 @@ const [featureProject, ...subProjects] = featuredProjects;
                 <a href={featureProject.link} class="project-block project-block-feature">
                     <div class="image-wrapper">
                         {featureProject.loop ? (
-                            <video class={featureProject.fit === 'contain' ? 'project-img is-contain' : 'project-img'} poster={featureProject.image} autoplay muted loop playsinline preload="auto">
-                                <source src={featureProject.loop.replace('.mp4', '.webm')} type="video/webm" />
-                                <source src={featureProject.loop} type="video/mp4" />
-                            </video>
+                            <>
+                                <img src={featureProject.image} alt="" aria-hidden="true" class={featureProject.fit === 'contain' ? 'project-img first-frame is-contain' : 'project-img first-frame'} />
+                                <video class={featureProject.fit === 'contain' ? 'project-img project-video is-contain' : 'project-img project-video'} poster={featureProject.image} autoplay muted loop playsinline preload="auto">
+                                    <source src={featureProject.loop.replace('.mp4', '.webm')} type="video/webm" />
+                                    <source src={featureProject.loop} type="video/mp4" />
+                                </video>
+                            </>
                         ) : (
                             <img src={featureProject.image} alt={featureProject.title} class={featureProject.fit === 'contain' ? 'project-img is-contain' : 'project-img'} />
                         )}
@@ -82,10 +85,13 @@ const [featureProject, ...subProjects] = featuredProjects;
                             <a href={project.link} class="project-block project-block-sub">
                                 <div class="image-wrapper">
                                     {project.loop ? (
-                                        <video class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} poster={project.image} autoplay muted loop playsinline preload="auto">
-                                            <source src={project.loop.replace('.mp4', '.webm')} type="video/webm" />
-                                            <source src={project.loop} type="video/mp4" />
-                                        </video>
+                                        <>
+                                            <img src={project.image} alt="" aria-hidden="true" class={project.fit === 'contain' ? 'project-img first-frame is-contain' : 'project-img first-frame'} />
+                                            <video class={project.fit === 'contain' ? 'project-img project-video is-contain' : 'project-img project-video'} poster={project.image} autoplay muted loop playsinline preload="auto">
+                                                <source src={project.loop.replace('.mp4', '.webm')} type="video/webm" />
+                                                <source src={project.loop} type="video/mp4" />
+                                            </video>
+                                        </>
                                     ) : (
                                         <img src={project.image} alt={project.title} class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} />
                                     )}
@@ -98,10 +104,13 @@ const [featureProject, ...subProjects] = featuredProjects;
                             <div class="project-block project-block-sub is-upcoming">
                                 <div class="image-wrapper">
                                     {project.loop ? (
-                                        <video class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} poster={project.image} autoplay muted loop playsinline preload="auto">
-                                            <source src={project.loop.replace('.mp4', '.webm')} type="video/webm" />
-                                            <source src={project.loop} type="video/mp4" />
-                                        </video>
+                                        <>
+                                            <img src={project.image} alt="" aria-hidden="true" class={project.fit === 'contain' ? 'project-img first-frame is-contain' : 'project-img first-frame'} />
+                                            <video class={project.fit === 'contain' ? 'project-img project-video is-contain' : 'project-img project-video'} poster={project.image} autoplay muted loop playsinline preload="auto">
+                                                <source src={project.loop.replace('.mp4', '.webm')} type="video/webm" />
+                                                <source src={project.loop} type="video/mp4" />
+                                            </video>
+                                        </>
                                     ) : (
                                         <img src={project.image} alt={project.title} class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} />
                                     )}
@@ -156,6 +165,20 @@ const [featureProject, ...subProjects] = featuredProjects;
         document.body.dataset.visibleVideosInitialized = 'true';
 
         const visible = new Set();
+        videos.forEach((video) => {
+            let revealRequested = false;
+            const reveal = () => {
+                if (revealRequested) return;
+                revealRequested = true;
+                if (video.requestVideoFrameCallback) {
+                    video.requestVideoFrameCallback(() => video.classList.add('is-playing'));
+                } else {
+                    video.classList.add('is-playing');
+                }
+            };
+            video.addEventListener('playing', reveal, { once: true });
+            if (!video.paused && video.readyState >= 2) reveal();
+        });
         const playVisible = (video) => {
             if (document.hidden) return;
             const playback = video.play();
@@ -653,6 +676,21 @@ const [featureProject, ...subProjects] = featuredProjects;
     .project-img.is-contain {
         object-fit: contain;
         background-color: #fff;
+    }
+
+    .first-frame,
+    .project-video {
+        position: absolute;
+        inset: 0;
+    }
+
+    .project-video {
+        opacity: 0;
+        transition: opacity 180ms ease-out;
+    }
+
+    .project-video.is-playing {
+        opacity: 1;
     }
 
     /* タイトルと説明は画像に重ね、hoverしたときだけ見せる */

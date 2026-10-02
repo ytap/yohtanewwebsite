@@ -9,6 +9,7 @@ order: 4
 published: true
 
 loop: /yohtanewwebsite/assets/spoken-words-loop.mp4
+homePoster: /yohtanewwebsite/assets/spoken-words-home-first-frame.jpg
 poster: /yohtanewwebsite/assets/spoken-words-poster.jpg
 
 archiveVideo: /yohtanewwebsite/assets/spoken-words-archive.mp4

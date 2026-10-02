@@ -28,6 +28,8 @@ const projects = defineCollection({
         loop: z.string().optional(),
         // トップページだけ別のループを使いたい場合
         homeLoop: z.string().optional(),
+        // トップページの動画が始まるまで表示する先頭フレーム
+        homePoster: z.string().optional(),
         poster: z.string(),
 
         // 30秒のアーカイブ動画と、フル尺へのリンク
