@@ -62,7 +62,7 @@ const [featureProject, ...subProjects] = featuredProjects;
                 <a href={featureProject.link} class="project-block project-block-feature">
                     <div class="image-wrapper">
                         {featureProject.loop ? (
-                            <video class={featureProject.fit === 'contain' ? 'project-img is-contain' : 'project-img'} poster={featureProject.image} autoplay muted loop playsinline preload="auto">
+                            <video class={featureProject.fit === 'contain' ? 'project-img is-contain' : 'project-img'} poster={featureProject.image} muted loop playsinline preload="none">
                                 <source src={featureProject.loop.replace('.mp4', '.webm')} type="video/webm" />
                                 <source src={featureProject.loop} type="video/mp4" />
                             </video>
@@ -82,7 +82,7 @@ const [featureProject, ...subProjects] = featuredProjects;
                             <a href={project.link} class="project-block project-block-sub">
                                 <div class="image-wrapper">
                                     {project.loop ? (
-                                        <video class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} poster={project.image} autoplay muted loop playsinline preload="auto">
+                                        <video class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} poster={project.image} muted loop playsinline preload="none">
                                             <source src={project.loop.replace('.mp4', '.webm')} type="video/webm" />
                                             <source src={project.loop} type="video/mp4" />
                                         </video>
@@ -98,7 +98,7 @@ const [featureProject, ...subProjects] = featuredProjects;
                             <div class="project-block project-block-sub is-upcoming">
                                 <div class="image-wrapper">
                                     {project.loop ? (
-                                        <video class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} poster={project.image} autoplay muted loop playsinline preload="auto">
+                                        <video class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} poster={project.image} muted loop playsinline preload="none">
                                             <source src={project.loop.replace('.mp4', '.webm')} type="video/webm" />
                                             <source src={project.loop} type="video/mp4" />
                                         </video>
@@ -148,11 +148,49 @@ const [featureProject, ...subProjects] = featuredProjects;
 <script>
     import '../scripts/pages/main-canvas.js';
 
+    // 画面の近くにある作品だけ読み込み・再生する
+    function setupVisibleVideos() {
+        if (document.body.dataset.visibleVideosInitialized === 'true') return;
+        const videos = Array.from(document.querySelectorAll('.project-block video'));
+        if (videos.length === 0) return;
+        document.body.dataset.visibleVideosInitialized = 'true';
+
+        const visible = new Set();
+        const playVisible = (video) => {
+            if (document.hidden) return;
+            const playback = video.play();
+            if (playback && typeof playback.catch === 'function') playback.catch(() => {});
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(({ target, isIntersecting }) => {
+                if (isIntersecting) {
+                    visible.add(target);
+                    playVisible(target);
+                } else {
+                    visible.delete(target);
+                    target.pause();
+                    target.muted = true;
+                }
+            });
+        }, { rootMargin: '150px 0px' });
+
+        videos.forEach((video) => observer.observe(video));
+        document.addEventListener('visibilitychange', () => {
+            videos.forEach((video) => {
+                if (document.hidden) video.pause();
+                else if (visible.has(video)) playVisible(video);
+            });
+        });
+    }
+
     // 作品のループ映像: 通常はミュート、hoverしている1本だけ音を出す
     function setupHoverSound() {
         const toggle = document.getElementById('sound-toggle');
         const blocks = Array.from(document.querySelectorAll('.project-block'));
         if (!toggle || blocks.length === 0) return;
+        if (toggle.dataset.hoverSoundInitialized === 'true') return;
+        toggle.dataset.hoverSoundInitialized = 'true';
 
         // hoverできない端末 (スマホなど) では音を扱わない
         if (!window.matchMedia('(hover: hover)').matches) return;
@@ -280,6 +318,7 @@ const [featureProject, ...subProjects] = featuredProjects;
             }
         })();
 
+        setupVisibleVideos();
         setupHoverSound();
 
         (async () => {

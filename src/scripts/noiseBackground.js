@@ -1,4 +1,7 @@
+let cleanupPrevious = null;
+
 export function initNoiseBackground(pixelSize = 4, theme = 'default') {
+    if (cleanupPrevious) cleanupPrevious();
     const existingCanvas = document.getElementById('global-noise-canvas');
     if (existingCanvas) existingCanvas.remove();
 
@@ -31,10 +34,11 @@ export function initNoiseBackground(pixelSize = 4, theme = 'default') {
     let maxSpread = 1000;
     const spreadIncrease = 0.5; 
 
-    window.addEventListener('mousemove', (e) => {
+    const onMouseMove = (e) => {
         mouseX = Math.floor(e.clientX / pixelSize);
         mouseY = Math.floor(e.clientY / pixelSize);
-    });
+    };
+    window.addEventListener('mousemove', onMouseMove);
 
     function resize() {
         width = Math.floor(window.innerWidth / pixelSize);
@@ -52,7 +56,21 @@ export function initNoiseBackground(pixelSize = 4, theme = 'default') {
     window.addEventListener('resize', resize);
     resize();
 
-    function render() {
+    let animationFrame;
+    let lastFrame = 0;
+    cleanupPrevious = () => {
+        cancelAnimationFrame(animationFrame);
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('resize', resize);
+        canvas.remove();
+    };
+
+    function render(timestamp) {
+        if (!canvas.isConnected) return;
+        animationFrame = requestAnimationFrame(render);
+        if (timestamp - lastFrame < 1000 / 30) return;
+        lastFrame = timestamp;
+
         const dx = mouseX - prevMouseX;
         const dy = mouseY - prevMouseY;
         
@@ -134,8 +152,7 @@ export function initNoiseBackground(pixelSize = 4, theme = 'default') {
         }
         
         ctx.putImageData(imageData, 0, 0);
-        requestAnimationFrame(render);
     }
 
-    render();
+    animationFrame = requestAnimationFrame(render);
 }
