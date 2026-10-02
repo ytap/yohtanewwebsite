@@ -8,11 +8,13 @@ oneLiner: Leaving and receiving physiological traces through a public telephone.
 order: 5
 published: true
 
-# loop: (動画ができたら有効にする)
+homeLoop: /yohtanewwebsite/assets/tele-bio-loop.mp4
 poster: /yohtanewwebsite/assets/telebio-left.png
 fit: contain
+homeFit: cover
 
-# archiveVideo: (動画ができたら有効にする)
+archiveVideo: /yohtanewwebsite/assets/tele-bio-archive.mp4
+archivePoster: /yohtanewwebsite/assets/tele-bio-archive-poster.jpg
 
 concept: |
   A public telephone connects people across space, but its handset also retains

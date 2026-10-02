@@ -22,6 +22,7 @@ const projects = defineCollection({
 
         // 画像が横長すぎて切りたくない場合は 'contain' にする
         fit: z.enum(['cover', 'contain']).default('cover'),
+        homeFit: z.enum(['cover', 'contain']).optional(),
 
         // ループ再生する短い動画と、その静止画 (動画が無い間は静止画だけでも動く)
         loop: z.string().optional(),
@@ -31,6 +32,7 @@ const projects = defineCollection({
 
         // 30秒のアーカイブ動画と、フル尺へのリンク
         archiveVideo: z.string().optional(),
+        archivePoster: z.string().optional(),
         fullVideoUrl: z.string().url().optional(),
 
         // WhyとWhatに答える簡潔なコンセプト。YAMLの | で複数段落書ける

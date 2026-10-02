@@ -86,7 +86,7 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
             <div class="middle-right">
                 {d.archiveVideo ? (
                     <div class="archive-block">
-                        <video class="archive-video" src={d.archiveVideo} poster={d.poster} controls playsinline></video>
+                        <video class="archive-video" src={d.archiveVideo} poster={d.archivePoster ?? d.poster} controls playsinline></video>
                     </div>
                 ) : (
                     <p class="archive-pending">Documentation currently in progress...</p>
