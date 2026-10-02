@@ -62,7 +62,7 @@ const [featureProject, ...subProjects] = featuredProjects;
                 <a href={featureProject.link} class="project-block project-block-feature">
                     <div class="image-wrapper">
                         {featureProject.loop ? (
-                            <video class={featureProject.fit === 'contain' ? 'project-img is-contain' : 'project-img'} poster={featureProject.image} muted loop playsinline preload="none">
+                            <video class={featureProject.fit === 'contain' ? 'project-img is-contain' : 'project-img'} poster={featureProject.image} autoplay muted loop playsinline preload="auto">
                                 <source src={featureProject.loop.replace('.mp4', '.webm')} type="video/webm" />
                                 <source src={featureProject.loop} type="video/mp4" />
                             </video>
@@ -82,7 +82,7 @@ const [featureProject, ...subProjects] = featuredProjects;
                             <a href={project.link} class="project-block project-block-sub">
                                 <div class="image-wrapper">
                                     {project.loop ? (
-                                        <video class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} poster={project.image} muted loop playsinline preload="none">
+                                        <video class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} poster={project.image} autoplay muted loop playsinline preload="auto">
                                             <source src={project.loop.replace('.mp4', '.webm')} type="video/webm" />
                                             <source src={project.loop} type="video/mp4" />
                                         </video>
@@ -98,7 +98,7 @@ const [featureProject, ...subProjects] = featuredProjects;
                             <div class="project-block project-block-sub is-upcoming">
                                 <div class="image-wrapper">
                                     {project.loop ? (
-                                        <video class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} poster={project.image} muted loop playsinline preload="none">
+                                        <video class={project.fit === 'contain' ? 'project-img is-contain' : 'project-img'} poster={project.image} autoplay muted loop playsinline preload="auto">
                                             <source src={project.loop.replace('.mp4', '.webm')} type="video/webm" />
                                             <source src={project.loop} type="video/mp4" />
                                         </video>
