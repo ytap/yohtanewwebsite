@@ -389,7 +389,7 @@ export function mountSketchInstance(p, containerId = 'canvas-container') {
 
     let margin = 15;
     p.textSize(18);
-    p.text("It is " + currentWeather.time + " at Providence RI,", x + margin, y + margin);
+    p.text("It is " + currentWeather.time + " in Tokyo,", x + margin, y + margin);
     p.text("where Yohta is at." , x + margin, y + margin + (pHeight - margin * 2) / 4 * 0.6);
 
     p.textSize(18);

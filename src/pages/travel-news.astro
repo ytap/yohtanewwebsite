@@ -1,0 +1,277 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const events = [
+    {
+        type: 'Exhibition', date: 'Oct 16–23, 2026', title: 'Soundいる.',
+        location: 'Keio Yagami Campus, Kanagawa, Japan',
+        map: 'https://www.google.com/maps/search/?api=1&query=Keio+University+Yagami+Campus+Kanagawa+Japan',
+        projects: [{ name: 'Tele-bio', href: '/yohtanewwebsite/projects/tele-bio' }, { name: 'TBA' }],
+        thumbnail: { poster: '/yohtanewwebsite/assets/tele-bio-home-first-frame.jpg', video: '/yohtanewwebsite/assets/tele-bio-loop', alt: 'Tele-bio', href: '/yohtanewwebsite/projects/tele-bio' },
+    },
+    {
+        type: 'Conference', date: 'Nov 2–5, 2026', title: 'ACM UIST 2026',
+        detail: 'Demo for student innovation contest',
+        location: 'Detroit, MI, USA',
+        map: 'https://www.google.com/maps/search/?api=1&query=Detroit+Michigan+USA',
+        projects: [{ name: 'Tele-bio', href: '/yohtanewwebsite/projects/tele-bio' }],
+        thumbnail: { poster: '/yohtanewwebsite/assets/tele-bio-home-first-frame.jpg', video: '/yohtanewwebsite/assets/tele-bio-loop', alt: 'Tele-bio', href: '/yohtanewwebsite/projects/tele-bio' },
+    },
+    {
+        type: 'Exhibition', date: 'Nov 22–23, 2026', title: 'Open Research Forum 2026',
+        location: 'Keio SFC Campus, Japan',
+        map: 'https://www.google.com/maps/search/?api=1&query=Keio+University+Shonan+Fujisawa+Campus+Japan',
+        projects: [{ name: 'TBA' }],
+    },
+    {
+        type: 'Conference', date: 'Dec 2–5, 2026', title: 'SIGGRAPH Asia 2026',
+        detail: 'Oral presentation for art paper',
+        location: 'Kuala Lumpur, Malaysia',
+        map: 'https://www.google.com/maps/search/?api=1&query=Kuala+Lumpur+Malaysia',
+        projects: [{ name: 'Contact Membrane', href: '/yohtanewwebsite/projects/contact-membrane' }],
+        thumbnail: { poster: '/yohtanewwebsite/assets/contact-membrane-home-first-frame.jpg', video: '/yohtanewwebsite/assets/contact-membrane-loop', alt: 'Contact Membrane', href: '/yohtanewwebsite/projects/contact-membrane' },
+    },
+];
+---
+
+<Layout title="Travel & News: Yohta Kitagawa">
+    <div class="main-container">
+        <div class="travel-intro">
+            <div class="intro-copy">
+                <h1>Travel &amp; News</h1>
+                <p class="location-note">I will try to update as frequently as possible, but the best way to know where I am is by <a href="mailto:ykitagawa@keio.jp">contacting me</a>.<span class="last-updated">(Last updated Oct 6, 2026)</span></p>
+            </div>
+            <section class="location-section" aria-label="Current location and weather">
+                <div class="weather-board" aria-live="polite">
+                    <canvas class="wood-pixels" aria-hidden="true"></canvas>
+                    <p class="board-location">It is <time id="tokyo-time">--:--</time> in <a href="https://www.google.com/maps/search/?api=1&query=Tokyo+Japan" target="_blank" rel="noopener noreferrer">Tokyo, Japan ↗</a>,<br />where Yohta is at.</p>
+                    <div class="board-weather">
+                        <p>TEMP: <span id="weather-temp">--°C</span></p>
+                        <p>SKY: <span id="weather-sky">...</span></p>
+                    </div>
+                    <p class="board-song">Recently I've been listening to <a href="https://open.spotify.com/track/5faDeWJhejXrYY2Qdqhojh?si=4638926ddd164ab0" target="_blank" rel="noopener noreferrer">this ↗</a>.</p>
+                </div>
+            </section>
+        </div>
+
+        <section class="events-section" aria-labelledby="events-heading">
+            <h2 id="events-heading">Upcoming</h2>
+            <ul class="events-list">
+                {events.map((event) => (
+                    <li class="event">
+                        <div class="event-copy">
+                            <div class="event-meta"><span>{event.type}</span><time>{event.date}</time></div>
+                            <div class="event-details">
+                                <h3>{event.title}</h3>
+                                {event.detail && <p class="event-detail">{event.detail}</p>}
+                                <a class="event-map" href={event.map} target="_blank" rel="noopener noreferrer">{event.location} ↗</a>
+                                <p class="event-projects">Presenting: {event.projects.map((project, index) => (
+                                    <Fragment>{index > 0 && ', '}{project.href ? <a href={project.href}>{project.name}</a> : project.name}</Fragment>
+                                ))}</p>
+                            </div>
+                        </div>
+                        {event.thumbnail && (
+                            <a class="event-thumbnail" href={event.thumbnail.href} aria-label={`View ${event.thumbnail.alt}`}>
+                                <video poster={event.thumbnail.poster} autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+                                    <source src={`${event.thumbnail.video}.webm`} type="video/webm" />
+                                    <source src={`${event.thumbnail.video}.mp4`} type="video/mp4" />
+                                </video>
+                            </a>
+                        )}
+                    </li>
+                ))}
+            </ul>
+        </section>
+    </div>
+</Layout>
+
+<script>
+    import { updateWeatherData } from '../scripts/wip/weather.js';
+
+    const timeElement = document.getElementById('tokyo-time');
+    const tempElement = document.getElementById('weather-temp');
+    const skyElement = document.getElementById('weather-sky');
+    const woodCanvas = document.querySelector('.wood-pixels');
+
+    function drawWoodPixels() {
+        if (!(woodCanvas instanceof HTMLCanvasElement) || !woodCanvas.parentElement) return;
+        const context = woodCanvas.getContext('2d');
+        if (!context) return;
+
+        // Draw the original slanted wood grain at a low resolution so its edges stay square.
+        const pixelSize = 3;
+        const width = Math.max(1, Math.ceil(woodCanvas.parentElement.clientWidth / pixelSize));
+        const height = Math.max(1, Math.ceil(woodCanvas.parentElement.clientHeight / pixelSize));
+        woodCanvas.width = width;
+        woodCanvas.height = height;
+
+        const image = context.createImageData(width, height);
+        const blend = (start, end, amount) => start + (end - start) * amount;
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const index = (y * width + x) * 4;
+                const gradientPosition = Math.min(1, (x / width) * 0.8 + (y / height) * 0.2);
+                const firstHalf = gradientPosition < 0.55;
+                const amount = firstHalf ? gradientPosition / 0.55 : (gradientPosition - 0.55) / 0.45;
+                const from = firstHalf ? [159, 107, 59] : [121, 80, 44];
+                const to = firstHalf ? [121, 80, 44] : [166, 116, 67];
+                const grainPosition = (y * pixelSize + x * pixelSize * Math.tan(2 * Math.PI / 180)) % 32;
+                const groove = grainPosition >= 13 && grainPosition < 17 ? -18 : 0;
+                const fleck = (Math.random() - 0.5) * 4;
+                image.data[index] = blend(from[0], to[0], amount) + groove + fleck;
+                image.data[index + 1] = blend(from[1], to[1], amount) + groove * 0.8 + fleck;
+                image.data[index + 2] = blend(from[2], to[2], amount) + groove * 0.6 + fleck;
+                image.data[index + 3] = 255;
+            }
+        }
+        context.putImageData(image, 0, 0);
+    }
+
+    if (woodCanvas instanceof HTMLCanvasElement && woodCanvas.parentElement) {
+        new ResizeObserver(drawWoodPixels).observe(woodCanvas.parentElement);
+        drawWoodPixels();
+    }
+
+    function updateClock() {
+        if (timeElement) {
+            timeElement.textContent = new Intl.DateTimeFormat('en-GB', {
+                timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit',
+            }).format(new Date());
+        }
+    }
+
+    async function updateBoardWeather() {
+        const weather = await updateWeatherData();
+        if (weather) {
+            if (tempElement) tempElement.textContent = `${weather.temp}°C`;
+            if (skyElement) skyElement.textContent = weather.condition;
+        } else if (skyElement) {
+            skyElement.textContent = 'Unavailable';
+        }
+    }
+
+    updateClock();
+    updateBoardWeather();
+    setInterval(updateClock, 1000);
+    setInterval(updateBoardWeather, 600000);
+</script>
+
+<style>
+    @font-face {
+        font-family: 'TerminalGrotesque';
+        src: url('../scripts/wip/terminal-grotesque.ttf') format('truetype');
+        font-display: swap;
+    }
+
+    .main-container {
+        width: 86vw;
+        margin: 0 auto;
+        padding: 24px 0 80px;
+    }
+
+    h1 {
+        font-size: 40px;
+        font-weight: normal;
+        line-height: 1.3;
+        margin: 0 0 24px;
+    }
+
+    h2 { font-size: 28px; font-weight: normal; margin: 0 0 20px; }
+    .travel-intro {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) clamp(280px, 40vw, 440px);
+        align-items: start;
+        gap: clamp(24px, 4vw, 64px);
+        margin-bottom: 76px;
+    }
+
+    .weather-board {
+        position: relative;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 24px;
+        border: 4px solid #24170e;
+        color: #fff;
+        background:
+            repeating-linear-gradient(2deg, transparent 0 13px, #60381c55 14px 16px, transparent 17px 32px),
+            linear-gradient(125deg, #9f6b3b, #79502c 55%, #a67443);
+        font-family: 'TerminalGrotesque', monospace;
+        font-size: 23px;
+        line-height: 1.3;
+    }
+
+    .wood-pixels {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        image-rendering: pixelated;
+        pointer-events: none;
+    }
+
+    .weather-board > :not(.wood-pixels) { position: relative; }
+    .weather-board p { margin: 0; }
+    .board-location { margin-bottom: 24px !important; }
+    .board-weather {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        white-space: nowrap;
+        font-size: clamp(16px, 2.25vw, 23px);
+    }
+    .board-song { margin-top: 20px !important; font-size: clamp(16px, 2vw, 20px); line-height: 1.35; }
+
+    .weather-board a {
+        color: inherit;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
+    }
+
+    .location-note { max-width: 420px; font-size: 20px; line-height: 1.5; margin: 0; }
+    .last-updated { margin-left: 0.35em; font-size: 16px; color: #777; }
+    .location-note a, .event a { color: inherit; text-underline-offset: 4px; }
+
+    .events-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid #333; }
+    .event {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) clamp(170px, 22vw, 280px);
+        gap: 28px;
+        padding: 26px 0 30px;
+        border-bottom: 1px solid #333;
+    }
+
+    .event-copy {
+        display: grid;
+        grid-template-columns: minmax(150px, 28%) minmax(0, 1fr);
+        gap: 28px;
+    }
+
+    .event-thumbnail {
+        display: block;
+        align-self: start;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+    }
+
+    .event-thumbnail video { width: 100%; height: 100%; display: block; object-fit: cover; }
+
+    .event-meta { font-size: 18px; line-height: 1.5; }
+    .event-meta span, .event-meta time { display: block; }
+    .event-details h3 { font-size: 27px; font-weight: normal; margin: 0 0 8px; }
+    .event-detail { font-size: 18px; font-style: italic; margin: 0 0 8px; }
+    .event-map { font-size: 18px; }
+    .event-projects { font-size: 19px; margin: 14px 0 0; }
+
+    @media (max-width: 950px) {
+        .event-copy { grid-template-columns: 1fr; gap: 10px; }
+    }
+
+    @media (max-width: 700px) {
+        .travel-intro { grid-template-columns: 1fr; gap: 28px; margin-bottom: 64px; }
+        h1 { font-size: 34px; margin-bottom: 16px; }
+        .weather-board { font-size: 19px; padding: 18px; }
+        .event { grid-template-columns: 1fr; gap: 10px; }
+        .event-details h3 { font-size: 24px; }
+        .event-thumbnail { width: min(100%, 300px); }
+    }
+</style>

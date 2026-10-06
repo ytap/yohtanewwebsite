@@ -404,7 +404,7 @@ function drawWeatherPanel() {
   let lineGap = (pHeight - margin * 2) / 4;
   
   textSize(18);
-  text("It is " + currentWeather.time + " at Providence RI,", x + margin, y + margin);
+  text("It is " + currentWeather.time + " in Tokyo,", x + margin, y + margin);
   text("where Yohta is at." , x + margin, y + margin + lineGap * 0.6);
   
   textSize(18);

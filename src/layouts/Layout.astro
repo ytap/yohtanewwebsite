@@ -121,10 +121,26 @@ const { title = "Portfolio: Yohta Kitagawa", isHome = false, isWip = false, prel
             color: #888;
         }
 
+        @media (max-width: 700px) {
+            .site-nav {
+                position: relative;
+                top: auto;
+                right: auto;
+                justify-content: flex-end;
+                gap: 20px;
+                padding: 18px 7vw 0;
+            }
+
+            .site-nav a {
+                font-size: 18px;
+            }
+        }
+
     </style>
 </head>
 <body data-is-home={String(isHome)} data-is-wip={String(isWip)}>
-    <nav class="site-nav">
+    <nav class="site-nav" aria-label="Main navigation">
+        <a href="/yohtanewwebsite/travel-news">Travel &amp; News</a>
         <a href="/yohtanewwebsite/vision">Vision</a>
     </nav>
 

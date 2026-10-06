@@ -1,8 +1,8 @@
 // wip/weather.js
 
 const OPENWEATHER_API_KEY = "1434b5cbdf383d0400571c957b7dd29d";
-const YOHTA_LAT = 41.8240;
-const YOHTA_LON = -71.4128;
+const YOHTA_LAT = 35.6762;
+const YOHTA_LON = 139.6503;
 
 let currentWeather = null;
 
@@ -18,7 +18,7 @@ export async function updateWeatherData() {
       condition: data.weather[0].main,
       windSpeed: data.wind.speed,
       windDeg: data.wind.deg,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      time: new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit' }).format(new Date())
     };
   } catch (error) {
     console.error("Weather update error:", error);
