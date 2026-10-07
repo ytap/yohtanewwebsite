@@ -8,9 +8,8 @@ oneLiner: How can wired earphones weave tangible, embodied, and entangled experi
 order: 2
 published: true
 
-loop: /yohtanewwebsite/assets/knot-music-home-loop.mp4
-homeLoop: /yohtanewwebsite/assets/knot-music-home-loop.mp4
-homePoster: /yohtanewwebsite/assets/knot-music-home-first-frame.jpg
+loop: /yohtanewwebsite/assets/knot-music-loop.mp4
+homePoster: /yohtanewwebsite/assets/knot-music-poster.jpg
 poster: /yohtanewwebsite/assets/knot-music-poster.jpg
 
 archiveVideo: /yohtanewwebsite/assets/knot-music-archive.mp4
@@ -34,10 +33,7 @@ credits: |
   Created and performed by Yohta Kitagawa and Shinnosuke Hirose.
 
 extraImages:
-  - src: /yohtanewwebsite/assets/Knot-hat.JPG
-    caption: "Knot-hat (2026, in progress)"
-  - src: /yohtanewwebsite/assets/knotplant.jpeg
-    caption: "Knot-plant (2026, in progress)"
+  - caption: "more coming soon..."
   - src: /yohtanewwebsite/assets/knotsudare.jpeg
     caption: "Knot-sudare (2026, in progress)"
 
@@ -48,4 +44,4 @@ recognition:
 
 Knot-music began with the everyday act of untangling earphones. For the first iteration, playing three different tracks through three entangled pairs turned the task of untangling into a spatial composition that changes with every pull and knot.
 
-The same material exploration continued in Knot-hat, a wearable structure woven from roughly a hundred wired earphones. We pushed this way of making to Knot-plant and Knot-sudare, slowly seeing the world through the lens of wired earphones. The project is ongoing, and we are actively thinking what can be said from this practice.
+The same material exploration continued through further objects, slowly seeing the world through the lens of wired earphones. The project is ongoing, and we are actively thinking what can be said from this practice.

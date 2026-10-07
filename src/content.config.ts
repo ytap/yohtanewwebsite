@@ -47,7 +47,7 @@ const projects = defineCollection({
 
         // Recognitionの下、Processの上に置く補足画像
         extraImages: z.array(z.object({
-            src: z.string(),
+            src: z.string().optional(),
             caption: z.string().optional(),
         })).default([]),
 

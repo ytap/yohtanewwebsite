@@ -100,11 +100,11 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
         </section>
 
         {d.extraImages.map((image, index) => (
-            <section class="project-extra">
+            <section class:list={['project-extra', { 'is-coming-soon': !image.src }]}>
                 {project.id === 'knot-music' && index === 0 && (
                     <h2 class="section-heading future-iterations-heading">Future Iterations</h2>
                 )}
-                <img src={image.src} alt={image.caption ?? d.title} />
+                {image.src && <img src={image.src} alt={image.caption ?? d.title} />}
                 {image.caption && <p class="extra-caption">{image.caption}</p>}
             </section>
         ))}
@@ -371,6 +371,11 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
 
     .project-extra {
         margin-bottom: 24px;
+    }
+
+    .project-extra.is-coming-soon .extra-caption {
+        margin: 0;
+        padding: 24px 0;
     }
 
     .project-extra img {

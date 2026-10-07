@@ -1,0 +1,50 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const works = [
+    { title: 'Knot-hat', src: '/yohtanewwebsite/assets/Knot-hat.JPG' },
+    { title: 'Knot-plant', src: '/yohtanewwebsite/assets/knotplant.jpeg' },
+];
+---
+
+<Layout title="Knot-music preview: Yohta Kitagawa" noindex>
+    <div class="preview-container">
+        <h1>Knot-music preview</h1>
+        {works.map((work) => (
+            <section>
+                <h2>{work.title}</h2>
+                <img src={work.src} alt={work.title} />
+            </section>
+        ))}
+    </div>
+</Layout>
+
+<style>
+    .preview-container {
+        width: min(86vw, 1100px);
+        margin: 24px auto 80px;
+    }
+
+    h1, h2 {
+        font-weight: normal;
+    }
+
+    h1 {
+        font-size: 32px;
+        margin-bottom: 40px;
+    }
+
+    h2 {
+        font-size: 22px;
+    }
+
+    section {
+        margin-bottom: 56px;
+    }
+
+    img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+</style>

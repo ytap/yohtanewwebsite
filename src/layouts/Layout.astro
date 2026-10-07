@@ -5,14 +5,16 @@ interface Props {
     isHome?: boolean;
     isWip?: boolean;
     preloadImages?: string[];
+    noindex?: boolean;
 }
 
-const { title = "Portfolio: Yohta Kitagawa", isHome = false, isWip = false, preloadImages = [] } = Astro.props;
+const { title = "Portfolio: Yohta Kitagawa", isHome = false, isWip = false, preloadImages = [], noindex = false } = Astro.props;
 ---
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <title>{title}</title>
+    {noindex && <meta name="robots" content="noindex, nofollow, noarchive" />}
     {preloadImages.map((src) => <link rel="preload" as="image" href={src} />)}
     <style is:global>
         @font-face {
