@@ -47,10 +47,7 @@ const [featureProject, ...subProjects] = featuredProjects;
         </section>
 
         <section class="featured-section" id="projects">
-            <div class="sound-controls" role="group" aria-label="Sound">
-                <button id="sound-off" class="sound-option is-selected" type="button" aria-pressed="true">Sound is off</button>
-                <button id="sound-on" class="sound-option" type="button" aria-pressed="false">Sound is on</button>
-            </div>
+            <button id="sound-toggle" class="sound-toggle" type="button" aria-pressed="false">Sound is off</button>
 
             <div class="projects-layout">
                 <a href={featureProject.link} class="project-block project-block-feature">
@@ -203,12 +200,11 @@ const [featureProject, ...subProjects] = featuredProjects;
 
     // 作品のループ映像: 通常はミュート、hoverしている1本だけ音を出す
     function setupHoverSound() {
-        const soundOffButton = document.getElementById('sound-off');
-        const soundOnButton = document.getElementById('sound-on');
+        const toggle = document.getElementById('sound-toggle');
         const blocks = Array.from(document.querySelectorAll('.project-block'));
-        if (!soundOffButton || !soundOnButton || blocks.length === 0) return;
-        if (soundOffButton.dataset.hoverSoundInitialized === 'true') return;
-        soundOffButton.dataset.hoverSoundInitialized = 'true';
+        if (!toggle || blocks.length === 0) return;
+        if (toggle.dataset.hoverSoundInitialized === 'true') return;
+        toggle.dataset.hoverSoundInitialized = 'true';
 
         // hoverできない端末 (スマホなど) では音を扱わない
         if (!window.matchMedia('(hover: hover)').matches) return;
@@ -312,20 +308,16 @@ const [featureProject, ...subProjects] = featuredProjects;
             videos.forEach(({ video }) => muteNow(video));
         });
 
-        function setSound(enabled) {
-            soundOn = enabled;
-            soundOffButton.classList.toggle('is-selected', !soundOn);
-            soundOnButton.classList.toggle('is-selected', soundOn);
-            soundOffButton.setAttribute('aria-pressed', String(!soundOn));
-            soundOnButton.setAttribute('aria-pressed', String(soundOn));
+        toggle.addEventListener('click', () => {
+            soundOn = !soundOn;
+            toggle.textContent = soundOn ? 'Sound is on' : 'Sound is off';
+            toggle.classList.toggle('is-on', soundOn);
+            toggle.setAttribute('aria-pressed', String(soundOn));
             if (!soundOn) {
                 current = null;
                 videos.forEach(({ video }) => muteNow(video));
             }
-        }
-
-        soundOffButton.addEventListener('click', () => setSound(false));
-        soundOnButton.addEventListener('click', () => setSound(true));
+        });
     }
 
     function initPage() {
@@ -507,47 +499,44 @@ const [featureProject, ...subProjects] = featuredProjects;
     }
 
     /* プロジェクトのボックスの真上・右端。浮かせてあるので下のグリッドは動かない */
-    .featured-section .sound-controls {
+    .featured-section .sound-toggle {
         position: absolute;
         right: 0;
         bottom: 100%;
     }
 
-    .sound-controls {
-        display: flex;
-        gap: 8px;
-        padding-bottom: 12px;
-    }
-
-    .sound-option {
+    .sound-toggle {
         border: 2px dotted #333;
         background: transparent;
+        min-width: 140px;
         padding: 8px 12px;
+        margin-bottom: 12px;
         font: inherit;
         font-size: 16px;
         line-height: 1.2;
+        text-align: center;
         cursor: pointer;
         color: #333;
         transition: background-color 0.2s ease, color 0.2s ease;
     }
 
-    .sound-option:hover:not(.is-selected) {
+    .sound-toggle:hover:not(.is-on) {
         background: #e5e5e5;
     }
 
-    .sound-option:focus-visible {
+    .sound-toggle:focus-visible {
         outline: 2px solid #333;
         outline-offset: 3px;
     }
 
-    .sound-option.is-selected {
+    .sound-toggle.is-on {
         background: #333;
         color: #fff;
     }
 
     /* hoverが無い端末では音を扱わないので、トグル自体を出さない */
     @media (hover: none), (max-width: 700px) {
-        .sound-controls {
+        .sound-toggle {
             display: none;
         }
     }
