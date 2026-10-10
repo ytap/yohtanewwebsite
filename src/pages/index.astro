@@ -47,7 +47,7 @@ const [featureProject, ...subProjects] = featuredProjects;
         </section>
 
         <section class="featured-section" id="projects">
-            <button id="sound-toggle" class="sound-toggle" type="button" aria-pressed="false">Sound: off</button>
+            <button id="sound-toggle" class="sound-toggle" type="button" aria-pressed="false"><span>Sound: off</span></button>
 
             <div class="projects-layout">
                 <a href={featureProject.link} class="project-block project-block-feature">
@@ -310,7 +310,7 @@ const [featureProject, ...subProjects] = featuredProjects;
 
         toggle.addEventListener('click', () => {
             soundOn = !soundOn;
-            toggle.textContent = soundOn ? 'Sound: on' : 'Sound: off';
+            toggle.querySelector('span').textContent = soundOn ? 'Sound: on' : 'Sound: off';
             toggle.classList.toggle('is-on', soundOn);
             toggle.setAttribute('aria-pressed', String(soundOn));
             if (!soundOn) {
@@ -506,9 +506,10 @@ const [featureProject, ...subProjects] = featuredProjects;
     }
 
     .sound-toggle {
+        display: grid;
+        place-items: center;
         border: 2px dotted #333;
         background: transparent;
-        min-width: 140px;
         padding: 8px 12px;
         margin-bottom: 12px;
         font: inherit;
@@ -518,6 +519,16 @@ const [featureProject, ...subProjects] = featuredProjects;
         cursor: pointer;
         color: #333;
         transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .sound-toggle::before,
+    .sound-toggle span {
+        grid-area: 1 / 1;
+    }
+
+    .sound-toggle::before {
+        content: 'Sound: off';
+        visibility: hidden;
     }
 
     .sound-toggle:hover:not(.is-on) {
