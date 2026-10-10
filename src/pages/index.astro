@@ -47,7 +47,7 @@ const [featureProject, ...subProjects] = featuredProjects;
         </section>
 
         <section class="featured-section" id="projects">
-            <button id="sound-toggle" class="sound-toggle" type="button" aria-pressed="false">Sound is off</button>
+            <button id="sound-toggle" class="sound-toggle" type="button" aria-pressed="false">Sound: off</button>
 
             <div class="projects-layout">
                 <a href={featureProject.link} class="project-block project-block-feature">
@@ -310,7 +310,7 @@ const [featureProject, ...subProjects] = featuredProjects;
 
         toggle.addEventListener('click', () => {
             soundOn = !soundOn;
-            toggle.textContent = soundOn ? 'Sound is on' : 'Sound is off';
+            toggle.textContent = soundOn ? 'Sound: on' : 'Sound: off';
             toggle.classList.toggle('is-on', soundOn);
             toggle.setAttribute('aria-pressed', String(soundOn));
             if (!soundOn) {
