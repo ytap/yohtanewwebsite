@@ -6,9 +6,11 @@ interface Props {
     isWip?: boolean;
     preloadImages?: string[];
     noindex?: boolean;
+    publicVersion?: boolean;
 }
 
-const { title = "Portfolio: Yohta Kitagawa", isHome = false, isWip = false, preloadImages = [], noindex = false } = Astro.props;
+const { title = "Portfolio: Yohta Kitagawa", isHome = false, isWip = false, preloadImages = [], noindex = false, publicVersion = false } = Astro.props;
+const pageBase = publicVersion ? '/yohtanewwebsite/public' : '/yohtanewwebsite';
 ---
 <html lang="ja">
 <head>
@@ -140,17 +142,17 @@ const { title = "Portfolio: Yohta Kitagawa", isHome = false, isWip = false, prel
 
     </style>
 </head>
-<body data-is-home={String(isHome)} data-is-wip={String(isWip)}>
+<body data-is-home={String(isHome)} data-is-wip={String(isWip)} data-public-version={String(publicVersion)}>
     <nav class="site-nav" aria-label="Main navigation">
-        <a href="/yohtanewwebsite/travel-news">Travel &amp; News</a>
-        <a href="/yohtanewwebsite/vision">Vision</a>
+        <a href={`${pageBase}/travel-news`}>Travel &amp; News</a>
+        <a href={`${pageBase}/vision`}>Vision</a>
     </nav>
 
     {!isHome && (
         <div class="main-container" style="padding-bottom:0">
             <header class="sub-hero-section">
                 <h1 class="sub-header-title">
-                    <a href="/yohtanewwebsite/">Yohta Kitagawa</a>
+                    <a href={`${pageBase}/`}>Yohta Kitagawa</a>
                 </h1>
                 <canvas id="divider-canvas" class="procedural-divider"></canvas>
             </header>

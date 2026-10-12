@@ -10,16 +10,19 @@ export async function getStaticPaths() {
     }));
 }
 
-const { project } = Astro.props;
+const { project, publicVersion = false } = Astro.props;
 const d = project.data;
 const { Content } = await render(project);
+const extraImages = publicVersion && project.id === 'knot-music'
+    ? [{ caption: 'more coming soon...' }, ...d.extraImages.filter((image) => !image.hiddenFromPublic)]
+    : d.extraImages;
 
 
 // concept / technical / credits は空行で段落に分ける
 const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean);
 ---
 
-<Layout title={`${d.title}: Yohta Kitagawa`}>
+<Layout title={`${d.title}: Yohta Kitagawa`} publicVersion={publicVersion} noindex={!publicVersion}>
     <div class="main-container">
         <header class="project-header">
             <h1 class="project-title">{d.title}</h1>
@@ -99,7 +102,7 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
             </div>
         </section>
 
-        {d.extraImages.map((image, index) => (
+        {extraImages.map((image, index) => (
             <section class:list={['project-extra', { 'is-coming-soon': !image.src }]}>
                 {project.id === 'knot-music' && index === 0 && (
                     <h2 class="section-heading future-iterations-heading">Future Iterations</h2>
@@ -112,7 +115,9 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
         <section class="project-process bordered-block">
             <h2 class="section-heading">Process</h2>
             <div class="body-text process-body">
-                <Content />
+                {publicVersion && project.id === 'knot-music'
+                    ? paragraphs(d.publicProcess).map((p) => <p>{p}</p>)
+                    : <Content />}
             </div>
         </section>
 

@@ -5,6 +5,9 @@ import { getCollection } from 'astro:content';
 import { pdfPageImages } from '../utils/pdfPages.js';
 import cvLinks from '../data/cv-links.json';
 
+const publicVersion = Astro.props.publicVersion ?? false;
+const pageBase = publicVersion ? '/yohtanewwebsite/public' : '/yohtanewwebsite';
+
 // CVもページ画像で表示し、PDF内のリンクは同じ位置に透明な<a>を重ねて再現する
 const cvPages = pdfPageImages('cv');
 
@@ -16,13 +19,13 @@ const featuredProjects = projects.map((project) => ({
     image: project.data.homePoster ?? project.data.poster,
     loop: project.id === 'knot-music' ? undefined : (project.data.homeLoop ?? project.data.loop),
     fit: project.data.homeFit ?? project.data.fit,
-    link: project.data.published ? `/yohtanewwebsite/projects/${project.id}` : null,
+    link: project.data.published ? `${pageBase}/projects/${project.id}` : null,
 }));
 
 const [featureProject, ...subProjects] = featuredProjects;
 ---
 
-<Layout isHome={true} preloadImages={featuredProjects.map((project) => project.image)}>
+<Layout isHome={true} publicVersion={publicVersion} noindex={!publicVersion} preloadImages={featuredProjects.map((project) => project.image)}>
     <div class="main-container">
         <header class="hero-section">
             <h1 class="site-title">Yohta Kitagawa</h1>
@@ -39,7 +42,7 @@ const [featureProject, ...subProjects] = featuredProjects;
                 <div class="canvas-wrapper">
                     <canvas id="about-canvas" class="procedural-about"></canvas>
                 </div>
-                <p class="intro-contact"><a href="/yohtanewwebsite/vision">→ More on Mediating Animacy</a></p>
+                <p class="intro-contact"><a href={`${pageBase}/vision`}>→ More on Mediating Animacy</a></p>
                 <div class="contact-row">
                     <p class="intro-contact">Feel free to contact me at <a href="mailto:ykitagawa@keio.jp">ykitagawa@keio.jp</a> / <a href="https://instagram.com/yohta_kitagawa" target="_blank" rel="noopener noreferrer">Instagram</a></p>
                 </div>
@@ -124,7 +127,7 @@ const [featureProject, ...subProjects] = featuredProjects;
                         {i === 0 && cvLinks.map((link) => (
                             <a
                                 class="cv-page-link"
-                                href={link.href}
+                                href={publicVersion && link.href === 'https://ytap.github.io/yohtanewwebsite/' ? `${pageBase}/` : link.href}
                                 aria-label={link.label}
                                 title={link.label}
                                 target="_blank"

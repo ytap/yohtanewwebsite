@@ -1,9 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
+const publicVersion = Astro.props.publicVersion ?? false;
 ---
 
-<Layout title="Vision: Yohta Kitagawa">
+<Layout title="Vision: Yohta Kitagawa" publicVersion={publicVersion} noindex={!publicVersion}>
     <div class="main-container">
         <p class="vision-lead">How can computational media connect us to aliveness in the world?</p>
 

@@ -39,6 +39,7 @@ const projects = defineCollection({
 
         // WhyとWhatに答える簡潔なコンセプト。YAMLの | で複数段落書ける
         concept: z.string(),
+        publicProcess: z.string().optional(),
         // 技術的な実装。箇条書きで1項目1行
         technicalHeading: z.string().default('Technical Details'),
         technical: z.array(z.string()).default([]),
@@ -49,6 +50,7 @@ const projects = defineCollection({
         extraImages: z.array(z.object({
             src: z.string().optional(),
             caption: z.string().optional(),
+            hiddenFromPublic: z.boolean().default(false),
         })).default([]),
 
         // Creditsの下に埋め込む論文PDF (public/assets/ 以下のパス)

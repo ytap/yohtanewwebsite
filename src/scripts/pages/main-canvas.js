@@ -19,7 +19,9 @@ if (typeof window !== 'undefined') {
 
     // 本文中でVisionページに飛ばすリンク部分
     const linkText = "Mediating Animacy";
-    const linkHref = "/yohtanewwebsite/vision";
+    const linkHref = document.body.dataset.publicVersion === 'true'
+      ? "/yohtanewwebsite/public/vision"
+      : "/yohtanewwebsite/vision";
     const linkStart = aboutText.indexOf(linkText);
     const linkEnd = linkStart >= 0 ? linkStart + linkText.length : -1;
 

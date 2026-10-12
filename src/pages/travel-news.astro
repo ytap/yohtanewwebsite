@@ -1,6 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
+const publicVersion = Astro.props.publicVersion ?? false;
+const pageHref = (href) => publicVersion
+    ? href.replace('/yohtanewwebsite/projects/', '/yohtanewwebsite/public/projects/')
+    : href;
+
 const events = [
     {
         type: 'Exhibition', date: 'Oct 16–23, 2026', title: 'Soundいる.',
@@ -34,7 +39,7 @@ const events = [
 ];
 ---
 
-<Layout title="Travel & News: Yohta Kitagawa">
+<Layout title="Travel & News: Yohta Kitagawa" publicVersion={publicVersion} noindex={!publicVersion}>
     <div class="main-container">
         <div class="travel-intro">
             <div class="intro-copy">
@@ -66,12 +71,12 @@ const events = [
                                 {event.detail && <p class="event-detail">{event.detail}</p>}
                                 <a class="event-map" href={event.map} target="_blank" rel="noopener noreferrer">{event.location} ↗</a>
                                 <p class="event-projects">Presenting: {event.projects.map((project, index) => (
-                                    <Fragment>{index > 0 && ', '}{project.href ? <a href={project.href}>{project.name}</a> : project.name}</Fragment>
+                                    <Fragment>{index > 0 && ', '}{project.href ? <a href={pageHref(project.href)}>{project.name}</a> : project.name}</Fragment>
                                 ))}</p>
                             </div>
                         </div>
                         {event.thumbnail && (
-                            <a class="event-thumbnail" href={event.thumbnail.href} aria-label={`View ${event.thumbnail.alt}`}>
+                            <a class="event-thumbnail" href={pageHref(event.thumbnail.href)} aria-label={`View ${event.thumbnail.alt}`}>
                                 <video poster={event.thumbnail.poster} autoplay muted loop playsinline preload="metadata" aria-hidden="true">
                                     <source src={`${event.thumbnail.video}.webm`} type="video/webm" />
                                     <source src={`${event.thumbnail.video}.mp4`} type="video/mp4" />
