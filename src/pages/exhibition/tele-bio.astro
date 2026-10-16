@@ -92,11 +92,14 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 <style>
     .exhibition {
+        --screen-unit: min(1vw, 1.778dvh);
         width: 86vw;
-        min-height: 100svh;
+        height: 100dvh;
         margin: 0 auto;
-        padding: 24px 0 32px;
+        padding: calc(1.76 * var(--screen-unit)) 0 calc(2.34 * var(--screen-unit));
         box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
     }
 
     .project-header {
@@ -104,8 +107,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        gap: 32px;
-        margin-bottom: 28px;
+        flex: 0 0 auto;
+        gap: calc(2.34 * var(--screen-unit));
+        margin-bottom: calc(2.05 * var(--screen-unit));
     }
 
     /* Keep the site's typeface, with a larger title for the exhibition. */
@@ -113,7 +117,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         display: inline-block;
         position: relative;
         padding: 0.25em 0.3em 0.05em;
-        font-size: clamp(48px, 4.5vw, 80px);
+        font-size: calc(4.5 * var(--screen-unit));
         font-weight: normal;
         color: #333;
         margin: 0;
@@ -121,24 +125,32 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     }
 
     .body-text {
-        font-size: 20px;
+        font-size: calc(1.6 * var(--screen-unit));
         line-height: 1.6;
         color: #333;
-        margin: 0 0 20px;
+        margin: 0 0 calc(1.46 * var(--screen-unit));
     }
 
-    .guide-group + .guide-group { margin-top: 32px; }
+    #exhibition-guide {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        gap: calc(2.34 * var(--screen-unit));
+    }
+
+    #exhibition-guide[hidden], #maintenance[hidden] { display: none; }
 
     .guide-group h2 {
-        font-size: 24px;
+        font-size: calc(1.76 * var(--screen-unit));
         font-weight: bold;
         line-height: 1.6;
-        margin: 0 0 12px;
+        margin: 0 0 calc(0.88 * var(--screen-unit));
     }
 
     .guide-list {
         display: grid;
-        gap: 12px;
+        gap: calc(0.88 * var(--screen-unit));
         list-style: none;
         padding: 0;
         margin: 0;
@@ -156,27 +168,38 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         margin: 0;
     }
 
-    #exhibition-guide, #maintenance { padding-right: 204px; }
+    #exhibition-guide, #maintenance { padding-right: calc(14.94 * var(--screen-unit)); }
 
     .website img {
         display: block;
-        width: 164px;
+        width: calc(12 * var(--screen-unit));
         height: auto;
-        margin: 0 auto 8px;
+        margin: 0 auto calc(0.59 * var(--screen-unit));
         background: white;
     }
 
-    .website figcaption { font-size: 16px; }
+    .website figcaption { font-size: calc(1.17 * var(--screen-unit)); }
 
-    #maintenance { padding-top: 32px; }
+    #maintenance {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
     #maintenance h2 {
-        font-size: 24px;
+        font-size: calc(1.76 * var(--screen-unit));
         font-weight: normal;
-        margin: 0 0 20px;
+        margin: 0 0 calc(1.46 * var(--screen-unit));
         line-height: 1.6;
     }
 
     @media (max-width: 900px) {
+        .exhibition {
+            --screen-unit: 13.66px;
+            height: auto;
+            min-height: 100dvh;
+        }
+        #exhibition-guide { justify-content: flex-start; }
         .project-header { gap: 24px; }
         .website { position: static; }
         #exhibition-guide, #maintenance { padding-right: 0; }
