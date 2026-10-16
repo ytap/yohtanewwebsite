@@ -1,0 +1,186 @@
+---
+import { getEntry } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+const project = await getEntry('projects', 'tele-bio');
+const title = project.data.title;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Layout title={`${title} — 展示ガイド`} standalone noindex noiseTheme="pale-blue">
+    <div class="exhibition">
+        <header class="project-header">
+            <h1 class="project-title">{title}</h1>
+            <figure class="website">
+                <img src={`${base}/assets/tele-bio-website-qr.svg`} width="164" height="164" alt="作者のウェブサイトのQRコード： https://ytap.github.io/yohtanewwebsite/" />
+                <figcaption>作者のウェブサイト</figcaption>
+            </figure>
+        </header>
+
+        <div id="exhibition-guide">
+            <section class="guide-group" aria-labelledby="instructions-title">
+                <h2 id="instructions-title">体験の仕方</h2>
+                <ul class="guide-list body-text">
+                    <li>受話器を手に取り、自由に声を出してみてください。</li>
+                    <li>ダイアルを回さずに持ち上げると、自分とやり取りができます。</li>
+                    <li>ダイアルを回すと、その数字に応じた人数の、過去の利用者の軌跡が重なって再生されます。</li>
+                </ul>
+            </section>
+            <section class="guide-group" aria-labelledby="notice-title">
+                <h2 id="notice-title">注意</h2>
+                <ul class="guide-list body-text">
+                    <li>体験中の声と生体データは記録され、次の鑑賞者に再生されます。</li>
+                    <li>体験中、ミストが出たり、受話器が温かくなったりすることがあります。苦手な方はご注意ください。</li>
+                    <li>現在プロトタイプ中の作品です。不具合があれば、お近くのx-Musicメンバー、または作者の北川までお知らせください（ykitagawa@keio.jp）。</li>
+                </ul>
+            </section>
+        </div>
+
+        <section id="maintenance" aria-labelledby="maintenance-title" hidden>
+            <h2 id="maintenance-title">現在メンテナンス中です。</h2>
+            <p class="body-text">調整のため、ただいま体験をお休みしています。しばらくお待ちください。</p>
+        </section>
+    </div>
+</Layout>
+
+<script>
+    import { initElementBorder } from '../../scripts/projectCardBorder.js';
+
+    document.fonts.ready.then(() => {
+        const title = document.querySelector('.project-title');
+        if (title) initElementBorder(title, 'compact');
+    });
+
+    const storageKey = 'tele-bio:maintenance';
+    const guide = document.getElementById('exhibition-guide');
+    const maintenance = document.getElementById('maintenance');
+    let isMaintenance = false;
+
+    function showMaintenance(enabled: boolean) {
+        isMaintenance = enabled;
+        if (guide) guide.hidden = enabled;
+        if (maintenance) maintenance.hidden = !enabled;
+    }
+
+    try {
+        showMaintenance(localStorage.getItem(storageKey) === 'true');
+    } catch {
+        // The shortcut still works when persistent browser storage is unavailable.
+    }
+
+    // Staff keyboard control; no controls appear on the audience-facing display.
+    window.addEventListener('keydown', (event) => {
+        const target = event.target;
+        if (target instanceof HTMLElement && (target.isContentEditable || target.closest('input, textarea, select'))) return;
+        if (event.code !== 'KeyM' || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey || event.repeat) return;
+        event.preventDefault();
+        showMaintenance(!isMaintenance);
+        try {
+            localStorage.setItem(storageKey, String(isMaintenance));
+        } catch {
+            // Keep the current display usable without storage.
+        }
+    });
+
+    // Another window on the same browser can control the exhibition monitor too.
+    window.addEventListener('storage', (event) => {
+        if (event.key === storageKey || event.key === null) {
+            showMaintenance(event.key === storageKey && event.newValue === 'true');
+        }
+    });
+</script>
+
+<style>
+    .exhibition {
+        width: 86vw;
+        min-height: 100svh;
+        margin: 0 auto;
+        padding: 24px 0 32px;
+        box-sizing: border-box;
+    }
+
+    .project-header {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 32px;
+        margin-bottom: 28px;
+    }
+
+    /* Keep the site's typeface, with a larger title for the exhibition. */
+    .project-title {
+        display: inline-block;
+        position: relative;
+        padding: 0.25em 0.3em 0.05em;
+        font-size: clamp(48px, 4.5vw, 80px);
+        font-weight: normal;
+        color: #333;
+        margin: 0;
+        line-height: 1;
+    }
+
+    .body-text {
+        font-size: 20px;
+        line-height: 1.6;
+        color: #333;
+        margin: 0 0 20px;
+    }
+
+    .guide-group + .guide-group { margin-top: 32px; }
+
+    .guide-group h2 {
+        font-size: 24px;
+        font-weight: bold;
+        line-height: 1.6;
+        margin: 0 0 12px;
+    }
+
+    .guide-list {
+        display: grid;
+        gap: 12px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .guide-list li { position: relative; padding-left: 1em; }
+    .guide-list li::before { content: '・'; position: absolute; left: 0; }
+
+    .website {
+        position: absolute;
+        top: 0;
+        right: 0;
+        text-align: center;
+        flex: 0 0 auto;
+        margin: 0;
+    }
+
+    #exhibition-guide, #maintenance { padding-right: 204px; }
+
+    .website img {
+        display: block;
+        width: 164px;
+        height: auto;
+        margin: 0 auto 8px;
+        background: white;
+    }
+
+    .website figcaption { font-size: 16px; }
+
+    #maintenance { padding-top: 32px; }
+    #maintenance h2 {
+        font-size: 24px;
+        font-weight: normal;
+        margin: 0 0 20px;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 900px) {
+        .project-header { gap: 24px; }
+        .website { position: static; }
+        #exhibition-guide, #maintenance { padding-right: 0; }
+        .website img { width: 128px; }
+        .website figcaption { font-size: 14px; }
+    }
+</style>

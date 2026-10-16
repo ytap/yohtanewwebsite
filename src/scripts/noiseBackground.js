@@ -130,6 +130,11 @@ export function initNoiseBackground(pixelSize = 4, theme = 'default') {
                 g_bg = Math.min(255, gray + 30); 
                 r_bg = Math.max(0, gray - 10);
                 b_bg = Math.max(0, gray - 10);
+            } else if (theme === 'pale-blue' && Math.random() < 0.2) {
+                // A few pale blue grains amongst the existing neutral noise.
+                r_bg = Math.max(0, gray - 45);
+                g_bg = Math.min(255, gray + 12);
+                b_bg = Math.min(255, gray + 42);
             }
 
             // 変更: 255の代わりにbgAlphaを使用

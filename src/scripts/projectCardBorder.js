@@ -95,13 +95,14 @@ function fit(canvas, card) {
     canvas.height = r.height;
 }
 
-// 下線は文字のスケールに合わせて、枠よりも細かく密な点線にする
+// 下線と文字を囲む小さい枠は、作品カードの枠より細かく密な点線にする
 function makeDashArray(mode = 'rect') {
     const arr = [];
-    const limit = mode === 'underline' ? 600 : 1200;
+    const compact = mode === 'underline' || mode === 'compact';
+    const limit = compact ? 600 : 1200;
     for (let total = 0; total < limit;) {
-        const d = mode === 'underline' ? 2 + Math.random() * 6 : 8 + Math.random() * 30;
-        const g = mode === 'underline' ? 4 + Math.random() * 8 : 20 + Math.random() * 70;
+        const d = compact ? 2 + Math.random() * 6 : 8 + Math.random() * 30;
+        const g = compact ? 4 + Math.random() * 8 : 20 + Math.random() * 70;
         arr.push(d, g);
         total += d + g;
     }

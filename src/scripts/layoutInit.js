@@ -7,7 +7,7 @@ function setupLayoutScripts() {
 
     if (!isWip && !isHome) {
         try {
-            initNoiseBackground(2);
+            initNoiseBackground(2, document.body.dataset.noiseTheme ?? 'default');
         } catch (e) {
             console.error('Failed to init noiseBackground:', e);
         }

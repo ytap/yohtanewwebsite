@@ -7,14 +7,17 @@ interface Props {
     preloadImages?: string[];
     noindex?: boolean;
     publicVersion?: boolean;
+    standalone?: boolean;
+    noiseTheme?: 'default' | 'pale-blue';
 }
 
-const { title = "Portfolio: Yohta Kitagawa", isHome = false, isWip = false, preloadImages = [], noindex = false, publicVersion = false } = Astro.props;
+const { title = "Portfolio: Yohta Kitagawa", isHome = false, isWip = false, preloadImages = [], noindex = false, publicVersion = false, standalone = false, noiseTheme = 'default' } = Astro.props;
 const pageBase = publicVersion ? '/yohtanewwebsite/public' : '/yohtanewwebsite';
 ---
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    {standalone && <meta name="viewport" content="width=device-width, initial-scale=1" />}
     <title>{title}</title>
     {noindex && <meta name="robots" content="noindex, nofollow, noarchive" />}
     {preloadImages.map((src) => <link rel="preload" as="image" href={src} />)}
@@ -142,13 +145,13 @@ const pageBase = publicVersion ? '/yohtanewwebsite/public' : '/yohtanewwebsite';
 
     </style>
 </head>
-<body data-is-home={String(isHome)} data-is-wip={String(isWip)} data-public-version={String(publicVersion)}>
-    <nav class="site-nav" aria-label="Main navigation">
+<body data-is-home={String(isHome)} data-is-wip={String(isWip)} data-public-version={String(publicVersion)} data-noise-theme={noiseTheme}>
+    {!standalone && <nav class="site-nav" aria-label="Main navigation">
         <a href={`${pageBase}/travel-news`}>Travel &amp; News</a>
         <a href={`${pageBase}/vision`}>Vision</a>
-    </nav>
+    </nav>}
 
-    {!isHome && (
+    {!isHome && !standalone && (
         <div class="main-container" style="padding-bottom:0">
             <header class="sub-hero-section">
                 <h1 class="sub-header-title">
