@@ -29,7 +29,10 @@ const [featureProject, ...subProjects] = featuredProjects;
     <div class="main-container">
         <header class="hero-section">
             <h1 class="site-title">Yohta Kitagawa</h1>
-            <canvas id="divider-canvas" class="procedural-divider"></canvas>
+            <div class="divider-wrapper">
+                <canvas id="divider-canvas" class="procedural-divider" aria-hidden="true"></canvas>
+                <div class="divider-notice-links"></div>
+            </div>
         </header>
 
         <section class="intro-section" id="vision">
@@ -378,6 +381,40 @@ const [featureProject, ...subProjects] = featuredProjects;
         opacity: 0;
         animation: fadeIn 2s ease-out forwards;
         animation-delay: 0.2s;
+    }
+
+    .divider-wrapper {
+        position: relative;
+        height: 20px;
+    }
+
+    .divider-notice-links {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100vw;
+        height: 20px;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    .divider-notice-links :global(a) {
+        position: absolute;
+        top: 0;
+        left: 0;
+        font: italic 11px/20px CothamSans, sans-serif;
+        white-space: nowrap;
+        color: #333;
+        text-decoration: none;
+        pointer-events: auto;
+    }
+
+    .divider-notice-links :global(a:hover),
+    .divider-notice-links :global(a:focus-visible) {
+        color: #258ba5;
+        text-decoration: underline;
+        outline-offset: -2px;
     }
 
     /* -------------------------------------

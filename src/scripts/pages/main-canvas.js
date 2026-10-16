@@ -241,14 +241,18 @@ if (typeof window !== 'undefined') {
         dividerCanvas.style.height = dividerCssHeight + 'px';
         dividerCtx.scale(dpr, dpr);
 
-  /** @type {{x:number,length:number,text?:string}[]} */
+  /** @type {{x:number,length:number,link?:HTMLAnchorElement}[]} */
   let lines = [];
   let currentSpeed = 90;
   const targetSpeed = 0.5; // 描き切ったあとの巡回速度 (ゆっくり)
   let brakeForce = 0.05;
 
-        // 点線の合間に時折混ざる「製作中」の文言
-        const noticeText = 'Website under construction...';
+        // 点線の合間に、現在の展示案内へのリンクを時折挟む。
+        const noticeText = 'currently exhibiting here!';
+        const noticeHref = document.body.dataset.publicVersion === 'true'
+          ? '/yohtanewwebsite/public/travel-news'
+          : '/yohtanewwebsite/travel-news';
+        const noticeLinks = dividerCanvas.parentElement?.querySelector('.divider-notice-links');
         const noticeFontSize = 11;
         const noticeFont = `italic ${noticeFontSize}px CothamSans, sans-serif`;
         dividerCtx.font = noticeFont;
@@ -270,11 +274,13 @@ if (typeof window !== 'undefined') {
           dividerCtx.textAlign = 'left';
           dividerCtx.textBaseline = 'middle';
 
+          // Hovering or focusing a link holds it still for easy activation.
+          const paused = noticeLinks?.matches(':hover') || noticeLinks?.contains(document.activeElement);
           for (let i = 0; i < lines.length; i++) {
-            // currentSpeedを使って左方向に移動させます
-            lines[i].x -= currentSpeed;
-            if (lines[i].text) {
-              dividerCtx.fillText(lines[i].text, lines[i].x, dividerCssHeight / 2);
+            lines[i].x -= paused ? 0 : currentSpeed;
+            if (lines[i].link) {
+              lines[i].link.style.transform = `translateX(${lines[i].x}px)`;
+              lines[i].link.tabIndex = lines[i].x >= 0 && lines[i].x + lines[i].length <= dividerWidth ? 0 : -1;
             } else {
               dividerCtx.beginPath();
               dividerCtx.moveTo(lines[i].x, dividerCssHeight / 2);
@@ -284,7 +290,11 @@ if (typeof window !== 'undefined') {
           }
           
           // 画面の左端より外に出た線を削除します
-          lines = lines.filter(line => line.x + line.length > 0);
+          lines = lines.filter(line => {
+            if (line.x + line.length > 0) return true;
+            line.link?.remove();
+            return false;
+          });
           
           // 画面の右端に隙間ができたら新しい線を追加します
           if (lines.length > 0) {
@@ -294,8 +304,14 @@ if (typeof window !== 'undefined') {
               const space = 12 + Math.random() * 36;
               const newX = rightmostX + space;
               // しばらく線が続いたら、時折文言を挟む
-              if (sinceLastNotice > 2 && Math.random() < 0.5) {
-                lines.push({ x: newX, length: noticeWidth, text: noticeText });
+              if (noticeLinks && sinceLastNotice > 5 && Math.random() < 0.5) {
+                const link = document.createElement('a');
+                link.textContent = noticeText;
+                link.href = noticeHref;
+                link.tabIndex = -1;
+                link.style.transform = `translateX(${newX}px)`;
+                noticeLinks.appendChild(link);
+                lines.push({ x: newX, length: noticeWidth, link });
                 rightmostX = newX + noticeWidth;
                 sinceLastNotice = 0;
               } else {
