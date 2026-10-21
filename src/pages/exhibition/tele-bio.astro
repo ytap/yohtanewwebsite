@@ -34,9 +34,14 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
             </section>
         </div>
 
-        <section id="maintenance" aria-labelledby="maintenance-title" hidden>
+        <section class="maintenance-screen" id="maintenance" aria-labelledby="maintenance-title" hidden>
             <h2 id="maintenance-title">現在メンテナンス中です。</h2>
             <p class="body-text">調整のため、ただいま体験をお休みしています。しばらくお待ちください。</p>
+        </section>
+
+        <section class="maintenance-screen" id="maintenance-recovery" aria-labelledby="maintenance-recovery-title" hidden>
+            <h2 id="maintenance-recovery-title">現在メンテナンス中です、すみません。</h2>
+            <p class="body-text">16時から復旧予定です。</p>
         </section>
     </div>
 </Layout>
@@ -52,16 +57,26 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     const storageKey = 'tele-bio:maintenance';
     const guide = document.getElementById('exhibition-guide');
     const maintenance = document.getElementById('maintenance');
-    let isMaintenance = false;
+    const recovery = document.getElementById('maintenance-recovery');
+    const screens = [guide, maintenance, recovery];
+    let screenMode = 0;
 
-    function showMaintenance(enabled: boolean) {
-        isMaintenance = enabled;
-        if (guide) guide.hidden = enabled;
-        if (maintenance) maintenance.hidden = !enabled;
+    function readScreen(value: string | null) {
+        // Retain the existing display state saved before three-screen switching.
+        if (value === 'true' || value === '1') return 1;
+        if (value === '2') return 2;
+        return 0;
+    }
+
+    function showScreen(mode: number) {
+        screenMode = mode;
+        screens.forEach((screen, index) => {
+            if (screen) screen.hidden = index !== mode;
+        });
     }
 
     try {
-        showMaintenance(localStorage.getItem(storageKey) === 'true');
+        showScreen(readScreen(localStorage.getItem(storageKey)));
     } catch {
         // The shortcut still works when persistent browser storage is unavailable.
     }
@@ -72,9 +87,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         if (target instanceof HTMLElement && (target.isContentEditable || target.closest('input, textarea, select'))) return;
         if (event.code !== 'KeyM' || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey || event.repeat) return;
         event.preventDefault();
-        showMaintenance(!isMaintenance);
+        showScreen((screenMode + 1) % screens.length);
         try {
-            localStorage.setItem(storageKey, String(isMaintenance));
+            localStorage.setItem(storageKey, String(screenMode));
         } catch {
             // Keep the current display usable without storage.
         }
@@ -83,7 +98,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     // Another window on the same browser can control the exhibition monitor too.
     window.addEventListener('storage', (event) => {
         if (event.key === storageKey || event.key === null) {
-            showMaintenance(event.key === storageKey && event.newValue === 'true');
+            showScreen(readScreen(event.key === storageKey ? event.newValue : null));
         }
     });
 </script>
@@ -137,7 +152,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         gap: calc(5 * var(--screen-unit));
     }
 
-    #exhibition-guide[hidden], #maintenance[hidden] { display: none; }
+    #exhibition-guide[hidden], .maintenance-screen[hidden] { display: none; }
 
     .guide-group h2 {
         font-size: calc(1.76 * var(--screen-unit));
@@ -181,7 +196,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         margin: 0;
     }
 
-    #maintenance { padding-right: calc(14.94 * var(--screen-unit)); }
+    .maintenance-screen { padding-right: calc(14.94 * var(--screen-unit)); }
 
     .website img {
         display: block;
@@ -193,13 +208,13 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
     .website figcaption { font-size: calc(1.17 * var(--screen-unit)); }
 
-    #maintenance {
+    .maintenance-screen {
         flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: center;
     }
-    #maintenance h2 {
+    .maintenance-screen h2 {
         font-size: calc(1.76 * var(--screen-unit));
         font-weight: normal;
         margin: 0 0 calc(1.46 * var(--screen-unit));
@@ -215,7 +230,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         #exhibition-guide { justify-content: flex-start; }
         .project-header { gap: 24px; }
         .website { position: static; }
-        #exhibition-guide, #maintenance { padding-right: 0; }
+        #exhibition-guide, .maintenance-screen { padding-right: 0; }
         .website img { width: 128px; }
         .website figcaption { font-size: 14px; }
     }
