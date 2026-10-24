@@ -9,6 +9,7 @@ const pageHref = (href) => publicVersion
 const events = [
     {
         type: 'Conference', date: 'Nov 2–5, 2026', title: 'ACM UIST 2026',
+        titleLink: 'https://uist.acm.org/2026/',
         detail: 'Demo for student innovation contest',
         detailLink: 'https://programs.sigchi.org/uist/2026/people/list/275975',
         location: 'Detroit, MI, USA',
@@ -18,12 +19,14 @@ const events = [
     },
     {
         type: 'Exhibition', date: 'Nov 22–23, 2026', title: 'Open Research Forum 2026',
+        titleLink: 'https://expo.sfc.keio.ac.jp/2026/en/orf/',
         location: 'Keio SFC Campus, Japan',
         map: 'https://www.google.com/maps/search/?api=1&query=Keio+University+Shonan+Fujisawa+Campus+Japan',
         projects: [{ name: 'TBA' }],
     },
     {
         type: 'Conference', date: 'Dec 2–5, 2026', title: 'SIGGRAPH Asia 2026',
+        titleLink: 'https://asia.siggraph.org/2026/',
         detail: 'Oral presentation for art paper',
         location: 'Kuala Lumpur, Malaysia',
         map: 'https://www.google.com/maps/search/?api=1&query=Kuala+Lumpur+Malaysia',
@@ -61,7 +64,7 @@ const events = [
                         <div class="event-copy">
                             <div class="event-meta"><span>{event.type}</span><time>{event.date}</time></div>
                             <div class="event-details">
-                                <h3>{event.title}</h3>
+                                <h3><a href={event.titleLink} target="_blank" rel="noopener noreferrer">{event.title}</a></h3>
                                 {event.detail && <p class="event-detail">{event.detailLink ? <a href={event.detailLink} target="_blank" rel="noopener noreferrer">{event.detail}</a> : event.detail}</p>}
                                 <a class="event-map" href={event.map} target="_blank" rel="noopener noreferrer">{event.location} ↗</a>
                                 <p class="event-projects">Presenting: {event.projects.map((project, index) => (
