@@ -62,8 +62,7 @@ const events = [
                             <div class="event-meta"><span>{event.type}</span><time>{event.date}</time></div>
                             <div class="event-details">
                                 <h3>{event.title}</h3>
-                                {event.detail && <p class="event-detail">{event.detail}</p>}
-                                {event.detailLink && <a class="event-detail-link" href={event.detailLink} target="_blank" rel="noopener noreferrer">UIST program ↗</a>}
+                                {event.detail && <p class="event-detail">{event.detailLink ? <a href={event.detailLink} target="_blank" rel="noopener noreferrer">{event.detail}</a> : event.detail}</p>}
                                 <a class="event-map" href={event.map} target="_blank" rel="noopener noreferrer">{event.location} ↗</a>
                                 <p class="event-projects">Presenting: {event.projects.map((project, index) => (
                                     <Fragment>{index > 0 && ', '}{project.href ? <a href={pageHref(project.href)}>{project.name}</a> : project.name}</Fragment>
@@ -259,7 +258,6 @@ const events = [
     .event-meta span, .event-meta time { display: block; }
     .event-details h3 { font-size: 27px; font-weight: normal; margin: 0 0 8px; }
     .event-detail { font-size: 18px; font-style: italic; margin: 0 0 8px; }
-    .event-detail-link { display: block; width: fit-content; font-size: 18px; margin: 0 0 8px; }
     .event-map { font-size: 18px; }
     .event-projects { font-size: 19px; margin: 14px 0 0; }
 
