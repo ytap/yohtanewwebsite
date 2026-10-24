@@ -8,15 +8,9 @@ const pageHref = (href) => publicVersion
 
 const events = [
     {
-        type: 'Exhibition', date: 'Oct 16–23, 2026', title: 'Soundいる.',
-        location: 'Keio Yagami Campus, Kanagawa, Japan',
-        map: 'https://www.google.com/maps/search/?api=1&query=Keio+University+Yagami+Campus+Kanagawa+Japan',
-        projects: [{ name: 'Tele-bio', href: '/yohtanewwebsite/projects/tele-bio' }, { name: 'Knot-music', href: '/yohtanewwebsite/projects/knot-music' }],
-        thumbnail: { poster: '/yohtanewwebsite/assets/tele-bio-home-first-frame.jpg', video: '/yohtanewwebsite/assets/tele-bio-loop', alt: 'Tele-bio', href: '/yohtanewwebsite/projects/tele-bio' },
-    },
-    {
         type: 'Conference', date: 'Nov 2–5, 2026', title: 'ACM UIST 2026',
         detail: 'Demo for student innovation contest',
+        detailLink: 'https://programs.sigchi.org/uist/2026/people/list/275975',
         location: 'Detroit, MI, USA',
         map: 'https://www.google.com/maps/search/?api=1&query=Detroit+Michigan+USA',
         projects: [{ name: 'Tele-bio', href: '/yohtanewwebsite/projects/tele-bio' }],
@@ -54,7 +48,7 @@ const events = [
                         <p>TEMP: <span id="weather-temp">--°C</span></p>
                         <p>SKY: <span id="weather-sky">...</span></p>
                     </div>
-                    <p class="board-song">Recently I've been listening to <a href="https://open.spotify.com/track/5faDeWJhejXrYY2Qdqhojh?si=4638926ddd164ab0" target="_blank" rel="noopener noreferrer">this ↗</a>.</p>
+                    <p class="board-song">Recently I've been listening to <a href="https://open.spotify.com/track/03LKxyUbFKaVSfxCbDI0Qf?si=8fb3ea3f96b6426b" target="_blank" rel="noopener noreferrer">this ↗</a>.</p>
                 </div>
             </section>
         </div>
@@ -69,6 +63,7 @@ const events = [
                             <div class="event-details">
                                 <h3>{event.title}</h3>
                                 {event.detail && <p class="event-detail">{event.detail}</p>}
+                                {event.detailLink && <a class="event-detail-link" href={event.detailLink} target="_blank" rel="noopener noreferrer">UIST program ↗</a>}
                                 <a class="event-map" href={event.map} target="_blank" rel="noopener noreferrer">{event.location} ↗</a>
                                 <p class="event-projects">Presenting: {event.projects.map((project, index) => (
                                     <Fragment>{index > 0 && ', '}{project.href ? <a href={pageHref(project.href)}>{project.name}</a> : project.name}</Fragment>
@@ -264,6 +259,7 @@ const events = [
     .event-meta span, .event-meta time { display: block; }
     .event-details h3 { font-size: 27px; font-weight: normal; margin: 0 0 8px; }
     .event-detail { font-size: 18px; font-style: italic; margin: 0 0 8px; }
+    .event-detail-link { display: block; width: fit-content; font-size: 18px; margin: 0 0 8px; }
     .event-map { font-size: 18px; }
     .event-projects { font-size: 19px; margin: 14px 0 0; }
 
