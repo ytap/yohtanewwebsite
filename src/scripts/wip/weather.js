@@ -6,9 +6,9 @@ const YOHTA_LON = 139.6503;
 
 let currentWeather = null;
 
-export async function updateWeatherData() {
+export async function updateWeatherData({ lat = YOHTA_LAT, lon = YOHTA_LON, timeZone = 'Asia/Tokyo' } = {}) {
   try {
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${YOHTA_LAT}&lon=${YOHTA_LON}&units=metric&appid=${OPENWEATHER_API_KEY}`;
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${OPENWEATHER_API_KEY}`;
     const response = await fetch(url);
     if (!response.ok) throw new Error("Weather fetch failed");
 
@@ -18,12 +18,13 @@ export async function updateWeatherData() {
       condition: data.weather[0].main,
       windSpeed: data.wind.speed,
       windDeg: data.wind.deg,
-      time: new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit' }).format(new Date())
+      time: new Intl.DateTimeFormat('en-GB', { timeZone, hour: '2-digit', minute: '2-digit' }).format(new Date())
     };
+    return currentWeather;
   } catch (error) {
     console.error("Weather update error:", error);
+    return null;
   }
-  return currentWeather;
 }
 
 export function getCurrentWeather() {

@@ -46,7 +46,7 @@ const events = [
             <section class="location-section" aria-label="Current location and weather">
                 <div class="weather-board" aria-live="polite">
                     <canvas class="wood-pixels" aria-hidden="true"></canvas>
-                    <p class="board-location">It is <time id="tokyo-time">--:--</time> in <a href="https://www.google.com/maps/search/?api=1&query=Tokyo+Japan" target="_blank" rel="noopener noreferrer">Tokyo, Japan ↗</a>,<br />where Yohta is at.</p>
+                    <p class="board-location">It is <time id="location-time">--:--</time> in <a id="location-map" href="https://www.google.com/maps/search/?api=1&query=Tokyo+Japan" target="_blank" rel="noopener noreferrer">Tokyo, Japan ↗</a>,<br />where Yohta is at.</p>
                     <div class="board-weather">
                         <p>TEMP: <span id="weather-temp">--°C</span></p>
                         <p>SKY: <span id="weather-sky">...</span></p>
@@ -90,10 +90,41 @@ const events = [
 <script>
     import { updateWeatherData } from '../scripts/wip/weather.js';
 
-    const timeElement = document.getElementById('tokyo-time');
+    const timeElement = document.getElementById('location-time');
+    const mapElement = document.getElementById('location-map');
     const tempElement = document.getElementById('weather-temp');
     const skyElement = document.getElementById('weather-sky');
     const woodCanvas = document.querySelector('.wood-pixels');
+
+    const locations = {
+        tokyo: {
+            name: 'Tokyo, Japan', timeZone: 'Asia/Tokyo', lat: 35.6762, lon: 139.6503,
+            map: 'https://www.google.com/maps/search/?api=1&query=Tokyo+Japan',
+        },
+        nyc: {
+            name: 'New York City, NY, USA', timeZone: 'America/New_York', lat: 40.7128, lon: -74.0060,
+            map: 'https://www.google.com/maps/search/?api=1&query=New+York+City+New+York+USA',
+        },
+        detroit: {
+            name: 'Detroit, MI, USA', timeZone: 'America/Detroit', lat: 42.3314, lon: -83.0458,
+            map: 'https://www.google.com/maps/search/?api=1&query=Detroit+Michigan+USA',
+        },
+    };
+
+    const usDateFormatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit',
+    });
+
+    function scheduledLocation(now) {
+        const parts = Object.fromEntries(usDateFormatter.formatToParts(now).map(({ type, value }) => [type, value]));
+        const usDate = Number(`${parts.year}${parts.month}${parts.day}`);
+        if (usDate >= 20261030 && usDate <= 20261101) return locations.nyc;
+        if (usDate >= 20261102 && usDate <= 20261106) return locations.detroit;
+        return locations.tokyo;
+    }
+
+    let currentLocation;
+    let weatherRequest = 0;
 
     function drawWoodPixels() {
         if (!(woodCanvas instanceof HTMLCanvasElement) || !woodCanvas.parentElement) return;
@@ -135,15 +166,30 @@ const events = [
     }
 
     function updateClock() {
+        const now = new Date();
+        const location = scheduledLocation(now);
+        if (location !== currentLocation) {
+            currentLocation = location;
+            if (mapElement) {
+                mapElement.textContent = `${location.name} ↗`;
+                mapElement.href = location.map;
+            }
+            if (tempElement) tempElement.textContent = '--°C';
+            if (skyElement) skyElement.textContent = '...';
+            updateBoardWeather();
+        }
         if (timeElement) {
             timeElement.textContent = new Intl.DateTimeFormat('en-GB', {
-                timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit',
-            }).format(new Date());
+                timeZone: location.timeZone, hour: '2-digit', minute: '2-digit',
+            }).format(now);
         }
     }
 
     async function updateBoardWeather() {
-        const weather = await updateWeatherData();
+        if (!currentLocation) return;
+        const request = ++weatherRequest;
+        const weather = await updateWeatherData(currentLocation);
+        if (request !== weatherRequest) return;
         if (weather) {
             if (tempElement) tempElement.textContent = `${weather.temp}°C`;
             if (skyElement) skyElement.textContent = weather.condition;
@@ -153,7 +199,6 @@ const events = [
     }
 
     updateClock();
-    updateBoardWeather();
     setInterval(updateClock, 1000);
     setInterval(updateBoardWeather, 600000);
 </script>
