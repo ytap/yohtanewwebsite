@@ -62,11 +62,14 @@ const events = [
                 {events.map((event) => (
                     <li class="event">
                         <div class="event-copy">
-                            <div class="event-meta"><span>{event.type}</span><time>{event.date}</time></div>
+                            <div class="event-meta">
+                                <span>{event.type}</span>
+                                <time>{event.date}</time>
+                                <a class="event-map" href={event.map} target="_blank" rel="noopener noreferrer">{event.location} ↗</a>
+                            </div>
                             <div class="event-details">
                                 <h3><a href={event.titleLink} target="_blank" rel="noopener noreferrer">{event.title}</a></h3>
                                 {event.detail && <p class="event-detail">{event.detailLink ? <a href={event.detailLink} target="_blank" rel="noopener noreferrer">{event.detail}</a> : event.detail}</p>}
-                                <a class="event-map" href={event.map} target="_blank" rel="noopener noreferrer">{event.location} ↗</a>
                                 <p class="event-projects">Presenting: {event.projects.map((project, index) => (
                                     <Fragment>{index > 0 && ', '}{project.href ? <a href={pageHref(project.href)}>{project.name}</a> : project.name}</Fragment>
                                 ))}</p>
@@ -303,10 +306,10 @@ const events = [
     .event-thumbnail video { width: 100%; height: 100%; display: block; object-fit: cover; }
 
     .event-meta { font-size: 18px; line-height: 1.5; }
-    .event-meta span, .event-meta time { display: block; }
+    .event-meta span, .event-meta time, .event-meta .event-map { display: block; }
     .event-details h3 { font-size: 27px; font-weight: normal; margin: 0 0 8px; }
     .event-detail { font-size: 18px; font-style: italic; margin: 0 0 8px; }
-    .event-map { font-size: 18px; }
+    .event-map { font-size: 18px; margin-top: 8px; }
     .event-projects { font-size: 19px; margin: 14px 0 0; }
 
     @media (max-width: 950px) {
