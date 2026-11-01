@@ -1,10 +1,12 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
+import { isProjectAvailable } from '../../utils/projectRelease.js';
 
 const publicVersion = Astro.props.publicVersion ?? false;
 const pageBase = publicVersion ? '/yohtanewwebsite/public' : '/yohtanewwebsite';
 const projects = (await getCollection('projects'))
+    .filter((project) => isProjectAvailable(project))
     .filter((project) => project.data.published && project.data.poster && project.id !== 'knot-music')
     .sort((a, b) => a.data.order - b.data.order);
 // 年をまたぐ作品は開始年に一度だけ掲載する。

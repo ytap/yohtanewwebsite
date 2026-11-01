@@ -1,10 +1,11 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
+import { isProjectAvailable, isKnotHatReleased } from '../../utils/projectRelease.js';
 
 export async function getStaticPaths() {
     const projects = await getCollection('projects');
-    return projects.map((project) => ({
+    return projects.filter((project) => isProjectAvailable(project)).map((project) => ({
         params: { slug: project.id },
         props: { project },
     }));
@@ -14,9 +15,12 @@ const { project, publicVersion = false } = Astro.props;
 const d = project.data;
 const pageBase = publicVersion ? '/yohtanewwebsite/public' : '/yohtanewwebsite';
 const { Content } = await render(project);
+const hatReleased = isKnotHatReleased();
+const isHatImage = (image) => image.src?.endsWith('/Knot-hat.JPG');
+const eligibleImages = d.extraImages.filter((image) => !isHatImage(image) || hatReleased);
 const extraImages = publicVersion && project.id === 'knot-music'
-    ? [{ caption: 'more coming soon...' }, ...d.extraImages.filter((image) => !image.hiddenFromPublic)]
-    : d.extraImages;
+    ? [{ caption: 'more coming soon...' }, ...eligibleImages.filter((image) => !image.hiddenFromPublic || (isHatImage(image) && hatReleased))]
+    : eligibleImages;
 
 
 // concept / technical / credits は空行で段落に分ける
@@ -114,7 +118,7 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
         {project.body?.trim() && <section class="project-process bordered-block">
             <h2 class="section-heading">Process</h2>
             <div class="body-text process-body">
-                {publicVersion && project.id === 'knot-music'
+                {(publicVersion || !hatReleased) && project.id === 'knot-music'
                     ? paragraphs(d.publicProcess).map((p) => <p>{p}</p>)
                     : <Content />}
             </div>

@@ -22,6 +22,7 @@ const projects = defineCollection({
         series: z.string().optional(),
         // ページがまだ無い作品はfalseにしておくと、トップからリンクされない
         published: z.boolean().default(true),
+        releaseAt: z.string().datetime().optional(),
 
         // 画像が横長すぎて切りたくない場合は 'contain' にする
         fit: z.enum(['cover', 'contain']).default('cover'),

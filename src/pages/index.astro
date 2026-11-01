@@ -4,6 +4,7 @@ import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { pdfPageImages } from '../utils/pdfPages.js';
 import cvLinks from '../data/cv-links.json';
+import { isProjectAvailable } from '../utils/projectRelease.js';
 
 const publicVersion = Astro.props.publicVersion ?? false;
 const pageBase = publicVersion ? '/yohtanewwebsite/public' : '/yohtanewwebsite';
@@ -12,7 +13,7 @@ const pageBase = publicVersion ? '/yohtanewwebsite/public' : '/yohtanewwebsite';
 const cvPages = pdfPageImages('cv');
 
 // 作品データは src/content/projects/*.md から読む (トップと個別ページで共通)
-const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const projects = (await getCollection('projects')).filter((project) => isProjectAvailable(project)).sort((a, b) => a.data.order - b.data.order);
 const featuredProjects = projects.filter((project) => project.data.featured).map((project) => ({
     title: project.data.title,
     description: project.data.oneLiner,
