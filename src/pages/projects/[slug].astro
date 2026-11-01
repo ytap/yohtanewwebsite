@@ -12,6 +12,7 @@ export async function getStaticPaths() {
 
 const { project, publicVersion = false } = Astro.props;
 const d = project.data;
+const pageBase = publicVersion ? '/yohtanewwebsite/public' : '/yohtanewwebsite';
 const { Content } = await render(project);
 const extraImages = publicVersion && project.id === 'knot-music'
     ? [{ caption: 'more coming soon...' }, ...d.extraImages.filter((image) => !image.hiddenFromPublic)]
@@ -29,8 +30,8 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
             <p class="project-meta">{d.contributors} · {d.year}{d.role ? ` · ${d.role}` : ''}</p>
         </header>
 
-        <section class="project-top">
-            <div class="loop-block">
+        <section class:list={["project-top", { "text-only": !d.poster && !d.loop } ]}>
+            {(d.poster || d.loop) && <div class="loop-block">
                 <div class="loop-wrapper">
                     {d.loop ? (
                         <video
@@ -50,7 +51,7 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
                     )}
                     <p class="loop-caption">{d.oneLiner}</p>
                 </div>
-            </div>
+            </div>}
 
             <div class="top-text bordered-block">
                 <p class="one-liner">{d.oneLiner}</p>
@@ -58,15 +59,15 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
             </div>
         </section>
 
-        <section class="project-middle">
+        {(d.technical.length > 0 || d.recognition.length > 0 || d.archiveVideo || d.fullVideoUrl) && <section class="project-middle">
             <div class="middle-left">
-                <div class="bordered-block">
+                {d.technical.length > 0 && <div class="bordered-block">
                     <h2 class="section-heading">{d.technicalHeading}</h2>
                     <ul class="technical-list">
                         {/* 項目内にリンクを書けるようにHTMLとして出力する */}
                         {d.technical.map((item) => <li set:html={item} />)}
                     </ul>
-                </div>
+                </div>}
 
                 {d.recognition.length > 0 && (
                     <div class="bordered-block">
@@ -86,21 +87,19 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
                 )}
             </div>
 
-            <div class="middle-right">
+            {(d.archiveVideo || d.fullVideoUrl) && <div class="middle-right">
                 {d.archiveVideo ? (
                     <div class="archive-block">
                         <video class="archive-video" src={d.archiveVideo} poster={d.archivePoster ?? d.poster} controls playsinline preload="none"></video>
                     </div>
-                ) : (
-                    <p class="archive-pending">Documentation currently in progress...</p>
-                )}
+                ) : null}
                 {d.fullVideoUrl && (
                     <p class="full-link">
                         <a href={d.fullVideoUrl} target="_blank" rel="noopener noreferrer">→ Watch the full video</a>
                     </p>
                 )}
-            </div>
-        </section>
+            </div>}
+        </section>}
 
         {extraImages.map((image, index) => (
             <section class:list={['project-extra', { 'is-coming-soon': !image.src }]}>
@@ -112,14 +111,16 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
             </section>
         ))}
 
-        <section class="project-process bordered-block">
+        {project.body?.trim() && <section class="project-process bordered-block">
             <h2 class="section-heading">Process</h2>
             <div class="body-text process-body">
                 {publicVersion && project.id === 'knot-music'
                     ? paragraphs(d.publicProcess).map((p) => <p>{p}</p>)
                     : <Content />}
             </div>
-        </section>
+        </section>}
+
+        {d.series && <p class="project-series"><a href={`${pageBase}/projects/${d.series}/`}>→ Explore Knot-music</a></p>}
 
         <section class="project-credits bordered-block">
             <h2 class="section-heading">Credits</h2>
@@ -136,6 +137,7 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
                 <p class="paper-link"><a href={d.paper} target="_blank" rel="noopener noreferrer">→ Open as PDF</a></p>
             </section>
         )}
+        <p class="all-projects-link"><a href={`${pageBase}/projects/`}>← All projects</a></p>
     </div>
 </Layout>
 
@@ -223,6 +225,10 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
         align-items: start;
         margin-bottom: 56px;
     }
+
+    .project-top.text-only { grid-template-columns: 1fr; max-width: 860px; }
+    .project-series, .all-projects-link { margin: 32px 0; font-size: 20px; }
+    .project-series a, .all-projects-link a { color: inherit; text-underline-offset: 5px; }
 
     .loop-wrapper {
         position: relative;

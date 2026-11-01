@@ -17,6 +17,9 @@ const projects = defineCollection({
 
         // トップでの並び順 (小さいほど先。1番目が左の大きい枠になる)
         order: z.number(),
+        // 一覧には載せつつ、トップの選抜作品からは外せる
+        featured: z.boolean().default(true),
+        series: z.string().optional(),
         // ページがまだ無い作品はfalseにしておくと、トップからリンクされない
         published: z.boolean().default(true),
 
@@ -30,7 +33,7 @@ const projects = defineCollection({
         homeLoop: z.string().optional(),
         // トップページの動画が始まるまで表示する先頭フレーム
         homePoster: z.string().optional(),
-        poster: z.string(),
+        poster: z.string().optional(),
 
         // 30秒のアーカイブ動画と、フル尺へのリンク
         archiveVideo: z.string().optional(),

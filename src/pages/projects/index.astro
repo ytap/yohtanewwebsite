@@ -1,0 +1,91 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const publicVersion = Astro.props.publicVersion ?? false;
+const pageBase = publicVersion ? '/yohtanewwebsite/public' : '/yohtanewwebsite';
+const projects = (await getCollection('projects'))
+    .filter((project) => project.data.published && project.data.poster && project.id !== 'knot-music')
+    .sort((a, b) => a.data.order - b.data.order);
+// 年をまたぐ作品は開始年に一度だけ掲載する。
+const yearOf = (project) => Number(project.data.year.match(/\d{4}/)?.[0] ?? 0);
+const years = [...new Set(projects.map(yearOf))].sort((a, b) => b - a);
+---
+
+<Layout title="Projects: Yohta Kitagawa" publicVersion={publicVersion} noindex={!publicVersion}>
+    <div class="main-container projects-page">
+        <h1>Projects</h1>
+        {years.map((year) => (
+            <details class="year-group" open id={`year-${year}`}>
+                <summary><h2>{year}</h2><span class="year-mark" aria-hidden="true"></span></summary>
+                <ul class="projects-list">
+                    {projects.filter((project) => yearOf(project) === year).map((project) => (
+                        <li>
+                            <a class="project-entry" href={`${pageBase}/projects/${project.id}/`} aria-label={`${project.data.title}, ${project.data.year}`}>
+                                <img src={project.data.poster} alt={project.data.title} loading="lazy" />
+                                <div class="project-caption">
+                                    <h3>{project.data.title}</h3>
+                                    <p class="project-year">{project.data.year}</p>
+                                    <p>{project.data.oneLiner}</p>
+                                </div>
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </details>
+        ))}
+        <p class="home-link"><a href={`${pageBase}/#projects`}>← Back to featured projects</a></p>
+    </div>
+</Layout>
+
+<style>
+    .projects-page { padding-top: 48px; padding-bottom: 80px; }
+    h1 { margin: 0 0 40px; font-size: 40px; font-weight: normal; }
+    .year-group { margin-bottom: 48px; }
+    .year-group summary { display: flex; justify-content: space-between; align-items: center; padding: 12px 0 24px; cursor: pointer; list-style: none; }
+    .year-group summary::-webkit-details-marker { display: none; }
+    .year-group summary h2 { margin: 0; font-size: 28px; font-weight: normal; }
+    .year-mark::before { content: '+'; font-size: 24px; }
+    .year-group[open] .year-mark::before { content: '−'; }
+    .year-group summary:focus-visible { outline: 2px solid #333; outline-offset: 4px; }
+    .projects-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; list-style: none; padding: 0; margin: 0; }
+    .projects-list > li { min-width: 0; }
+    .project-entry { position: relative; display: block; width: 100%; aspect-ratio: 3 / 2; }
+    .project-entry img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; }
+    .project-entry:focus-visible { outline: 2px solid #333; outline-offset: 5px; }
+    .project-caption {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 16px;
+        box-sizing: border-box;
+        color: #fff;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+        opacity: 0;
+        transition: opacity 0.25s ease;
+        pointer-events: none;
+    }
+    .project-entry:hover .project-caption,
+    .project-entry:focus-visible .project-caption { opacity: 1; }
+    .project-caption h3 { margin: 0; font-size: clamp(18px, 1.8vw, 28px); font-weight: bold; line-height: 1.1; }
+    .project-caption p { margin: 0; font-size: clamp(13px, 1.05vw, 17px); line-height: 1.5; color: #eee; }
+    .project-caption .project-year { font-size: 13px; }
+    @media (prefers-reduced-motion: reduce) {
+        .project-caption { transition: none; }
+    }
+    .home-link { margin: 32px 0 0; font-size: 18px; }
+    .home-link a { color: inherit; text-decoration: none; text-underline-offset: 5px; }
+    .home-link a:hover, .home-link a:focus-visible { text-decoration: underline; }
+    @media (max-width: 900px) {
+        .projects-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+    }
+    @media (max-width: 500px) {
+        .projects-page { padding-top: 32px; padding-bottom: 56px; }
+        h1 { font-size: 34px; margin-bottom: 28px; }
+        .projects-list { grid-template-columns: 1fr; gap: 24px; }
+    }
+</style>

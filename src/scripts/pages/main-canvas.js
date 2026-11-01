@@ -241,91 +241,41 @@ if (typeof window !== 'undefined') {
         dividerCanvas.style.height = dividerCssHeight + 'px';
         dividerCtx.scale(dpr, dpr);
 
-  /** @type {{x:number,length:number,link?:HTMLAnchorElement}[]} */
-  let lines = [];
-  let currentSpeed = 90;
-  const targetSpeed = 0.5; // 描き切ったあとの巡回速度 (ゆっくり)
-  let brakeForce = 0.05;
-
-        // 点線の合間に、現在の展示案内へのリンクを時折挟む。
-        const noticeText = 'currently exhibiting here!';
-        const noticeHref = document.body.dataset.publicVersion === 'true'
-          ? '/yohtanewwebsite/public/travel-news'
-          : '/yohtanewwebsite/travel-news';
-        const noticeLinks = dividerCanvas.parentElement?.querySelector('.divider-notice-links');
-        const noticeFontSize = 11;
-        const noticeFont = `italic ${noticeFontSize}px CothamSans, sans-serif`;
-        dividerCtx.font = noticeFont;
-        const noticeWidth = dividerCtx.measureText(noticeText).width;
-        let sinceLastNotice = 0; // 直近の文言から追加した線の数
+        /** @type {{x:number,length:number}[]} */
+        let lines = [];
+        let currentSpeed = 90;
+        const targetSpeed = 0.5;
+        let brakeForce = 0.05;
 
         function renderDivider() {
-          if (brakeForce < 0.08) {
-            brakeForce += 0.0005;
-          }
+          if (brakeForce < 0.08) brakeForce += 0.0005;
           currentSpeed += (targetSpeed - currentSpeed) * brakeForce;
-
           dividerCtx.clearRect(0, 0, dividerWidth, dividerCssHeight);
           dividerCtx.strokeStyle = 'rgb(51,51,51)';
           dividerCtx.lineWidth = 1.5;
 
-          dividerCtx.fillStyle = 'rgb(51,51,51)';
-          dividerCtx.font = noticeFont;
-          dividerCtx.textAlign = 'left';
-          dividerCtx.textBaseline = 'middle';
-
-          // Hovering or focusing a link holds it still for easy activation.
-          const paused = noticeLinks?.matches(':hover') || noticeLinks?.contains(document.activeElement);
-          for (let i = 0; i < lines.length; i++) {
-            lines[i].x -= paused ? 0 : currentSpeed;
-            if (lines[i].link) {
-              lines[i].link.style.transform = `translateX(${lines[i].x}px)`;
-              lines[i].link.tabIndex = lines[i].x >= 0 && lines[i].x + lines[i].length <= dividerWidth ? 0 : -1;
-            } else {
-              dividerCtx.beginPath();
-              dividerCtx.moveTo(lines[i].x, dividerCssHeight / 2);
-              dividerCtx.lineTo(lines[i].x + lines[i].length, dividerCssHeight / 2);
-              dividerCtx.stroke();
-            }
+          for (const line of lines) {
+            line.x -= currentSpeed;
+            dividerCtx.beginPath();
+            dividerCtx.moveTo(line.x, dividerCssHeight / 2);
+            dividerCtx.lineTo(line.x + line.length, dividerCssHeight / 2);
+            dividerCtx.stroke();
           }
-          
-          // 画面の左端より外に出た線を削除します
-          lines = lines.filter(line => {
-            if (line.x + line.length > 0) return true;
-            line.link?.remove();
-            return false;
-          });
-          
-          // 画面の右端に隙間ができたら新しい線を追加します
+          lines = lines.filter(line => line.x + line.length > 0);
+
           if (lines.length > 0) {
-            let rightmostLine = lines[lines.length - 1];
-            let rightmostX = rightmostLine.x + rightmostLine.length;
+            const last = lines[lines.length - 1];
+            let rightmostX = last.x + last.length;
             while (rightmostX < dividerWidth) {
               const space = 12 + Math.random() * 36;
-              const newX = rightmostX + space;
-              // しばらく線が続いたら、時折文言を挟む
-              if (noticeLinks && sinceLastNotice > 5 && Math.random() < 0.5) {
-                const link = document.createElement('a');
-                link.textContent = noticeText;
-                link.href = noticeHref;
-                link.tabIndex = -1;
-                link.style.transform = `translateX(${newX}px)`;
-                noticeLinks.appendChild(link);
-                lines.push({ x: newX, length: noticeWidth, link });
-                rightmostX = newX + noticeWidth;
-                sinceLastNotice = 0;
-              } else {
-                const length = 8 + Math.random() * 24;
-                lines.push({ x: newX, length: length });
-                rightmostX = newX + length;
-                sinceLastNotice++;
-              }
+              const length = 8 + Math.random() * 24;
+              const x = rightmostX + space;
+              lines.push({ x, length });
+              rightmostX = x + length;
             }
           } else {
-            const length = 8 + Math.random() * 24;
-            lines.push({ x: dividerWidth, length: length });
+            lines.push({ x: dividerWidth, length: 8 + Math.random() * 24 });
           }
-          
           requestAnimationFrame(renderDivider);
         }
         renderDivider();

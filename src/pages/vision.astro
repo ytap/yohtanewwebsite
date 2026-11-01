@@ -18,9 +18,6 @@ const publicVersion = Astro.props.publicVersion ?? false;
             <div class="vision-diagram">
                 <img src="/yohtanewwebsite/assets/animacy-diagram-v2.jpg" alt="Diagram: needs-driven HCI compared with Mediating Animacy" />
             </div>
-            <div class="vision-photo">
-                <img src="/yohtanewwebsite/assets/shoryuuma.png" alt="Shoryuuma" />
-            </div>
         </section>
 
         <p class="pdf-note">Unpublished manuscript, 2026. Not peer reviewed.</p>
@@ -72,18 +69,6 @@ const publicVersion = Astro.props.publicVersion ?? false;
         display: block;
     }
 
-    .vision-photo {
-        grid-column: 1;
-        grid-row: 2;
-        width: min(100%, 360px);
-    }
-
-    .vision-photo img {
-        width: 100%;
-        height: auto;
-        display: block;
-    }
-
     @media (max-width: 700px) {
         .vision-intro {
             grid-template-columns: 1fr;
@@ -100,13 +85,9 @@ const publicVersion = Astro.props.publicVersion ?? false;
             height: auto;
         }
 
-        .vision-photo {
-            width: min(100%, 320px);
-        }
-
         .vision-summary {
             grid-column: 1;
-            grid-row: 3;
+            grid-row: 2;
         }
     }
 

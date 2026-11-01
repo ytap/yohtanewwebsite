@@ -13,7 +13,7 @@ const cvPages = pdfPageImages('cv');
 
 // 作品データは src/content/projects/*.md から読む (トップと個別ページで共通)
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
-const featuredProjects = projects.map((project) => ({
+const featuredProjects = projects.filter((project) => project.data.featured).map((project) => ({
     title: project.data.title,
     description: project.data.oneLiner,
     image: project.data.homePoster ?? project.data.poster,
@@ -23,6 +23,9 @@ const featuredProjects = projects.map((project) => ({
 }));
 
 const [featureProject, ...subProjects] = featuredProjects;
+const moreProjects = projects.filter((project) =>
+    project.data.published && !project.data.featured && project.data.poster
+);
 ---
 
 <Layout isHome={true} publicVersion={publicVersion} noindex={!publicVersion} preloadImages={featuredProjects.map((project) => project.image)}>
@@ -31,7 +34,6 @@ const [featureProject, ...subProjects] = featuredProjects;
             <h1 class="site-title">Yohta Kitagawa</h1>
             <div class="divider-wrapper">
                 <canvas id="divider-canvas" class="procedural-divider" aria-hidden="true"></canvas>
-                <div class="divider-notice-links"></div>
             </div>
         </header>
 
@@ -53,7 +55,10 @@ const [featureProject, ...subProjects] = featuredProjects;
         </section>
 
         <section class="featured-section" id="projects">
-            <button id="sound-toggle" class="sound-toggle" type="button" aria-pressed="false"><span>Sound: off</span></button>
+            <div class="sound-gain">
+                <label for="sound-gain">Audio</label>
+                <input id="sound-gain" type="range" min="0" max="100" step="1" value="0" aria-label="Project audio volume" aria-valuetext="Muted" />
+            </div>
 
             <div class="projects-layout">
                 <a href={featureProject.link} class="project-block project-block-feature">
@@ -120,6 +125,24 @@ const [featureProject, ...subProjects] = featuredProjects;
                     ))}
                 </div>
             </div>
+        </section>
+
+        <section class="more-projects-section" aria-label="More projects">
+            <div class="project-marquee">
+                <div class="project-marquee-track">
+                    {[0, 1].map((copy) => (
+                        <div class="project-marquee-group" aria-hidden={copy === 1 ? 'true' : undefined}>
+                            {moreProjects.map((project) => (
+                                <a class="project-marquee-item" href={`${pageBase}/projects/${project.id}/`} aria-label={project.data.title} tabindex={copy === 1 ? -1 : undefined}>
+                                    <img src={project.data.poster} alt="" loading="lazy" decoding="async" />
+                                    <span>{project.data.title}</span>
+                                </a>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+            </div>
+            <p class="more-projects"><a href={`${pageBase}/projects/`}>→ More projects</a></p>
         </section>
 
         <section class="cv-section" id="cv">
@@ -206,11 +229,11 @@ const [featureProject, ...subProjects] = featuredProjects;
 
     // 作品のループ映像: 通常はミュート、hoverしている1本だけ音を出す
     function setupHoverSound() {
-        const toggle = document.getElementById('sound-toggle');
+        const gain = document.getElementById('sound-gain');
         const blocks = Array.from(document.querySelectorAll('.project-block'));
-        if (!toggle || blocks.length === 0) return;
-        if (toggle.dataset.hoverSoundInitialized === 'true') return;
-        toggle.dataset.hoverSoundInitialized = 'true';
+        if (!(gain instanceof HTMLInputElement) || blocks.length === 0) return;
+        if (gain.dataset.hoverSoundInitialized === 'true') return;
+        gain.dataset.hoverSoundInitialized = 'true';
 
         // hoverできない端末 (スマホなど) では音を扱わない
         if (!window.matchMedia('(hover: hover)').matches) return;
@@ -220,10 +243,7 @@ const [featureProject, ...subProjects] = featuredProjects;
             .filter(entry => entry.video);
         if (videos.length === 0) return;
 
-        // hover時の音量 (0〜1)。上げ下げはこの数値だけで調整できる
-        const HOVER_VOLUME = 0.4;
-
-        let soundOn = false;
+        let volume = Number(gain.value) / 100;
         let current = null;
         // フェードのタイマーは動画ごとに持つ (共有すると前の動画が鳴りっぱなしになる)
         const fadeTimers = new WeakMap();
@@ -272,12 +292,12 @@ const [featureProject, ...subProjects] = featuredProjects;
         }
 
         function playSound(video) {
-            if (!soundOn || !video) return;
+            if (volume === 0 || !video) return;
             if (current && current !== video) muteNow(current);
             current = video;
             video.volume = 0;
             video.muted = false;
-            fadeTo(video, HOVER_VOLUME);
+            fadeTo(video, volume);
             const p = video.play();
             if (p && typeof p.catch === 'function') {
                 p.catch(() => {
@@ -314,16 +334,74 @@ const [featureProject, ...subProjects] = featuredProjects;
             videos.forEach(({ video }) => muteNow(video));
         });
 
-        toggle.addEventListener('click', () => {
-            soundOn = !soundOn;
-            toggle.querySelector('span').textContent = soundOn ? 'Sound: on' : 'Sound: off';
-            toggle.classList.toggle('is-on', soundOn);
-            toggle.setAttribute('aria-pressed', String(soundOn));
-            if (!soundOn) {
+        gain.addEventListener('input', () => {
+            volume = Number(gain.value) / 100;
+            gain.setAttribute('aria-valuetext', volume === 0 ? 'Muted' : `${gain.value}%`);
+            gain.style.setProperty('--gain-level', `${gain.value}%`);
+            if (volume === 0) {
                 current = null;
                 videos.forEach(({ video }) => muteNow(video));
+            } else if (current) {
+                fadeTo(current, volume);
             }
         });
+    }
+
+    function setupProjectMarquee() {
+        const marquee = document.querySelector('.project-marquee');
+        const track = marquee?.querySelector('.project-marquee-track');
+        const group = track?.querySelector('.project-marquee-group');
+        if (!(marquee instanceof HTMLElement) || !(track instanceof HTMLElement) || !(group instanceof HTMLElement)) return;
+        if (marquee.dataset.initialized === 'true') return;
+        marquee.dataset.initialized = 'true';
+
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        let hovering = false;
+        let focused = false;
+        let speed = 1;
+        let offset = 0;
+        let previousTime = 0;
+        let frame = 0;
+
+        // 速度だけを滑らかに変え、位置は連続させる。
+        function tick(time) {
+            if (!marquee.isConnected || document.hidden || reducedMotion.matches) {
+                frame = 0;
+                return;
+            }
+            const elapsed = previousTime ? Math.min((time - previousTime) / 1000, 0.064) : 0;
+            previousTime = time;
+            const targetSpeed = hovering || focused ? 0 : 1;
+            speed += (targetSpeed - speed) * (1 - Math.exp(-elapsed / 0.3));
+            const width = group.offsetWidth;
+            if (width > 0) {
+                offset = (offset + (width / 55) * speed * elapsed) % width;
+                track.style.transform = `translateX(${-offset}px)`;
+            }
+            frame = requestAnimationFrame(tick);
+        }
+
+        function resume() {
+            if (reducedMotion.matches) {
+                cancelAnimationFrame(frame);
+                frame = 0;
+                offset = 0;
+                track.style.transform = '';
+            } else if (!document.hidden && !frame) {
+                previousTime = 0;
+                frame = requestAnimationFrame(tick);
+            }
+        }
+
+        marquee.addEventListener('pointerenter', () => { hovering = true; });
+        marquee.addEventListener('pointerleave', () => { hovering = false; });
+        marquee.addEventListener('focusin', () => { focused = true; });
+        marquee.addEventListener('focusout', (event) => {
+            focused = event.relatedTarget instanceof Node && marquee.contains(event.relatedTarget);
+        });
+        document.addEventListener('visibilitychange', resume);
+        reducedMotion.addEventListener('change', resume);
+        resume();
     }
 
     function initPage() {
@@ -340,6 +418,7 @@ const [featureProject, ...subProjects] = featuredProjects;
 
         setupVisibleVideos();
         setupHoverSound();
+        setupProjectMarquee();
 
         (async () => {
             try {
@@ -386,35 +465,6 @@ const [featureProject, ...subProjects] = featuredProjects;
     .divider-wrapper {
         position: relative;
         height: 20px;
-    }
-
-    .divider-notice-links {
-        position: absolute;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100vw;
-        height: 20px;
-        overflow: hidden;
-        pointer-events: none;
-    }
-
-    .divider-notice-links :global(a) {
-        position: absolute;
-        top: 0;
-        left: 0;
-        font: italic 11px/20px CothamSans, sans-serif;
-        white-space: nowrap;
-        color: #333;
-        text-decoration: none;
-        pointer-events: auto;
-    }
-
-    .divider-notice-links :global(a:hover),
-    .divider-notice-links :global(a:focus-visible) {
-        color: #258ba5;
-        text-decoration: underline;
-        outline-offset: -2px;
     }
 
     /* -------------------------------------
@@ -538,58 +588,78 @@ const [featureProject, ...subProjects] = featuredProjects;
         margin-bottom: 40px;
     }
 
-    /* プロジェクトのボックスの真上・右端。浮かせてあるので下のグリッドは動かない */
-    .featured-section .sound-toggle {
+    .sound-gain {
         position: absolute;
-        right: 0;
+        right: 16px;
         bottom: 100%;
-    }
-
-    .sound-toggle {
-        display: grid;
-        place-items: center;
-        border: 2px dotted #333;
-        background: transparent;
-        padding: 8px 12px;
-        margin-bottom: 12px;
-        font: inherit;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+        color: #555;
+        font-family: inherit;
         font-size: 16px;
-        line-height: 1.2;
-        text-align: center;
+    }
+
+    .sound-gain label {
+        font: inherit;
+        letter-spacing: normal;
+    }
+
+    .sound-gain input {
+        --gain-level: 0%;
+        appearance: none;
+        -webkit-appearance: none;
+        width: 112px;
+        height: 24px;
+        margin: 0;
+        background: transparent;
         cursor: pointer;
-        color: #333;
-        transition: background-color 0.2s ease, color 0.2s ease;
     }
 
-    .sound-toggle::before,
-    .sound-toggle span {
-        grid-area: 1 / 1;
+    .sound-gain input::-webkit-slider-runnable-track {
+        height: 12px;
+        border: 1px solid #777;
+        border-radius: 0;
+        box-sizing: border-box;
+        background: linear-gradient(to right, #555 var(--gain-level), transparent var(--gain-level));
     }
 
-    .sound-toggle::before {
-        content: 'Sound: off';
-        visibility: hidden;
+    .sound-gain input::-moz-range-track {
+        height: 10px;
+        border: 1px solid #777;
+        border-radius: 0;
+        background: transparent;
     }
 
-    .sound-toggle:hover:not(.is-on) {
-        background: #e5e5e5;
-    }
+    .sound-gain input::-moz-range-progress { height: 10px; border-radius: 0; background: #555; }
 
-    .sound-toggle:focus-visible {
-        outline: 2px solid #333;
-        outline-offset: 3px;
-    }
-
-    .sound-toggle.is-on {
+    .sound-gain input::-webkit-slider-thumb {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 4px;
+        height: 10px;
+        margin-top: 0;
+        border: 0;
+        border-radius: 0;
         background: #333;
-        color: #fff;
     }
 
-    /* hoverが無い端末では音を扱わないので、トグル自体を出さない */
+    .sound-gain input::-moz-range-thumb {
+        width: 4px;
+        height: 10px;
+        border: 0;
+        border-radius: 0;
+        background: #333;
+    }
+
+    .sound-gain input:focus-visible {
+        outline: 1px solid #555;
+        outline-offset: 4px;
+    }
+
     @media (hover: none), (max-width: 700px) {
-        .sound-toggle {
-            display: none;
-        }
+        .sound-gain { display: none; }
     }
 
 
@@ -602,6 +672,79 @@ const [featureProject, ...subProjects] = featuredProjects;
 
     .cv-section {
         margin-top: 56px;
+    }
+
+    .more-projects-section { margin: -8px 16px 0; }
+
+    .project-marquee { overflow: hidden; padding: 5px; margin: -5px; }
+
+    .project-marquee-track {
+        display: flex;
+        width: max-content;
+        will-change: transform;
+    }
+
+    .project-marquee-group {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding-right: 20px;
+    }
+
+    .project-marquee-item {
+        position: relative;
+        display: block;
+        flex: 0 0 160px;
+        width: 160px;
+        height: 108px;
+        padding: 8px;
+        box-sizing: border-box;
+        color: #fff;
+    }
+
+    .project-marquee-item img { display: block; width: 100%; height: 100%; object-fit: contain; }
+    .project-marquee-item span {
+        position: absolute;
+        inset: auto 8px 8px;
+        padding: 16px 8px 8px;
+        font-size: 13px;
+        line-height: 1.3;
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    .project-marquee-item:hover span,
+    .project-marquee-item:focus-visible span { opacity: 1; }
+    .project-marquee-item:focus-visible { outline: 2px solid #333; outline-offset: 3px; }
+
+    @media (max-width: 700px) {
+        .project-marquee-item { flex-basis: 128px; width: 128px; height: 86px; }
+        .project-marquee-group { gap: 16px; padding-right: 16px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .project-marquee { overflow-x: auto; }
+        .project-marquee-track { will-change: auto; }
+        .project-marquee-group[aria-hidden="true"] { display: none; }
+        .project-marquee-item span { transition: none; }
+    }
+
+    .more-projects {
+        margin: 20px 0 0;
+        text-align: right;
+        font-size: 20px;
+    }
+
+    .more-projects a {
+        color: inherit;
+        text-decoration: none;
+        text-underline-offset: 5px;
+    }
+
+    .more-projects a:hover,
+    .more-projects a:focus-visible {
+        text-decoration: underline;
     }
 
     /* CVはページ画像で表示する。どの画面幅でも同じ大きさで読める */
