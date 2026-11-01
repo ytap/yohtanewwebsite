@@ -147,6 +147,7 @@ const pageBase = publicVersion ? '/yohtanewwebsite/public' : '/yohtanewwebsite';
 </head>
 <body data-is-home={String(isHome)} data-is-wip={String(isWip)} data-public-version={String(publicVersion)} data-noise-theme={noiseTheme}>
     {!standalone && <nav class="site-nav" aria-label="Main navigation">
+        <a href={`${pageBase}/projects/`}>Projects</a>
         <a href={`${pageBase}/travel-news`}>Travel &amp; News</a>
         <a href={`${pageBase}/vision`}>Vision</a>
     </nav>}
