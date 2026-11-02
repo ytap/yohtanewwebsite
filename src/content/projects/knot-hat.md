@@ -8,9 +8,8 @@ order: 19
 series: "knot-music"
 featured: false
 published: true
-releaseAt: "2026-11-07T05:00:00Z"
 concept: "Knot-hat is a wearable structure woven from roughly a hundred wired earphones. As part of Knot-music, it explores how sound leakage and fashion entangle private and public space."
 credits: "Created by Yohta Kitagawa and Shinnosuke Hirose. Part of Knot-music."
 poster: "/yohtanewwebsite/assets/Knot-hat.JPG"
-recognition: [{"text": "Grand Prize, Fashion Category, IMAGINE University Competition 2026."}]
+recognition: [{"text": "Grand Prize, Fashion Category, IMAGINE University Competition 2026.", "releaseAt": "2026-11-07T05:00:00Z"}]
 ---

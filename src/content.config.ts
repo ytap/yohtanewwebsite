@@ -63,6 +63,7 @@ const projects = defineCollection({
         // 受賞・論文など。textが本文、urlがあればリンクになる
         recognition: z.array(z.object({
             text: z.string(),
+            releaseAt: z.string().datetime().optional(),
             url: z.string().url().optional(),
         })).default([]),
     }),

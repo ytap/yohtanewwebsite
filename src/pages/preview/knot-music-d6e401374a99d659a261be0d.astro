@@ -1,11 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { isKnotHatReleased } from '../../utils/projectRelease.js';
 
 const works = [
     { title: 'Knot-hat', src: '/yohtanewwebsite/assets/Knot-hat.JPG' },
     { title: 'Knot-plant', src: '/yohtanewwebsite/assets/knotplant.jpeg' },
-].filter((work) => work.title !== 'Knot-hat' || isKnotHatReleased());
+];
 ---
 
 <Layout title="Knot-music preview: Yohta Kitagawa" noindex>

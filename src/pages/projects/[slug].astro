@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
-import { isProjectAvailable, isKnotHatReleased } from '../../utils/projectRelease.js';
+import { isProjectAvailable, isRecognitionAvailable } from '../../utils/projectRelease.js';
 
 export async function getStaticPaths() {
     const projects = await getCollection('projects');
@@ -15,12 +15,10 @@ const { project, publicVersion = false } = Astro.props;
 const d = project.data;
 const pageBase = publicVersion ? '/yohtanewwebsite/public' : '/yohtanewwebsite';
 const { Content } = await render(project);
-const hatReleased = isKnotHatReleased();
-const isHatImage = (image) => image.src?.endsWith('/Knot-hat.JPG');
-const eligibleImages = d.extraImages.filter((image) => !isHatImage(image) || hatReleased);
+const recognition = d.recognition.filter((item) => isRecognitionAvailable(item));
 const extraImages = publicVersion && project.id === 'knot-music'
-    ? [{ caption: 'more coming soon...' }, ...eligibleImages.filter((image) => !image.hiddenFromPublic || (isHatImage(image) && hatReleased))]
-    : eligibleImages;
+    ? [{ caption: 'more coming soon...' }, ...d.extraImages.filter((image) => !image.hiddenFromPublic || image.src?.endsWith('/Knot-hat.JPG'))]
+    : d.extraImages;
 
 
 // concept / technical / credits は空行で段落に分ける
@@ -63,7 +61,7 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
             </div>
         </section>
 
-        {(d.technical.length > 0 || d.recognition.length > 0 || d.archiveVideo || d.fullVideoUrl) && <section class="project-middle">
+        {(d.technical.length > 0 || recognition.length > 0 || d.archiveVideo || d.fullVideoUrl) && <section class="project-middle">
             <div class="middle-left">
                 {d.technical.length > 0 && <div class="bordered-block">
                     <h2 class="section-heading">{d.technicalHeading}</h2>
@@ -73,11 +71,11 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
                     </ul>
                 </div>}
 
-                {d.recognition.length > 0 && (
+                {recognition.length > 0 && (
                     <div class="bordered-block">
                         <h2 class="section-heading">Publications &amp; Exhibitions</h2>
                         <ul class="recognition-list">
-                            {d.recognition.map((item) => (
+                            {recognition.map((item) => (
                                 <li>
                                     {item.url ? (
                                         <a href={item.url} target="_blank" rel="noopener noreferrer">{item.text}</a>
@@ -118,7 +116,7 @@ const paragraphs = (text) => (text ?? '').trim().split(/\n\s*\n/).filter(Boolean
         {project.body?.trim() && <section class="project-process bordered-block">
             <h2 class="section-heading">Process</h2>
             <div class="body-text process-body">
-                {(publicVersion || !hatReleased) && project.id === 'knot-music'
+                {publicVersion && project.id === 'knot-music'
                     ? paragraphs(d.publicProcess).map((p) => <p>{p}</p>)
                     : <Content />}
             </div>
