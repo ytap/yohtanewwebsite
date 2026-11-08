@@ -36,7 +36,7 @@ const events = [
         thumbnail: { poster: '/yohtanewwebsite/assets/contact-membrane-home-first-frame.jpg', video: '/yohtanewwebsite/assets/contact-membrane-loop', alt: 'Contact Membrane', href: '/yohtanewwebsite/projects/contact-membrane' },
     },
 ];
-const eventTabs = [
+const eventSections = [
     { id: 'upcoming', label: 'Upcoming', events: events.filter((event) => !event.archived) },
     { id: 'archive', label: 'Archive', events: events.filter((event) => event.archived) },
 ];
@@ -62,84 +62,45 @@ const eventTabs = [
             </section>
         </div>
 
-        <section class="events-section" aria-label="Events">
-            <div class="event-tabs" role="tablist" aria-label="Event listings">
-                {eventTabs.map((tab, index) => (
-                    <button type="button" role="tab" id={`tab-${tab.id}`} aria-controls={`panel-${tab.id}`}
-                        aria-selected={index === 0 ? 'true' : 'false'} tabindex={index === 0 ? 0 : -1}>
-                        {tab.label}
-                    </button>
-                ))}
-            </div>
-            {eventTabs.map((tab, index) => (
-                <div role="tabpanel" id={`panel-${tab.id}`} aria-labelledby={`tab-${tab.id}`} hidden={index !== 0}>
-                    <ul class="events-list">
-                        {tab.events.map((event) => (
-                            <li class="event">
-                                <div class="event-copy">
-                                    <div class="event-meta">
-                                        <span>{event.type}</span>
-                                        <time>{event.date}</time>
-                                        <a class="event-map" href={event.map} target="_blank" rel="noopener noreferrer">{event.location} ↗</a>
-                                    </div>
-                                    <div class="event-details">
-                                        <h3><a href={event.titleLink} target="_blank" rel="noopener noreferrer">{event.title}</a></h3>
-                                        {event.detail && <p class="event-detail">{event.detailLink ? <a href={event.detailLink} target="_blank" rel="noopener noreferrer">{event.detail}</a> : event.detail}</p>}
-                                        <p class="event-projects">Presenting: {event.projects.map((project, index) => (
-                                            <Fragment>{index > 0 && ', '}{project.href ? <a href={pageHref(project.href)}>{project.name}</a> : project.name}</Fragment>
-                                        ))}</p>
-                                    </div>
+        {eventSections.map((section) => (
+            <section class="events-section" aria-labelledby={section.id}>
+                <h2 id={section.id}>{section.label}</h2>
+                <ul class="events-list">
+                    {section.events.map((event) => (
+                        <li class="event">
+                            <div class="event-copy">
+                                <div class="event-meta">
+                                    <span>{event.type}</span>
+                                    <time>{event.date}</time>
+                                    <a class="event-map" href={event.map} target="_blank" rel="noopener noreferrer">{event.location} ↗</a>
                                 </div>
-                                {event.image && <img class="event-thumbnail" src={event.image.src} alt={event.image.alt} />}
-                                {event.thumbnail && (
-                                    <a class="event-thumbnail" href={pageHref(event.thumbnail.href)} aria-label={`View ${event.thumbnail.alt}`}>
-                                        <video poster={event.thumbnail.poster} autoplay muted loop playsinline preload="metadata" aria-hidden="true">
-                                            <source src={`${event.thumbnail.video}.webm`} type="video/webm" />
-                                            <source src={`${event.thumbnail.video}.mp4`} type="video/mp4" />
-                                        </video>
-                                    </a>
-                                )}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            ))}
-        </section>
+                                <div class="event-details">
+                                    <h3><a href={event.titleLink} target="_blank" rel="noopener noreferrer">{event.title}</a></h3>
+                                    {event.detail && <p class="event-detail">{event.detailLink ? <a href={event.detailLink} target="_blank" rel="noopener noreferrer">{event.detail}</a> : event.detail}</p>}
+                                    <p class="event-projects">Presenting: {event.projects.map((project, index) => (
+                                        <Fragment>{index > 0 && ', '}{project.href ? <a href={pageHref(project.href)}>{project.name}</a> : project.name}</Fragment>
+                                    ))}</p>
+                                </div>
+                            </div>
+                            {event.image && <img class="event-thumbnail" src={event.image.src} alt={event.image.alt} />}
+                            {event.thumbnail && (
+                                <a class="event-thumbnail" href={pageHref(event.thumbnail.href)} aria-label={`View ${event.thumbnail.alt}`}>
+                                    <video poster={event.thumbnail.poster} autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+                                        <source src={`${event.thumbnail.video}.webm`} type="video/webm" />
+                                        <source src={`${event.thumbnail.video}.mp4`} type="video/mp4" />
+                                    </video>
+                                </a>
+                            )}
+                        </li>
+                    ))}
+                </ul>
+            </section>
+        ))}
     </div>
 </Layout>
 
 <script>
     import { updateWeatherData } from '../scripts/wip/weather.js';
-
-    const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.event-tabs [role="tab"]'));
-
-    function selectEventTab(selected: HTMLButtonElement) {
-        for (const tab of tabs) {
-            const active = tab === selected;
-            tab.setAttribute('aria-selected', String(active));
-            tab.tabIndex = active ? 0 : -1;
-            const panel = document.getElementById(tab.getAttribute('aria-controls') ?? '');
-            if (panel) panel.hidden = !active;
-        }
-    }
-
-    tabs.forEach((tab, index) => {
-        tab.addEventListener('click', () => selectEventTab(tab));
-        tab.addEventListener('keydown', (event) => {
-            const nextIndex = {
-                ArrowLeft: (index - 1 + tabs.length) % tabs.length,
-                ArrowRight: (index + 1) % tabs.length,
-                Home: 0,
-                End: tabs.length - 1,
-            }[event.key];
-            if (nextIndex === undefined) return;
-
-            event.preventDefault();
-            const nextTab = tabs[nextIndex];
-            selectEventTab(nextTab);
-            nextTab.focus();
-        });
-    });
 
     const timeElement = document.getElementById('location-time');
     const mapElement = document.getElementById('location-map');
@@ -274,22 +235,9 @@ const eventTabs = [
         margin: 0 0 24px;
     }
 
-    .event-tabs { display: flex; gap: 24px; margin-bottom: 20px; }
+    .events-section + .events-section { margin-top: 56px; }
+    .events-section h2 { font-size: 28px; font-weight: normal; margin: 0 0 20px; }
 
-    .event-tabs button {
-        padding: 0;
-        border: 0;
-        background: transparent;
-        color: inherit;
-        font: inherit;
-        font-size: 28px;
-        cursor: pointer;
-    }
-
-    .event-tabs button[aria-selected="true"] {
-        text-decoration: underline;
-        text-underline-offset: 5px;
-    }
     .travel-intro {
         display: grid;
         grid-template-columns: minmax(0, 1fr) clamp(280px, 40vw, 440px);
