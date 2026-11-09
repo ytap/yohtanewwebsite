@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const publicVersion = Astro.props.publicVersion ?? false;
+const pageBase = publicVersion ? '/yohtanewwebsite/public' : '/yohtanewwebsite';
+---
+
+<Layout title="Updates: Yohta Kitagawa" publicVersion={publicVersion} noindex={!publicVersion}>
+    <main class="updates">
+        <h1>Updates</h1>
+        <article>
+            <h2><a href={`${pageBase}/projects/knot-hat/`}>Knot-hat wins the Fashion Grand Prize</a></h2>
+            <p>IMAGINE University Competition 2026</p>
+        </article>
+    </main>
+</Layout>
+
+<style>
+    .updates { width: 86vw; margin: 0 auto; padding: 24px 0 80px; }
+    h1 { font-size: 40px; font-weight: normal; margin: 0 0 24px; }
+    article { border-block: 1px solid #333; padding: 26px 0 30px; }
+    h2 { font-size: 27px; font-weight: normal; margin: 0 0 8px; }
+    p { font-size: 18px; margin: 0; }
+    a { color: inherit; text-underline-offset: 4px; }
+
+    @media (max-width: 700px) {
+        h1 { font-size: 34px; }
+        h2 { font-size: 24px; }
+    }
+</style>

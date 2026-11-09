@@ -38,15 +38,15 @@ const events = [
 ];
 const eventSections = [
     { id: 'upcoming', label: 'Upcoming', events: events.filter((event) => !event.archived) },
-    { id: 'archive', label: 'Archive', events: events.filter((event) => event.archived) },
+    { id: 'archive', label: 'Archive', note: '(Since November 2026)', events: events.filter((event) => event.archived) },
 ];
 ---
 
-<Layout title="Travel & News: Yohta Kitagawa" publicVersion={publicVersion} noindex={!publicVersion}>
+<Layout title="Events: Yohta Kitagawa" publicVersion={publicVersion} noindex={!publicVersion}>
     <div class="main-container">
         <div class="travel-intro">
             <div class="intro-copy">
-                <h1>Travel &amp; News</h1>
+                <h1>Events</h1>
                 <p class="location-note">I will try to update as frequently as possible, but the best way to know where I am is by <a href="mailto:ykitagawa@keio.jp">contacting me</a>.<span class="last-updated">(Last updated Nov 8, 2026)</span></p>
             </div>
             <section class="location-section" aria-label="Current location and weather">
@@ -64,7 +64,10 @@ const eventSections = [
 
         {eventSections.map((section) => (
             <section class="events-section" aria-labelledby={section.id}>
-                <h2 id={section.id}>{section.label}</h2>
+                <h2 id={section.id}>
+                    {section.label}
+                    {section.note && <small class="section-note">{section.note}</small>}
+                </h2>
                 <ul class="events-list">
                     {section.events.map((event) => (
                         <li class="event">
@@ -237,6 +240,7 @@ const eventSections = [
 
     .events-section + .events-section { margin-top: 56px; }
     .events-section h2 { font-size: 28px; font-weight: normal; margin: 0 0 20px; }
+    .section-note { margin-left: 0.35em; font-size: 0.55em; }
 
     .travel-intro {
         display: grid;

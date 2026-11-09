@@ -134,7 +134,8 @@ const pageBase = publicVersion ? '/yohtanewwebsite/public' : '/yohtanewwebsite';
                 top: auto;
                 right: auto;
                 justify-content: flex-end;
-                gap: 20px;
+                flex-wrap: wrap;
+                gap: 8px clamp(10px, 3vw, 20px);
                 padding: 18px 7vw 0;
             }
 
@@ -148,7 +149,8 @@ const pageBase = publicVersion ? '/yohtanewwebsite/public' : '/yohtanewwebsite';
 <body data-is-home={String(isHome)} data-is-wip={String(isWip)} data-public-version={String(publicVersion)} data-noise-theme={noiseTheme}>
     {!standalone && <nav class="site-nav" aria-label="Main navigation">
         <a href={`${pageBase}/projects/`}>Projects</a>
-        <a href={`${pageBase}/travel-news`}>Travel &amp; News</a>
+        <a href={`${pageBase}/updates/`}>Updates</a>
+        <a href={`${pageBase}/travel-news/`}>Events</a>
         <a href={`${pageBase}/vision`}>Vision</a>
     </nav>}
 
